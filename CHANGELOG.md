@@ -15,6 +15,13 @@ All notable changes to Nemro are documented here.
 
 - Lab is no longer a placeholder. The on-device AI decoder remains the next S1 step.
 - About and privacy copy now describe the bundled EEG excerpt.
+- Release builds sign with the keystore from `android/key.properties` when present, falling back to the debug key otherwise (see `docs/release-signing.md`).
+- CI now fails if the release manifest requests the `INTERNET` permission.
+- Enabled the `avoid_print` and `prefer_single_quotes` lints.
+
+### Security
+
+- `.gitignore` now explicitly excludes `*.jks`, `*.keystore`, `key.properties`, and `.env` files.
 
 ## [0.1.0] - 2026-10-27
 
