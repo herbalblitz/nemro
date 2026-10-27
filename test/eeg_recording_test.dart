@@ -89,15 +89,17 @@ void main() {
     expect(recording.channels, hasLength(8));
     expect(recording.sampleCount, 9600);
     expect(recording.duration, 60);
-    expect(recording.events, hasLength(8));
+    expect(recording.events, hasLength(15));
     expect(
       recording.events.where((event) => event.kind == EegEventKind.leftFist),
-      hasLength(2),
+      hasLength(3),
     );
     expect(
       recording.events.where((event) => event.kind == EegEventKind.rightFist),
-      hasLength(2),
+      hasLength(4),
     );
+    expect(recording.eventAt(4.2)?.kind, EegEventKind.rightFist);
+    expect(recording.eventAt(12.5)?.kind, EegEventKind.leftFist);
     expect(recording.source, contains('PhysioNet'));
   });
 }

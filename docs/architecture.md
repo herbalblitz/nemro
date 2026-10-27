@@ -7,7 +7,7 @@
 3. **Small, replaceable modules.** The UI can grow without locking the data or model layers together.
 4. **Bilingual by default.** Every user-facing string goes through ARB localization.
 
-## S0 structure
+## Structure
 
 ```text
 lib/
@@ -24,13 +24,21 @@ lib/
     onboarding/            language + consent
     shell/                 bottom navigation shell
     home/                  landing screen
-    lab/                   EEG demo placeholder
+    lab/                   EEG replay + on-device decoder
     live/                  camera attention placeholder
     insights/              history placeholder
     learn/                 lesson list placeholder
     settings/              language, theme, privacy, data, about
     about/                 project, sources, disclaimer
     privacy/               in-app privacy policy
+tool/
+  train_eeg_decoder.py     reproducible model training (stdlib only)
+  extract_eeg_excerpt.py   CSV/JSON excerpt exporter (stdlib only)
+assets/
+  eeg/                     bundled 60-second EEGMMIDB excerpt + metadata
+  models/                  bundled logistic-regression weights + metadata
+docs/
+  model-card.md            model details, evaluation, limitations
 ```
 
 ## State and routing
@@ -49,14 +57,12 @@ lib/
 
 ## Data flow
 
-### Lab (S1)
+### Lab (S1) — complete
 
-Status: replay implemented; decoder next.
-
-1. **Done:** bundle a small, documented public EEG window with source metadata. See [data-sources.md](data-sources.md).
-2. **Next:** preprocess the replay window into the decoder's expected shape.
-3. **Next:** run an on-device TFLite EEG decoder.
-4. **Partial:** the waveform and task markers are shown with a clear "demo / not medical" label; model output and confidence come next.
+1. **Bundle:** a small, documented public EEG window with source metadata. See [data-sources.md](data-sources.md).
+2. **Preprocess:** extract complete 4.1-second task windows from the replay; remove the window mean and apply a Hann window.
+3. **Decode:** compute mu/beta Goertzel power for C3, C4, CP3, and CP4, standardize the 8 features, and run a bundled logistic regression entirely in Dart.
+4. **Show:** waveform, task markers, playhead, prediction, class probabilities, and the known marker side by side, with the held-out accuracy and a clear demo label.
 5. **Next:** store a session summary locally for Insights.
 
 ### Lab replay implementation
@@ -65,6 +71,15 @@ Status: replay implemented; decoder next.
 - `lib/features/lab/data/eeg_recording.dart` parses and validates the CSV/metadata pair. It rejects mismatched channel orders, malformed rows, and non-increasing timestamps.
 - `lib/features/lab/widgets/eeg_chart.dart` paints the scrolling multi-channel waveform, task-marker bands, channel labels, and playhead.
 - Playback is a local timer in `LabScreen`; it never touches the network. The dataset page opens in the user's external browser.
+
+### Lab decoder implementation
+
+- `assets/models/eeg_decoder.json` stores the weights, normalization values, feature order, and training/evaluation metadata.
+- `lib/features/lab/data/eeg_decoder.dart` parses the model, extracts Goertzel band power, standardizes features, and applies the sigmoid. It is pure Dart; there is no TFLite or native dependency.
+- `lib/features/lab/data/eeg_decoder_repository.dart` loads the asset and exposes `eegDecoderProvider` and `eegPredictionsProvider`. Predictions are computed once for every complete left/right task, not on each playback tick, so the UI timer stays cheap.
+- The decoder card shows the prediction, left/right probabilities, the known marker, and the held-out accuracy. A mismatch is visible; the app does not hide it.
+- The model is trained on S001/R08 + R12 and evaluated on the held-out S001/R04, the same run used for the replay. Held-out accuracy is 66.7% (chance 50%); leave-one-run-out mean is 60.0%. Full details and limitations: [model-card.md](model-card.md).
+- The EDF+ TAL onsets are absolute seconds. The excerpt exporter uses them directly; earlier record-relative handling was a bug and was fixed before the decoder was trained.
 
 ### Live (S2)
 
@@ -91,7 +106,7 @@ Status: replay implemented; decoder next.
 ## Testing
 
 - `flutter analyze` must be clean.
-- `flutter test` covers first-launch onboarding, onboarding completion, ARB key parity, EEG CSV/metadata parsing, the bundled asset shape, Lab replay, and the Vietnamese narrow-screen layout.
+- `flutter test` covers first-launch onboarding, onboarding completion, ARB key parity, EEG CSV/metadata parsing, the bundled asset shape, decoder model parsing, inference on the bundled replay, synthetic band-power behavior, incomplete-window rejection, Lab replay, and the Vietnamese narrow-screen layout.
 - CI builds a release APK on an x64 runner so ARM64 development machines are not a blocker.
 
 ## Build versions

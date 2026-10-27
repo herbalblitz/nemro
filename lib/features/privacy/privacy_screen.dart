@@ -49,6 +49,10 @@ class PrivacyScreen extends StatelessWidget {
             body: l10n.privacyDataBody,
           ),
           _PrivacySection(
+            title: l10n.privacyDecoderTitle,
+            body: l10n.privacyDecoderBody,
+          ),
+          _PrivacySection(
             title: l10n.privacyCameraTitle,
             body: l10n.privacyCameraBody,
           ),

@@ -52,8 +52,15 @@ app.*.map.json
 
 # Local secrets (never commit)
 .github_token
+.env
+
 # Release signing and secrets — never commit these.
 *.jks
 *.keystore
+*.p12
+*.pfx
 key.properties
-.env
+
+# Python tooling
+__pycache__/
+*.pyc

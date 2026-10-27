@@ -185,7 +185,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeSubheadline.
   ///
   /// In en, this message translates to:
-  /// **'Replay real EEG, inspect the task markers, and learn what BCI can really do. AI decoding is next.'**
+  /// **'Replay real EEG, watch an on-device decoder estimate the imagined hand, and learn what BCI can really do.'**
   String get homeSubheadline;
 
   /// No description provided for @homeLabTitle.
@@ -197,7 +197,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeLabSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Replay real EEG'**
+  /// **'Replay + on-device decoder'**
   String get homeLabSubtitle;
 
   /// No description provided for @homeLabAction.
@@ -245,7 +245,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeRecentEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No saved sessions yet. Try the Lab replay.'**
+  /// **'No saved sessions yet. Try the Lab decoder.'**
   String get homeRecentEmpty;
 
   /// No description provided for @homeRecentAction.
@@ -299,7 +299,7 @@ abstract class AppLocalizations {
   /// No description provided for @labReplayIntro.
   ///
   /// In en, this message translates to:
-  /// **'A real 60-second window from the PhysioNet motor-imagery dataset. Press play to inspect the raw signal and its task markers.'**
+  /// **'A real 60-second window from the PhysioNet motor-imagery dataset. Press play to inspect the raw signal, its task markers, and the on-device decoder output.'**
   String get labReplayIntro;
 
   /// No description provided for @labReplayBadge.
@@ -371,20 +371,80 @@ abstract class AppLocalizations {
   /// No description provided for @labDecoderBody.
   ///
   /// In en, this message translates to:
-  /// **'The on-device decoder is the next step. This screen replays the raw signal and its task markers first, without pretending to read thoughts.'**
+  /// **'A small model estimates the imagined hand from mu/beta band power. It runs entirely on this device; no EEG leaves the phone.'**
   String get labDecoderBody;
 
-  /// No description provided for @labNextBadge.
+  /// No description provided for @labOnDeviceBadge.
   ///
   /// In en, this message translates to:
-  /// **'NEXT'**
-  String get labNextBadge;
+  /// **'ON-DEVICE'**
+  String get labOnDeviceBadge;
 
-  /// No description provided for @labDisclaimer.
+  /// No description provided for @labDecoderModel.
   ///
   /// In en, this message translates to:
-  /// **'Research demo only. Not a medical device and not mind reading.'**
-  String get labDisclaimer;
+  /// **'Logistic regression · mu/beta power · {count} channels'**
+  String labDecoderModel(int count);
+
+  /// No description provided for @labDecoderTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Trained on runs {train}; evaluated on run {test}.'**
+  String labDecoderTraining(String train, String test);
+
+  /// No description provided for @labDecoderAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Held-out accuracy: {percent}% (chance 50%)'**
+  String labDecoderAccuracy(int percent);
+
+  /// No description provided for @labDecoderLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading the on-device model…'**
+  String get labDecoderLoading;
+
+  /// No description provided for @labDecoderIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest — decoder idle.'**
+  String get labDecoderIdle;
+
+  /// No description provided for @labDecoderDecoding.
+  ///
+  /// In en, this message translates to:
+  /// **'Decoding this window…'**
+  String get labDecoderDecoding;
+
+  /// No description provided for @labDecoderIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough signal in this window.'**
+  String get labDecoderIncomplete;
+
+  /// No description provided for @labDecoderUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Decoder unavailable.'**
+  String get labDecoderUnavailable;
+
+  /// No description provided for @labDecoderPrediction.
+  ///
+  /// In en, this message translates to:
+  /// **'Prediction'**
+  String get labDecoderPrediction;
+
+  /// No description provided for @labDecoderMarker.
+  ///
+  /// In en, this message translates to:
+  /// **'Marker'**
+  String get labDecoderMarker;
+
+  /// No description provided for @labDecoderLimitations.
+  ///
+  /// In en, this message translates to:
+  /// **'Single subject (S001). Demo only; not a medical device and not mind reading.'**
+  String get labDecoderLimitations;
 
   /// No description provided for @labDatasetTitle.
   ///
@@ -704,6 +764,18 @@ abstract class AppLocalizations {
   /// **'PhysioNet EEG Motor Movement/Imagery Dataset'**
   String get aboutSourceEeg;
 
+  /// No description provided for @aboutSourceModel.
+  ///
+  /// In en, this message translates to:
+  /// **'On-device decoder'**
+  String get aboutSourceModel;
+
+  /// No description provided for @aboutSourcePlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned'**
+  String get aboutSourcePlanned;
+
   /// No description provided for @aboutSourceBci.
   ///
   /// In en, this message translates to:
@@ -713,7 +785,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutSourceNote.
   ///
   /// In en, this message translates to:
-  /// **'The Lab bundles a 60-second excerpt from EEGMMIDB under the Open Data Commons Attribution License 1.0.'**
+  /// **'The Lab bundles a 60-second EEGMMIDB excerpt (ODC-BY 1.0). Its decoder is a small logistic regression trained on S001 runs 8 and 12 and evaluated on run 4: 67% held-out accuracy, 50% chance. Research demo only.'**
   String get aboutSourceNote;
 
   /// No description provided for @aboutRepo.
@@ -737,7 +809,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyIntro.
   ///
   /// In en, this message translates to:
-  /// **'Nemro is local-first. Version 0.1.0 has no Internet permission and sends no data off the device.'**
+  /// **'Nemro is local-first. Version 0.2.0 has no Internet permission. The bundled EEG sample and decoder run entirely on-device.'**
   String get privacyIntro;
 
   /// No description provided for @privacyDataTitle.
@@ -749,8 +821,20 @@ abstract class AppLocalizations {
   /// No description provided for @privacyDataBody.
   ///
   /// In en, this message translates to:
-  /// **'Language, theme, and onboarding state. Lab and Live sessions will be stored locally when added in later versions.'**
+  /// **'Language, theme, and onboarding state. Lab and Live sessions will be stored locally when added in later versions. The Lab decoder processes the bundled sample locally; no EEG is collected from you.'**
   String get privacyDataBody;
+
+  /// No description provided for @privacyDecoderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'On-device AI'**
+  String get privacyDecoderTitle;
+
+  /// No description provided for @privacyDecoderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The Lab decoder is a small model bundled with the app. It runs locally on the EEG sample, and predictions never leave the device.'**
+  String get privacyDecoderBody;
 
   /// No description provided for @privacyCameraTitle.
   ///
@@ -785,7 +869,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacySharingBody.
   ///
   /// In en, this message translates to:
-  /// **'No analytics, ads, or third-party data-collecting SDKs.'**
+  /// **'No analytics, ads, or third-party data-collecting SDKs. The bundled decoder does not call a server.'**
   String get privacySharingBody;
 
   /// No description provided for @privacyContactTitle.

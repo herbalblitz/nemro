@@ -14,9 +14,9 @@
   "onboardingConsentCheckbox": "Tôi đã hiểu và đồng ý",
   "onboardingContinue": "Đồng ý và tiếp tục",
   "homeHeadline": "Vòng lặp AI–não, trong tầm tay.",
-  "homeSubheadline": "Phát lại EEG thật, xem các mốc nhiệm vụ và học đúng về BCI. Bước tiếp theo là AI giải mã.",
+  "homeSubheadline": "Phát lại EEG thật, xem bộ giải mã trên thiết bị ước lượng bàn tay đang tưởng tượng và học đúng về BCI.",
   "homeLabTitle": "Lab",
-  "homeLabSubtitle": "Phát lại EEG thật",
+  "homeLabSubtitle": "Phát lại + giải mã trên thiết bị",
   "homeLabAction": "Mở Lab",
   "homeLabBadge": "DEMO",
   "homeLiveTitle": "Live",
@@ -24,7 +24,7 @@
   "homeLiveAction": "Bật camera",
   "homeLiveBadge": "SẮP CÓ",
   "homeRecentTitle": "Phiên gần nhất",
-  "homeRecentEmpty": "Chưa có phiên nào được lưu. Hãy thử phát lại EEG trong Lab.",
+  "homeRecentEmpty": "Chưa có phiên nào được lưu. Hãy thử bộ giải mã trong Lab.",
   "homeRecentAction": "Mở Lab",
   "homeFooter": "Mã nguồn mở. Không phải thiết bị y tế. Không đọc suy nghĩ.",
   "navHome": "Trang chủ",
@@ -33,7 +33,7 @@
   "navSettings": "Cài đặt",
   "labTitle": "Lab",
   "labReplayTitle": "Phát lại EEG",
-  "labReplayIntro": "Cửa sổ 60 giây thật từ bộ dữ liệu vận động–tưởng tượng của PhysioNet. Nhấn phát để xem tín hiệu thô và các mốc nhiệm vụ.",
+  "labReplayIntro": "Cửa sổ 60 giây thật từ bộ dữ liệu vận động–tưởng tượng của PhysioNet. Nhấn phát để xem tín hiệu thô, các mốc nhiệm vụ và kết quả giải mã trên thiết bị.",
   "labReplayBadge": "PHÁT LẠI",
   "labChannelSummary": "{count} kênh · {rate} Hz",
   "@labChannelSummary": {
@@ -62,9 +62,43 @@
   "labLeftFist": "Tưởng tượng nắm tay trái",
   "labRightFist": "Tưởng tượng nắm tay phải",
   "labDecoderTitle": "Bộ giải mã AI",
-  "labDecoderBody": "Bộ giải mã trên thiết bị là bước tiếp theo. Màn hình này trước hết phát lại tín hiệu thô và các mốc nhiệm vụ, không giả vờ đọc suy nghĩ.",
-  "labNextBadge": "TIẾP THEO",
-  "labDisclaimer": "Chỉ là bản demo nghiên cứu. Không phải thiết bị y tế và không đọc suy nghĩ.",
+  "labDecoderBody": "Một mô hình nhỏ ước lượng bàn tay đang tưởng tượng từ công suất dải mu/beta. Mô hình chạy hoàn toàn trên thiết bị; không có EEG nào rời khỏi điện thoại.",
+  "labOnDeviceBadge": "TRÊN THIẾT BỊ",
+  "labDecoderModel": "Hồi quy logistic · công suất mu/beta · {count} kênh",
+  "@labDecoderModel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labDecoderTraining": "Huấn luyện trên run {train}; đánh giá trên run {test}.",
+  "@labDecoderTraining": {
+    "placeholders": {
+      "train": {
+        "type": "String"
+      },
+      "test": {
+        "type": "String"
+      }
+    }
+  },
+  "labDecoderAccuracy": "Độ chính xác trên run giữ lại: {percent}% (ngẫu nhiên 50%)",
+  "@labDecoderAccuracy": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "labDecoderLoading": "Đang tải mô hình trên thiết bị…",
+  "labDecoderIdle": "Nghỉ — bộ giải mã tạm dừng.",
+  "labDecoderDecoding": "Đang giải mã cửa sổ này…",
+  "labDecoderIncomplete": "Không đủ tín hiệu trong cửa sổ này.",
+  "labDecoderUnavailable": "Bộ giải mã không khả dụng.",
+  "labDecoderPrediction": "Dự đoán",
+  "labDecoderMarker": "Mốc",
+  "labDecoderLimitations": "Một người tham gia (S001). Chỉ là demo; không phải thiết bị y tế và không đọc suy nghĩ.",
   "labDatasetTitle": "Dữ liệu & giấy phép",
   "labSourceLabel": "Nguồn",
   "labRecordingLabel": "Bản ghi",
@@ -118,20 +152,24 @@
   "aboutDisclaimerBody": "Nemro không phải thiết bị y tế, không đọc suy nghĩ và không thay thế tư vấn y tế.",
   "aboutSources": "Nguồn tham khảo",
   "aboutSourceEeg": "PhysioNet EEG Motor Movement/Imagery Dataset",
+  "aboutSourceModel": "Bộ giải mã trên thiết bị",
+  "aboutSourcePlanned": "Dự kiến",
   "aboutSourceBci": "BCI Competition IV 2a",
-  "aboutSourceNote": "Lab đóng gói một đoạn 60 giây từ EEGMMIDB theo giấy phép Open Data Commons Attribution 1.0.",
+  "aboutSourceNote": "Lab đóng gói một đoạn 60 giây từ EEGMMIDB (ODC-BY 1.0). Bộ giải mã là hồi quy logistic nhỏ, huấn luyện trên run 8 và 12 của S001, đánh giá trên run 4: độ chính xác 67%, mức ngẫu nhiên 50%. Chỉ là demo nghiên cứu.",
   "aboutRepo": "Mã nguồn trên GitHub",
   "aboutLicense": "Giấy phép MIT",
   "privacyTitle": "Quyền riêng tư",
-  "privacyIntro": "Nemro được thiết kế local-first. Phiên bản 0.1.0 không có quyền truy cập Internet và không gửi dữ liệu ra ngoài.",
+  "privacyIntro": "Nemro được thiết kế local-first. Phiên bản 0.2.0 không có quyền truy cập Internet. Mẫu EEG và bộ giải mã đi kèm chạy hoàn toàn trên thiết bị.",
   "privacyDataTitle": "Dữ liệu nào được lưu?",
-  "privacyDataBody": "Cài đặt ngôn ngữ, giao diện và trạng thái onboarding. Các phiên Lab/Live sẽ được lưu cục bộ khi được thêm ở phiên bản sau.",
+  "privacyDataBody": "Cài đặt ngôn ngữ, giao diện và trạng thái onboarding. Các phiên Lab/Live sẽ được lưu cục bộ khi được thêm ở phiên bản sau. Bộ giải mã Lab xử lý mẫu đi kèm ngay trên thiết bị; không EEG nào được thu thập từ bạn.",
+  "privacyDecoderTitle": "AI trên thiết bị",
+  "privacyDecoderBody": "Bộ giải mã Lab là một mô hình nhỏ đi kèm ứng dụng. Mô hình chạy cục bộ trên mẫu EEG và dự đoán không rời khỏi thiết bị.",
   "privacyCameraTitle": "Camera",
   "privacyCameraBody": "Khi Live được bật, camera xử lý khung hình trên thiết bị để ước lượng chú ý. Không video nào được lưu hoặc gửi đi.",
   "privacyStorageTitle": "Lưu trữ",
   "privacyStorageBody": "Dữ liệu nằm trong vùng riêng của app. Bạn có thể xóa toàn bộ trong Cài đặt.",
   "privacySharingTitle": "Chia sẻ",
-  "privacySharingBody": "Không có analytics, quảng cáo hay SDK bên thứ ba thu thập dữ liệu.",
+  "privacySharingBody": "Không có analytics, quảng cáo hay SDK bên thứ ba thu thập dữ liệu. Bộ giải mã đi kèm không gọi máy chủ.",
   "privacyContactTitle": "Liên hệ",
   "privacyContactBody": "Mở issue trên GitHub của dự án.",
   "commonBack": "Quay lại",

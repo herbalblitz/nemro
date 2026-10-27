@@ -56,13 +56,13 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeSubheadline =>
-      'Phát lại EEG thật, xem các mốc nhiệm vụ và học đúng về BCI. Bước tiếp theo là AI giải mã.';
+      'Phát lại EEG thật, xem bộ giải mã trên thiết bị ước lượng bàn tay đang tưởng tượng và học đúng về BCI.';
 
   @override
   String get homeLabTitle => 'Lab';
 
   @override
-  String get homeLabSubtitle => 'Phát lại EEG thật';
+  String get homeLabSubtitle => 'Phát lại + giải mã trên thiết bị';
 
   @override
   String get homeLabAction => 'Mở Lab';
@@ -87,7 +87,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeRecentEmpty =>
-      'Chưa có phiên nào được lưu. Hãy thử phát lại EEG trong Lab.';
+      'Chưa có phiên nào được lưu. Hãy thử bộ giải mã trong Lab.';
 
   @override
   String get homeRecentAction => 'Mở Lab';
@@ -116,7 +116,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get labReplayIntro =>
-      'Cửa sổ 60 giây thật từ bộ dữ liệu vận động–tưởng tượng của PhysioNet. Nhấn phát để xem tín hiệu thô và các mốc nhiệm vụ.';
+      'Cửa sổ 60 giây thật từ bộ dữ liệu vận động–tưởng tượng của PhysioNet. Nhấn phát để xem tín hiệu thô, các mốc nhiệm vụ và kết quả giải mã trên thiết bị.';
 
   @override
   String get labReplayBadge => 'PHÁT LẠI';
@@ -157,14 +157,50 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get labDecoderBody =>
-      'Bộ giải mã trên thiết bị là bước tiếp theo. Màn hình này trước hết phát lại tín hiệu thô và các mốc nhiệm vụ, không giả vờ đọc suy nghĩ.';
+      'Một mô hình nhỏ ước lượng bàn tay đang tưởng tượng từ công suất dải mu/beta. Mô hình chạy hoàn toàn trên thiết bị; không có EEG nào rời khỏi điện thoại.';
 
   @override
-  String get labNextBadge => 'TIẾP THEO';
+  String get labOnDeviceBadge => 'TRÊN THIẾT BỊ';
 
   @override
-  String get labDisclaimer =>
-      'Chỉ là bản demo nghiên cứu. Không phải thiết bị y tế và không đọc suy nghĩ.';
+  String labDecoderModel(int count) {
+    return 'Hồi quy logistic · công suất mu/beta · $count kênh';
+  }
+
+  @override
+  String labDecoderTraining(String train, String test) {
+    return 'Huấn luyện trên run $train; đánh giá trên run $test.';
+  }
+
+  @override
+  String labDecoderAccuracy(int percent) {
+    return 'Độ chính xác trên run giữ lại: $percent% (ngẫu nhiên 50%)';
+  }
+
+  @override
+  String get labDecoderLoading => 'Đang tải mô hình trên thiết bị…';
+
+  @override
+  String get labDecoderIdle => 'Nghỉ — bộ giải mã tạm dừng.';
+
+  @override
+  String get labDecoderDecoding => 'Đang giải mã cửa sổ này…';
+
+  @override
+  String get labDecoderIncomplete => 'Không đủ tín hiệu trong cửa sổ này.';
+
+  @override
+  String get labDecoderUnavailable => 'Bộ giải mã không khả dụng.';
+
+  @override
+  String get labDecoderPrediction => 'Dự đoán';
+
+  @override
+  String get labDecoderMarker => 'Mốc';
+
+  @override
+  String get labDecoderLimitations =>
+      'Một người tham gia (S001). Chỉ là demo; không phải thiết bị y tế và không đọc suy nghĩ.';
 
   @override
   String get labDatasetTitle => 'Dữ liệu & giấy phép';
@@ -334,11 +370,17 @@ class AppLocalizationsVi extends AppLocalizations {
   String get aboutSourceEeg => 'PhysioNet EEG Motor Movement/Imagery Dataset';
 
   @override
+  String get aboutSourceModel => 'Bộ giải mã trên thiết bị';
+
+  @override
+  String get aboutSourcePlanned => 'Dự kiến';
+
+  @override
   String get aboutSourceBci => 'BCI Competition IV 2a';
 
   @override
   String get aboutSourceNote =>
-      'Lab đóng gói một đoạn 60 giây từ EEGMMIDB theo giấy phép Open Data Commons Attribution 1.0.';
+      'Lab đóng gói một đoạn 60 giây từ EEGMMIDB (ODC-BY 1.0). Bộ giải mã là hồi quy logistic nhỏ, huấn luyện trên run 8 và 12 của S001, đánh giá trên run 4: độ chính xác 67%, mức ngẫu nhiên 50%. Chỉ là demo nghiên cứu.';
 
   @override
   String get aboutRepo => 'Mã nguồn trên GitHub';
@@ -351,14 +393,21 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get privacyIntro =>
-      'Nemro được thiết kế local-first. Phiên bản 0.1.0 không có quyền truy cập Internet và không gửi dữ liệu ra ngoài.';
+      'Nemro được thiết kế local-first. Phiên bản 0.2.0 không có quyền truy cập Internet. Mẫu EEG và bộ giải mã đi kèm chạy hoàn toàn trên thiết bị.';
 
   @override
   String get privacyDataTitle => 'Dữ liệu nào được lưu?';
 
   @override
   String get privacyDataBody =>
-      'Cài đặt ngôn ngữ, giao diện và trạng thái onboarding. Các phiên Lab/Live sẽ được lưu cục bộ khi được thêm ở phiên bản sau.';
+      'Cài đặt ngôn ngữ, giao diện và trạng thái onboarding. Các phiên Lab/Live sẽ được lưu cục bộ khi được thêm ở phiên bản sau. Bộ giải mã Lab xử lý mẫu đi kèm ngay trên thiết bị; không EEG nào được thu thập từ bạn.';
+
+  @override
+  String get privacyDecoderTitle => 'AI trên thiết bị';
+
+  @override
+  String get privacyDecoderBody =>
+      'Bộ giải mã Lab là một mô hình nhỏ đi kèm ứng dụng. Mô hình chạy cục bộ trên mẫu EEG và dự đoán không rời khỏi thiết bị.';
 
   @override
   String get privacyCameraTitle => 'Camera';
@@ -379,7 +428,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get privacySharingBody =>
-      'Không có analytics, quảng cáo hay SDK bên thứ ba thu thập dữ liệu.';
+      'Không có analytics, quảng cáo hay SDK bên thứ ba thu thập dữ liệu. Bộ giải mã đi kèm không gọi máy chủ.';
 
   @override
   String get privacyContactTitle => 'Liên hệ';

@@ -128,9 +128,17 @@ class AboutScreen extends StatelessWidget {
                 ),
                 const Divider(),
                 ListTile(
+                  leading: const Icon(Icons.memory_outlined),
+                  title: Text(l10n.aboutSourceModel),
+                  subtitle: const Text('S001 · R08 + R12 → R04 · MIT'),
+                  trailing: const Icon(Icons.open_in_new_rounded, size: 18),
+                  onTap: () => _openUrl(context, AppConstants.modelCardUrl),
+                ),
+                const Divider(),
+                ListTile(
                   leading: const Icon(Icons.science_outlined),
                   title: Text(l10n.aboutSourceBci),
-                  subtitle: const Text('BCI Competition'),
+                  subtitle: Text(l10n.aboutSourcePlanned),
                 ),
               ],
             ),

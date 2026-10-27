@@ -2,26 +2,34 @@
 
 All notable changes to Nemro are documented here.
 
-## [Unreleased]
+## [0.2.0] - 2026-10-27
 
 ### Added
 
-- Lab replay of a real 60-second EEG window from the PhysioNet EEGMMIDB dataset (S001/R04, 8 channels, 160 Hz).
-- Rest, left-fist, and right-fist task markers; play/pause, scrubbing, restart, and 0.5×/1×/2× speed controls.
-- Bundled ODC-BY 1.0 EEG excerpt with source metadata, citation, and in-app attribution.
-- Validated CSV/metadata parser and tests for the parser, bundled asset shape, Lab replay, and Vietnamese narrow-screen layout.
+- On-device logistic-regression decoder for imagined left/right fist movement in the Lab.
+- Mu/beta Goertzel features from C3, C4, CP3, and CP4; pure-Dart inference with no native or network dependency.
+- Bundled model weights (`assets/models/eeg_decoder.json`) with training metadata and a reproducible training tool (`tool/train_eeg_decoder.py`).
+- Model card with held-out evaluation, confusion matrix, calibration caveats, and limitations (`docs/model-card.md`).
+- Lab decoder card showing the prediction, left/right probabilities, the known task marker, and the held-out accuracy.
+- Reproducible EEG excerpt exporter (`tool/extract_eeg_excerpt.py`) and dataset/model attribution updates.
+- Decoder tests for model parsing, bundled replay inference, synthetic band-power behavior, and incomplete-window rejection.
 
 ### Changed
 
-- Lab is no longer a placeholder. The on-device AI decoder remains the next S1 step.
-- About and privacy copy now describe the bundled EEG excerpt.
+- Lab is no longer a placeholder; it now includes both replay and on-device decoding.
+- Home, About, privacy, README, architecture, and data-source docs now describe the decoder and its limits.
+- Version bumped to 0.2.0+2.
 - Release builds sign with the keystore from `android/key.properties` when present, falling back to the debug key otherwise (see `docs/release-signing.md`).
 - CI now fails if the release manifest requests the `INTERNET` permission.
 - Enabled the `avoid_print` and `prefer_single_quotes` lints.
 
+### Fixed
+
+- EEG task markers now use the EDF+ TAL absolute onsets directly. The previous record-relative handling shifted markers later in the file; the bundled excerpt and training data were regenerated.
+
 ### Security
 
-- `.gitignore` now explicitly excludes `*.jks`, `*.keystore`, `key.properties`, and `.env` files.
+- `.gitignore` now explicitly excludes `*.jks`, `*.keystore`, `*.p12`, `*.pfx`, `key.properties`, and `.env` files.
 
 ## [0.1.0] - 2026-10-27
 

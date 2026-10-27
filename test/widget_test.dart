@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:nemro/app.dart';
 import 'package:nemro/core/preferences/preferences_providers.dart';
+import 'package:nemro/features/lab/data/eeg_decoder.dart';
+import 'package:nemro/features/lab/data/eeg_decoder_repository.dart';
 import 'package:nemro/features/lab/data/eeg_recording.dart';
 import 'package:nemro/features/lab/data/eeg_repository.dart';
 
@@ -12,6 +14,8 @@ Future<void> _pumpApp(
   WidgetTester tester, {
   Map<String, Object> values = const {'locale': 'vi'},
   EegRecording? labRecording,
+  EegDecoder? labDecoder,
+  Map<double, EegPrediction>? labPredictions,
 }) async {
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 3.0;
@@ -27,6 +31,10 @@ Future<void> _pumpApp(
         sharedPreferencesProvider.overrideWithValue(prefs),
         if (labRecording != null)
           eegRecordingProvider.overrideWith((ref) => labRecording),
+        if (labDecoder != null)
+          eegDecoderProvider.overrideWith((ref) => labDecoder),
+        if (labPredictions != null)
+          eegPredictionsProvider.overrideWith((ref) => labPredictions),
       ],
       child: const NemroApp(),
     ),
@@ -45,12 +53,58 @@ EegRecording _testRecording() {
     samplingRate: 160,
     channels: const ['C3', 'Cz'],
     events: const [
-      EegEvent(onset: 2, duration: 4, label: 'T1'),
-      EegEvent(onset: 7, duration: 4, label: 'T2'),
+      EegEvent(onset: 0, duration: 4.1, label: 'T1'),
+      EegEvent(onset: 6, duration: 4.1, label: 'T2'),
     ],
     samples: List.generate(2, (_) => List<double>.filled(12 * 160, 0)),
     duration: 12,
   );
+}
+
+EegDecoder _testDecoder() {
+  return const EegDecoder(
+    EegDecoderModel(
+      name: 'Test decoder',
+      type: 'logistic_regression',
+      classes: ['left_fist', 'right_fist'],
+      channels: ['C3', 'Cz'],
+      muLow: 8,
+      muHigh: 13,
+      betaLow: 13,
+      betaHigh: 30,
+      frequencyStep: 0.5,
+      samplingRate: 160,
+      windowSeconds: 4.1,
+      featureOrder: 'channel-major, mu then beta',
+      mean: [0, 0, 0, 0],
+      std: [1, 1, 1, 1],
+      weights: [0, 0, 0, 0],
+      bias: 0,
+      training: EegDecoderTraining(
+        dataset: 'Test dataset',
+        subject: 'S001',
+        trainRuns: ['R08', 'R12'],
+        testRun: 'R04',
+        trainEpochs: 4000,
+        heldOutAccuracy: 0.667,
+        leaveOneRunOutAccuracy: 0.6,
+        chanceAccuracy: 0.5,
+        heldOutConfusion: [
+          [5, 3],
+          [2, 5],
+        ],
+      ),
+      preprocessing: 'Test preprocessing',
+      limitations: 'Test limitations',
+    ),
+  );
+}
+
+Map<double, EegPrediction> _testPredictions() {
+  return {
+    0.0: const EegPrediction(rightProbability: 0.72),
+    6.0: const EegPrediction(rightProbability: 0.36),
+  };
 }
 
 void main() {
@@ -96,6 +150,8 @@ void main() {
       tester,
       values: {'locale': 'en', 'onboarding_complete': true},
       labRecording: _testRecording(),
+      labDecoder: _testDecoder(),
+      labPredictions: _testPredictions(),
     );
 
     final openLab = find.text('Open Lab');
@@ -113,6 +169,20 @@ void main() {
     await tester.tap(find.text('Pause'));
     await tester.pumpAndSettle();
     expect(find.text('Play'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.text('AI decoder'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('AI decoder'), findsOneWidget);
+    expect(find.text('Prediction'), findsOneWidget);
+    final predictionLabel = tester.widget<Text>(
+      find.byKey(const ValueKey('decoder-prediction-label')),
+    );
+    expect(predictionLabel.data, 'Right fist imagery');
+    expect(find.textContaining('Held-out accuracy: 67%'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -121,6 +191,8 @@ void main() {
       tester,
       values: {'locale': 'vi', 'onboarding_complete': true},
       labRecording: _testRecording(),
+      labDecoder: _testDecoder(),
+      labPredictions: _testPredictions(),
     );
 
     final openLab = find.text('Mở Lab');
@@ -130,6 +202,14 @@ void main() {
 
     expect(find.text('Phát lại EEG'), findsOneWidget);
     expect(find.text('Phát'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Bộ giải mã AI'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Bộ giải mã AI'), findsOneWidget);
+    expect(find.text('Dự đoán'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

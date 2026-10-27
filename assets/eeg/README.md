@@ -13,6 +13,10 @@
   artifact removal, or normalization
 - **Markers:** `T0` rest, `T1` left-fist imagery, `T2` right-fist imagery
 
+The EDF+ TAL onsets are absolute seconds. The exporter uses them directly; do
+not add the record index to the onset. This 60-second excerpt contains seven
+complete imagined-fist tasks (four right, three left).
+
 The original EDF file is `S001/S001R04.edf` from the dataset. It is **not**
 included in this repository. The excerpt is redistributed under the dataset's
 [Open Data Commons Attribution License v1.0](https://opendatacommons.org/licenses/by/1-0/).
@@ -28,7 +32,16 @@ Schalk, G., McFarland, D. J., Hinterberger, T., Birbaumer, N., & Wolpaw, J. R.
 
 ## Regenerating
 
-Download `S001/S001R04.edf` and its `.event` file from PhysioNet, then export
-the first 60 seconds of the eight channels above. The JSON sidecar records the
-source metadata and task markers used by the app. Keep the raw EDF out of the
-repository.
+Download `S001/S001R04.edf` from PhysioNet, then run:
+
+```bash
+python3 tool/extract_eeg_excerpt.py \
+  --edf /path/to/S001R04.edf \
+  --csv assets/eeg/s001_r04_60s.csv \
+  --json assets/eeg/s001_r04_60s.json \
+  --seconds 60
+```
+
+The exporter reads the EDF annotation channel; a separate `.event` file is not
+needed. The JSON sidecar records the source metadata and task markers used by
+the app. Keep the raw EDF out of the repository.

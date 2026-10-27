@@ -14,9 +14,9 @@
   "onboardingConsentCheckbox": "I understand and agree",
   "onboardingContinue": "Agree and continue",
   "homeHeadline": "The AI–brain loop, in your hands.",
-  "homeSubheadline": "Replay real EEG, inspect the task markers, and learn what BCI can really do. AI decoding is next.",
+  "homeSubheadline": "Replay real EEG, watch an on-device decoder estimate the imagined hand, and learn what BCI can really do.",
   "homeLabTitle": "Lab",
-  "homeLabSubtitle": "Replay real EEG",
+  "homeLabSubtitle": "Replay + on-device decoder",
   "homeLabAction": "Open Lab",
   "homeLabBadge": "DEMO",
   "homeLiveTitle": "Live",
@@ -24,7 +24,7 @@
   "homeLiveAction": "Enable camera",
   "homeLiveBadge": "SOON",
   "homeRecentTitle": "Latest session",
-  "homeRecentEmpty": "No saved sessions yet. Try the Lab replay.",
+  "homeRecentEmpty": "No saved sessions yet. Try the Lab decoder.",
   "homeRecentAction": "Open Lab",
   "homeFooter": "Open source. Not a medical device. Not mind reading.",
   "navHome": "Home",
@@ -33,7 +33,7 @@
   "navSettings": "Settings",
   "labTitle": "Lab",
   "labReplayTitle": "EEG replay",
-  "labReplayIntro": "A real 60-second window from the PhysioNet motor-imagery dataset. Press play to inspect the raw signal and its task markers.",
+  "labReplayIntro": "A real 60-second window from the PhysioNet motor-imagery dataset. Press play to inspect the raw signal, its task markers, and the on-device decoder output.",
   "labReplayBadge": "REPLAY",
   "labChannelSummary": "{count} channels · {rate} Hz",
   "@labChannelSummary": {
@@ -62,9 +62,43 @@
   "labLeftFist": "Left fist imagery",
   "labRightFist": "Right fist imagery",
   "labDecoderTitle": "AI decoder",
-  "labDecoderBody": "The on-device decoder is the next step. This screen replays the raw signal and its task markers first, without pretending to read thoughts.",
-  "labNextBadge": "NEXT",
-  "labDisclaimer": "Research demo only. Not a medical device and not mind reading.",
+  "labDecoderBody": "A small model estimates the imagined hand from mu/beta band power. It runs entirely on this device; no EEG leaves the phone.",
+  "labOnDeviceBadge": "ON-DEVICE",
+  "labDecoderModel": "Logistic regression · mu/beta power · {count} channels",
+  "@labDecoderModel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labDecoderTraining": "Trained on runs {train}; evaluated on run {test}.",
+  "@labDecoderTraining": {
+    "placeholders": {
+      "train": {
+        "type": "String"
+      },
+      "test": {
+        "type": "String"
+      }
+    }
+  },
+  "labDecoderAccuracy": "Held-out accuracy: {percent}% (chance 50%)",
+  "@labDecoderAccuracy": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "labDecoderLoading": "Loading the on-device model…",
+  "labDecoderIdle": "Rest — decoder idle.",
+  "labDecoderDecoding": "Decoding this window…",
+  "labDecoderIncomplete": "Not enough signal in this window.",
+  "labDecoderUnavailable": "Decoder unavailable.",
+  "labDecoderPrediction": "Prediction",
+  "labDecoderMarker": "Marker",
+  "labDecoderLimitations": "Single subject (S001). Demo only; not a medical device and not mind reading.",
   "labDatasetTitle": "Dataset & license",
   "labSourceLabel": "Source",
   "labRecordingLabel": "Recording",
@@ -118,20 +152,24 @@
   "aboutDisclaimerBody": "Nemro is not a medical device, does not read minds, and is not a substitute for medical advice.",
   "aboutSources": "Sources",
   "aboutSourceEeg": "PhysioNet EEG Motor Movement/Imagery Dataset",
+  "aboutSourceModel": "On-device decoder",
+  "aboutSourcePlanned": "Planned",
   "aboutSourceBci": "BCI Competition IV 2a",
-  "aboutSourceNote": "The Lab bundles a 60-second excerpt from EEGMMIDB under the Open Data Commons Attribution License 1.0.",
+  "aboutSourceNote": "The Lab bundles a 60-second EEGMMIDB excerpt (ODC-BY 1.0). Its decoder is a small logistic regression trained on S001 runs 8 and 12 and evaluated on run 4: 67% held-out accuracy, 50% chance. Research demo only.",
   "aboutRepo": "Source on GitHub",
   "aboutLicense": "MIT License",
   "privacyTitle": "Privacy",
-  "privacyIntro": "Nemro is local-first. Version 0.1.0 has no Internet permission and sends no data off the device.",
+  "privacyIntro": "Nemro is local-first. Version 0.2.0 has no Internet permission. The bundled EEG sample and decoder run entirely on-device.",
   "privacyDataTitle": "What data is stored?",
-  "privacyDataBody": "Language, theme, and onboarding state. Lab and Live sessions will be stored locally when added in later versions.",
+  "privacyDataBody": "Language, theme, and onboarding state. Lab and Live sessions will be stored locally when added in later versions. The Lab decoder processes the bundled sample locally; no EEG is collected from you.",
+  "privacyDecoderTitle": "On-device AI",
+  "privacyDecoderBody": "The Lab decoder is a small model bundled with the app. It runs locally on the EEG sample, and predictions never leave the device.",
   "privacyCameraTitle": "Camera",
   "privacyCameraBody": "When Live is enabled, the camera processes frames on-device to estimate attention. No video is stored or sent.",
   "privacyStorageTitle": "Storage",
   "privacyStorageBody": "Data lives in the app's private storage. You can delete everything in Settings.",
   "privacySharingTitle": "Sharing",
-  "privacySharingBody": "No analytics, ads, or third-party data-collecting SDKs.",
+  "privacySharingBody": "No analytics, ads, or third-party data-collecting SDKs. The bundled decoder does not call a server.",
   "privacyContactTitle": "Contact",
   "privacyContactBody": "Open an issue on the project's GitHub.",
   "commonBack": "Back",

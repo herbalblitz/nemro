@@ -9,6 +9,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:nemro/core/constants/app_constants.dart';
 import 'package:nemro/core/l10n/generated/app_localizations.dart';
 import 'package:nemro/core/theme/app_theme.dart';
+import 'package:nemro/features/lab/data/eeg_decoder.dart';
+import 'package:nemro/features/lab/data/eeg_decoder_repository.dart';
 import 'package:nemro/features/lab/data/eeg_recording.dart';
 import 'package:nemro/features/lab/data/eeg_repository.dart';
 import 'package:nemro/features/lab/widgets/eeg_chart.dart';
@@ -159,7 +161,7 @@ class _LabContentState extends State<_LabContent> {
           onSpeed: (speed) => setState(() => _speed = speed),
         ),
         const SizedBox(height: 16),
-        const _DecoderCard(),
+        _DecoderCard(recording: recording, event: event),
         const SizedBox(height: 16),
         _DatasetCard(recording: recording, onOpenDataset: _openDataset),
         const SizedBox(height: 24),
@@ -554,13 +556,18 @@ class _LegendItem extends StatelessWidget {
   }
 }
 
-class _DecoderCard extends StatelessWidget {
-  const _DecoderCard();
+class _DecoderCard extends ConsumerWidget {
+  const _DecoderCard({required this.recording, required this.event});
+
+  final EegRecording recording;
+  final EegEvent? event;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final decoder = ref.watch(eegDecoderProvider);
+    final predictions = ref.watch(eegPredictionsProvider);
 
     return Card(
       elevation: 0,
@@ -597,11 +604,11 @@ class _DecoderCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
-                    l10n.labNextBadge,
+                    l10n.labOnDeviceBadge,
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: theme.colorScheme.onPrimaryContainer,
                       fontWeight: FontWeight.w800,
-                      letterSpacing: 0.5,
+                      letterSpacing: 0.4,
                     ),
                   ),
                 ),
@@ -615,16 +622,422 @@ class _DecoderCard extends StatelessWidget {
                 height: 1.45,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 14),
+            decoder.when(
+              loading: () => _DecoderStatus(
+                icon: const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                text: l10n.labDecoderLoading,
+                theme: theme,
+              ),
+              error: (error, stackTrace) => _DecoderStatus(
+                icon: Icon(
+                  Icons.error_outline_rounded,
+                  size: 18,
+                  color: theme.colorScheme.error,
+                ),
+                text: l10n.labDecoderUnavailable,
+                theme: theme,
+              ),
+              data: (decoder) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _ModelSummary(decoder: decoder, theme: theme, l10n: l10n),
+                  const SizedBox(height: 12),
+                  _PredictionPanel(
+                    recording: recording,
+                    event: event,
+                    predictions: predictions,
+                    theme: theme,
+                    l10n: l10n,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
             Text(
-              l10n.labDisclaimer,
+              l10n.labDecoderLimitations,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontStyle: FontStyle.italic,
+                height: 1.4,
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ModelSummary extends StatelessWidget {
+  const _ModelSummary({
+    required this.decoder,
+    required this.theme,
+    required this.l10n,
+  });
+
+  final EegDecoder decoder;
+  final ThemeData theme;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final training = decoder.model.training;
+    final accuracy = training.testRun.isNotEmpty
+        ? training.heldOutAccuracy
+        : training.leaveOneRunOutAccuracy;
+    final percent = (accuracy * 100).round();
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _SummaryLine(
+            icon: Icons.tune_rounded,
+            text: l10n.labDecoderModel(decoder.model.channels.length),
+            theme: theme,
+          ),
+          const SizedBox(height: 6),
+          _SummaryLine(
+            icon: Icons.science_outlined,
+            text: l10n.labDecoderTraining(
+              training.trainRuns.join(' & '),
+              training.testRun,
+            ),
+            theme: theme,
+          ),
+          const SizedBox(height: 6),
+          _SummaryLine(
+            icon: Icons.verified_outlined,
+            text: l10n.labDecoderAccuracy(percent),
+            theme: theme,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SummaryLine extends StatelessWidget {
+  const _SummaryLine({
+    required this.icon,
+    required this.text,
+    required this.theme,
+  });
+
+  final IconData icon;
+  final String text;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 15, color: theme.colorScheme.primary),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              height: 1.35,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PredictionPanel extends StatelessWidget {
+  const _PredictionPanel({
+    required this.recording,
+    required this.event,
+    required this.predictions,
+    required this.theme,
+    required this.l10n,
+  });
+
+  final EegRecording recording;
+  final EegEvent? event;
+  final AsyncValue<Map<double, EegPrediction>> predictions;
+  final ThemeData theme;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final current = event;
+    if (current == null ||
+        (current.kind != EegEventKind.leftFist &&
+            current.kind != EegEventKind.rightFist)) {
+      return _DecoderStatus(
+        icon: Icon(
+          Icons.pause_circle_outline_rounded,
+          size: 18,
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+        text: l10n.labDecoderIdle,
+        theme: theme,
+      );
+    }
+
+    if (current.end > recording.duration + 1e-6) {
+      return _DecoderStatus(
+        icon: Icon(
+          Icons.hourglass_empty_rounded,
+          size: 18,
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+        text: l10n.labDecoderIncomplete,
+        theme: theme,
+      );
+    }
+
+    return predictions.when(
+      loading: () => _DecoderStatus(
+        icon: const SizedBox(
+          width: 16,
+          height: 16,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+        text: l10n.labDecoderDecoding,
+        theme: theme,
+      ),
+      error: (error, stackTrace) => _DecoderStatus(
+        icon: Icon(
+          Icons.error_outline_rounded,
+          size: 18,
+          color: theme.colorScheme.error,
+        ),
+        text: l10n.labDecoderUnavailable,
+        theme: theme,
+      ),
+      data: (byOnset) {
+        final prediction = byOnset[current.onset];
+        if (prediction == null) {
+          return _DecoderStatus(
+            icon: Icon(
+              Icons.hourglass_empty_rounded,
+              size: 18,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+            text: l10n.labDecoderIncomplete,
+            theme: theme,
+          );
+        }
+        return _PredictionResult(
+          prediction: prediction,
+          marker: current,
+          theme: theme,
+          l10n: l10n,
+        );
+      },
+    );
+  }
+}
+
+class _PredictionResult extends StatelessWidget {
+  const _PredictionResult({
+    required this.prediction,
+    required this.marker,
+    required this.theme,
+    required this.l10n,
+  });
+
+  final EegPrediction prediction;
+  final EegEvent marker;
+  final ThemeData theme;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final predictedLabel = prediction.isRight
+        ? l10n.labRightFist
+        : l10n.labLeftFist;
+    final markerIsRight = marker.kind == EegEventKind.rightFist;
+    final markerLabel = markerIsRight ? l10n.labRightFist : l10n.labLeftFist;
+    final matches = prediction.isRight == markerIsRight;
+    final confidence = (prediction.confidence * 100).round();
+    final leftPercent = (prediction.leftProbability * 100).round();
+    final rightPercent = (prediction.rightProbability * 100).round();
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.35),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: theme.colorScheme.primary.withValues(alpha: 0.18),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                l10n.labDecoderPrediction,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '$confidence%',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Text(
+            predictedLabel,
+            key: const ValueKey('decoder-prediction-label'),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 10),
+          _ProbabilityBar(
+            leftProbability: prediction.leftProbability,
+            rightProbability: prediction.rightProbability,
+          ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  '${l10n.labLeftFist} $leftPercent%',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  '${l10n.labRightFist} $rightPercent%',
+                  textAlign: TextAlign.end,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Icon(
+                matches
+                    ? Icons.check_circle_outline_rounded
+                    : Icons.info_outline_rounded,
+                size: 16,
+                color: matches
+                    ? const Color(0xFF2E7D32)
+                    : theme.colorScheme.tertiary,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  '${l10n.labDecoderMarker}: $markerLabel',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProbabilityBar extends StatelessWidget {
+  const _ProbabilityBar({
+    required this.leftProbability,
+    required this.rightProbability,
+  });
+
+  final double leftProbability;
+  final double rightProbability;
+
+  @override
+  Widget build(BuildContext context) {
+    final total = leftProbability + rightProbability;
+    final leftFraction = total <= 0 ? 0.5 : leftProbability / total;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(999),
+          child: SizedBox(
+            height: 8,
+            child: Row(
+              children: [
+                SizedBox(
+                  width: constraints.maxWidth * leftFraction,
+                  child: const ColoredBox(color: Color(0xFF4EA8FF)),
+                ),
+                const Expanded(child: ColoredBox(color: Color(0xFFFFA24E))),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _DecoderStatus extends StatelessWidget {
+  const _DecoderStatus({
+    required this.icon,
+    required this.text,
+    required this.theme,
+  });
+
+  final Widget icon;
+  final String text;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          icon,
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                height: 1.35,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

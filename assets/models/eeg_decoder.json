@@ -1,0 +1,135 @@
+{
+  "name": "S001 mu/beta logistic regression",
+  "version": 1,
+  "type": "logistic_regression",
+  "classes": [
+    "left_fist",
+    "right_fist"
+  ],
+  "channels": [
+    "C3",
+    "C4",
+    "CP3",
+    "CP4"
+  ],
+  "bands": {
+    "mu_hz": [
+      8.0,
+      13.0
+    ],
+    "beta_hz": [
+      13.0,
+      30.0
+    ]
+  },
+  "frequency_step_hz": 0.5,
+  "sampling_rate_hz": 160.0,
+  "window_seconds": 4.1,
+  "feature_order": "channel-major, mu then beta",
+  "mean": [
+    6.762719457451661,
+    6.814281015654923,
+    6.597302380336247,
+    6.687917283028978,
+    6.829753251864575,
+    6.840091294401869,
+    6.71077121263411,
+    6.737468963149198
+  ],
+  "std": [
+    0.2127228057454453,
+    0.11771076826880332,
+    0.1581964157766928,
+    0.10774738423799296,
+    0.22945710098613542,
+    0.11686522300874393,
+    0.19372136684877167,
+    0.12321993156906776
+  ],
+  "weights": [
+    0.05202373145089232,
+    -0.17867769477998396,
+    0.7658221811316889,
+    0.11105282002497285,
+    -0.268178569596351,
+    -0.06651035537475146,
+    -0.00036385424793185434,
+    0.27480046709515366
+  ],
+  "bias": 0.01997280373707294,
+  "training": {
+    "dataset": "PhysioNet EEGMMIDB v1.0.0",
+    "subject": "S001",
+    "train_runs": [
+      "R08",
+      "R12"
+    ],
+    "test_run": "R04",
+    "train_epochs": 4000,
+    "train_trials": 30,
+    "class_counts": {
+      "left": 15,
+      "right": 15
+    },
+    "held_out_accuracy": 0.6666666666666666,
+    "held_out_confusion": [
+      [
+        5,
+        3
+      ],
+      [
+        2,
+        5
+      ]
+    ],
+    "leave_one_run_out_accuracy": 0.6,
+    "leave_one_run_out_folds": [
+      {
+        "test_run": "R04",
+        "accuracy": 0.6666666666666666,
+        "confusion": [
+          [
+            5,
+            3
+          ],
+          [
+            2,
+            5
+          ]
+        ]
+      },
+      {
+        "test_run": "R08",
+        "accuracy": 0.4666666666666667,
+        "confusion": [
+          [
+            6,
+            2
+          ],
+          [
+            6,
+            1
+          ]
+        ]
+      },
+      {
+        "test_run": "R12",
+        "accuracy": 0.6666666666666666,
+        "confusion": [
+          [
+            4,
+            3
+          ],
+          [
+            2,
+            6
+          ]
+        ]
+      }
+    ],
+    "chance_accuracy": 0.5
+  },
+  "preprocessing": "4.1 s epochs; per-window mean removal; Hann window; Goertzel power at 0.5 Hz steps; log10 power; standardized features.",
+  "limitations": "Single subject (S001), small sample, binary imagined fist task. Not a medical device and not mind reading.",
+  "license": "MIT for the code and weights; EEG data ODC-BY 1.0."
+}

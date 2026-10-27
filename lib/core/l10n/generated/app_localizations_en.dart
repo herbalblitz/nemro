@@ -55,13 +55,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeSubheadline =>
-      'Replay real EEG, inspect the task markers, and learn what BCI can really do. AI decoding is next.';
+      'Replay real EEG, watch an on-device decoder estimate the imagined hand, and learn what BCI can really do.';
 
   @override
   String get homeLabTitle => 'Lab';
 
   @override
-  String get homeLabSubtitle => 'Replay real EEG';
+  String get homeLabSubtitle => 'Replay + on-device decoder';
 
   @override
   String get homeLabAction => 'Open Lab';
@@ -85,7 +85,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeRecentTitle => 'Latest session';
 
   @override
-  String get homeRecentEmpty => 'No saved sessions yet. Try the Lab replay.';
+  String get homeRecentEmpty => 'No saved sessions yet. Try the Lab decoder.';
 
   @override
   String get homeRecentAction => 'Open Lab';
@@ -114,7 +114,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labReplayIntro =>
-      'A real 60-second window from the PhysioNet motor-imagery dataset. Press play to inspect the raw signal and its task markers.';
+      'A real 60-second window from the PhysioNet motor-imagery dataset. Press play to inspect the raw signal, its task markers, and the on-device decoder output.';
 
   @override
   String get labReplayBadge => 'REPLAY';
@@ -155,14 +155,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labDecoderBody =>
-      'The on-device decoder is the next step. This screen replays the raw signal and its task markers first, without pretending to read thoughts.';
+      'A small model estimates the imagined hand from mu/beta band power. It runs entirely on this device; no EEG leaves the phone.';
 
   @override
-  String get labNextBadge => 'NEXT';
+  String get labOnDeviceBadge => 'ON-DEVICE';
 
   @override
-  String get labDisclaimer =>
-      'Research demo only. Not a medical device and not mind reading.';
+  String labDecoderModel(int count) {
+    return 'Logistic regression · mu/beta power · $count channels';
+  }
+
+  @override
+  String labDecoderTraining(String train, String test) {
+    return 'Trained on runs $train; evaluated on run $test.';
+  }
+
+  @override
+  String labDecoderAccuracy(int percent) {
+    return 'Held-out accuracy: $percent% (chance 50%)';
+  }
+
+  @override
+  String get labDecoderLoading => 'Loading the on-device model…';
+
+  @override
+  String get labDecoderIdle => 'Rest — decoder idle.';
+
+  @override
+  String get labDecoderDecoding => 'Decoding this window…';
+
+  @override
+  String get labDecoderIncomplete => 'Not enough signal in this window.';
+
+  @override
+  String get labDecoderUnavailable => 'Decoder unavailable.';
+
+  @override
+  String get labDecoderPrediction => 'Prediction';
+
+  @override
+  String get labDecoderMarker => 'Marker';
+
+  @override
+  String get labDecoderLimitations =>
+      'Single subject (S001). Demo only; not a medical device and not mind reading.';
 
   @override
   String get labDatasetTitle => 'Dataset & license';
@@ -331,11 +367,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutSourceEeg => 'PhysioNet EEG Motor Movement/Imagery Dataset';
 
   @override
+  String get aboutSourceModel => 'On-device decoder';
+
+  @override
+  String get aboutSourcePlanned => 'Planned';
+
+  @override
   String get aboutSourceBci => 'BCI Competition IV 2a';
 
   @override
   String get aboutSourceNote =>
-      'The Lab bundles a 60-second excerpt from EEGMMIDB under the Open Data Commons Attribution License 1.0.';
+      'The Lab bundles a 60-second EEGMMIDB excerpt (ODC-BY 1.0). Its decoder is a small logistic regression trained on S001 runs 8 and 12 and evaluated on run 4: 67% held-out accuracy, 50% chance. Research demo only.';
 
   @override
   String get aboutRepo => 'Source on GitHub';
@@ -348,14 +390,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyIntro =>
-      'Nemro is local-first. Version 0.1.0 has no Internet permission and sends no data off the device.';
+      'Nemro is local-first. Version 0.2.0 has no Internet permission. The bundled EEG sample and decoder run entirely on-device.';
 
   @override
   String get privacyDataTitle => 'What data is stored?';
 
   @override
   String get privacyDataBody =>
-      'Language, theme, and onboarding state. Lab and Live sessions will be stored locally when added in later versions.';
+      'Language, theme, and onboarding state. Lab and Live sessions will be stored locally when added in later versions. The Lab decoder processes the bundled sample locally; no EEG is collected from you.';
+
+  @override
+  String get privacyDecoderTitle => 'On-device AI';
+
+  @override
+  String get privacyDecoderBody =>
+      'The Lab decoder is a small model bundled with the app. It runs locally on the EEG sample, and predictions never leave the device.';
 
   @override
   String get privacyCameraTitle => 'Camera';
@@ -376,7 +425,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacySharingBody =>
-      'No analytics, ads, or third-party data-collecting SDKs.';
+      'No analytics, ads, or third-party data-collecting SDKs. The bundled decoder does not call a server.';
 
   @override
   String get privacyContactTitle => 'Contact';
