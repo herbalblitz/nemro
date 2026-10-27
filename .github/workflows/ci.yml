@@ -84,13 +84,16 @@ jobs:
       # debug key, as before. The keystore and key.properties below exist only
       # inside this ephemeral runner and are never committed.
       - name: Set up release signing (if secrets are configured)
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
         run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "Release-signing secrets not configured; falling back to the debug key."
+            exit 0
+          fi
           echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/release.keystore
           {
             printf 'storePassword=%s\n' "$ANDROID_STORE_PASSWORD"
