@@ -37,6 +37,15 @@ jobs:
       - name: Generate localizations
         run: flutter gen-l10n
 
+      # Locks in the local-first promise: the release manifest must never
+      # request INTERNET permission. Debug builds keep it (hot reload).
+      - name: Assert release manifest has no INTERNET permission
+        run: |
+          if grep -q "android.permission.INTERNET" android/app/src/main/AndroidManifest.xml; then
+            echo "::error::Release manifest must not request INTERNET permission."
+            exit 1
+          fi
+
       - name: Analyze
         run: flutter analyze
 
@@ -70,8 +79,26 @@ jobs:
       - name: Generate localizations
         run: flutter gen-l10n
 
-      # Signed with the debug key until a release keystore is configured.
-      # This keeps the artifact small and installable for testing.
+      # When release-signing secrets are configured (see docs/release-signing.md),
+      # the build signs with the real keystore. Otherwise it falls back to the
+      # debug key, as before. The keystore and key.properties below exist only
+      # inside this ephemeral runner and are never committed.
+      - name: Set up release signing (if secrets are configured)
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/release.keystore
+          {
+            printf 'storePassword=%s\n' "$ANDROID_STORE_PASSWORD"
+            printf 'keyPassword=%s\n' "$ANDROID_KEY_PASSWORD"
+            printf 'keyAlias=%s\n' "$ANDROID_KEY_ALIAS"
+            printf 'storeFile=%s\n' "release.keystore"
+          } > android/key.properties
+
       - name: Build release APK
         run: flutter build apk --release
 
