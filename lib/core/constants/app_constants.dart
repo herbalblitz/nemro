@@ -2,6 +2,7 @@ abstract final class AppConstants {
   static const appName = 'Nemro';
   static const version = '0.1.0';
   static const repoUrl = 'https://github.com/herbalblitz/nemro';
+  static const eegDatasetUrl = 'https://physionet.org/content/eegmmidb/1.0.0/';
   static const privacyUrl =
       'https://github.com/herbalblitz/nemro/blob/main/docs/privacy.md';
 

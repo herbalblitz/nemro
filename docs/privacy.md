@@ -12,12 +12,14 @@ Nemro là ứng dụng giáo dục ưu tiên cục bộ. Chính sách này giả
 - No account, no ads, no analytics, no tracking.
 - The release build has no `INTERNET` permission.
 - Settings are stored on your device.
+- The Lab includes a read-only EEG sample that ships with the app; it is not collected from you.
 - Camera frames in future Live sessions will be processed on-device and will not be recorded or uploaded.
 - You can delete local data in **Settings → Data**.
 
 - Không tài khoản, không quảng cáo, không analytics, không tracking.
 - Bản release không có quyền `INTERNET`.
 - Cài đặt được lưu trên thiết bị.
+- Lab có sẵn một mẫu EEG chỉ đọc đi kèm ứng dụng; mẫu này không được thu thập từ bạn.
 - Khung hình camera trong Live (tương lai) được xử lý trên thiết bị, không ghi lại và không tải lên.
 - Bạn có thể xóa dữ liệu cục bộ trong **Cài đặt → Dữ liệu**.
 
@@ -35,9 +37,9 @@ Phiên bản 0.1.0 lưu:
 - lựa chọn giao diện (theo hệ thống, sáng hoặc tối);
 - trạng thái đã hoàn tất onboarding.
 
-Future versions may store Lab and Live session results locally (for example, model scores and timestamps) so that the Insights screen can show your history. Those records will remain on the device unless you explicitly export them.
+No EEG is recorded from you in 0.1.0. The Lab replay uses a read-only excerpt bundled with the app. Future versions may store Lab and Live session results locally (for example, model scores and timestamps) so that the Insights screen can show your history. Those records will remain on the device unless you explicitly export them.
 
-Các phiên bản sau có thể lưu kết quả Lab và Live cục bộ (ví dụ điểm mô hình và thời gian) để màn hình Lịch sử hiển thị. Các bản ghi này ở lại trên thiết bị trừ khi bạn chủ động xuất.
+Phiên bản 0.1.0 không ghi lại EEG của bạn. Màn hình Lab phát lại một đoạn dữ liệu chỉ đọc đi kèm ứng dụng. Các phiên bản sau có thể lưu kết quả Lab và Live cục bộ (ví dụ điểm mô hình và thời gian) để màn hình Lịch sử hiển thị. Các bản ghi này ở lại trên thiết bị trừ khi bạn chủ động xuất.
 
 ## What is not collected / Dữ liệu không thu thập
 

@@ -14,9 +14,9 @@
   "onboardingConsentCheckbox": "Tôi đã hiểu và đồng ý",
   "onboardingContinue": "Đồng ý và tiếp tục",
   "homeHeadline": "Vòng lặp AI–não, trong tầm tay.",
-  "homeSubheadline": "Xem AI giải mã EEG thật, theo dõi chú ý và học đúng về BCI.",
+  "homeSubheadline": "Phát lại EEG thật, xem các mốc nhiệm vụ và học đúng về BCI. Bước tiếp theo là AI giải mã.",
   "homeLabTitle": "Lab",
-  "homeLabSubtitle": "AI đọc EEG thật",
+  "homeLabSubtitle": "Phát lại EEG thật",
   "homeLabAction": "Mở Lab",
   "homeLabBadge": "DEMO",
   "homeLiveTitle": "Live",
@@ -24,17 +24,57 @@
   "homeLiveAction": "Bật camera",
   "homeLiveBadge": "SẮP CÓ",
   "homeRecentTitle": "Phiên gần nhất",
-  "homeRecentEmpty": "Chưa có phiên nào. Bắt đầu với Live.",
-  "homeRecentAction": "Bắt đầu Live",
+  "homeRecentEmpty": "Chưa có phiên nào được lưu. Hãy thử phát lại EEG trong Lab.",
+  "homeRecentAction": "Mở Lab",
   "homeFooter": "Mã nguồn mở. Không phải thiết bị y tế. Không đọc suy nghĩ.",
   "navHome": "Trang chủ",
   "navInsights": "Lịch sử",
   "navLearn": "Học",
   "navSettings": "Cài đặt",
   "labTitle": "Lab",
-  "labComingSoonTitle": "Demo EEG đang được xây dựng",
-  "labComingSoonBody": "S1 sẽ mang dữ liệu EEG thật, mô hình AI và biểu đồ sóng não vào đây.",
-  "labBadge": "SẮP CÓ",
+  "labReplayTitle": "Phát lại EEG",
+  "labReplayIntro": "Cửa sổ 60 giây thật từ bộ dữ liệu vận động–tưởng tượng của PhysioNet. Nhấn phát để xem tín hiệu thô và các mốc nhiệm vụ.",
+  "labReplayBadge": "PHÁT LẠI",
+  "labChannelSummary": "{count} kênh · {rate} Hz",
+  "@labChannelSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "rate": {
+        "type": "int"
+      }
+    }
+  },
+  "labWindowLabel": "Cửa sổ {seconds} giây",
+  "@labWindowLabel": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "labPlay": "Phát",
+  "labPause": "Tạm dừng",
+  "labRestart": "Chạy lại",
+  "labNow": "Hiện tại",
+  "labRest": "Nghỉ",
+  "labLeftFist": "Tưởng tượng nắm tay trái",
+  "labRightFist": "Tưởng tượng nắm tay phải",
+  "labDecoderTitle": "Bộ giải mã AI",
+  "labDecoderBody": "Bộ giải mã trên thiết bị là bước tiếp theo. Màn hình này trước hết phát lại tín hiệu thô và các mốc nhiệm vụ, không giả vờ đọc suy nghĩ.",
+  "labNextBadge": "TIẾP THEO",
+  "labDisclaimer": "Chỉ là bản demo nghiên cứu. Không phải thiết bị y tế và không đọc suy nghĩ.",
+  "labDatasetTitle": "Dữ liệu & giấy phép",
+  "labSourceLabel": "Nguồn",
+  "labRecordingLabel": "Bản ghi",
+  "labChannelsLabel": "Tín hiệu",
+  "labLicenseLabel": "Giấy phép",
+  "labRunDescription": "S001 · lượt 4 · tưởng tượng nắm tay trái/phải",
+  "labOpenDataset": "Mở trang dữ liệu",
+  "labLoading": "Đang tải EEG…",
+  "labLoadError": "Không tải được mẫu EEG.",
+  "labRetry": "Thử lại",
   "liveTitle": "Live",
   "liveComingSoonTitle": "Theo dõi chú ý đang được xây dựng",
   "liveComingSoonBody": "S2 sẽ dùng camera để ước lượng chú ý, mệt mỏi — hoàn toàn trên thiết bị.",
@@ -79,7 +119,7 @@
   "aboutSources": "Nguồn tham khảo",
   "aboutSourceEeg": "PhysioNet EEG Motor Movement/Imagery Dataset",
   "aboutSourceBci": "BCI Competition IV 2a",
-  "aboutSourceNote": "Nguồn dữ liệu được ghi rõ trong tài liệu và trong app.",
+  "aboutSourceNote": "Lab đóng gói một đoạn 60 giây từ EEGMMIDB theo giấy phép Open Data Commons Attribution 1.0.",
   "aboutRepo": "Mã nguồn trên GitHub",
   "aboutLicense": "Giấy phép MIT",
   "privacyTitle": "Quyền riêng tư",

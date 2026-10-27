@@ -14,9 +14,9 @@
   "onboardingConsentCheckbox": "I understand and agree",
   "onboardingContinue": "Agree and continue",
   "homeHeadline": "The AI–brain loop, in your hands.",
-  "homeSubheadline": "Watch AI decode real EEG, track attention, and learn what BCI can really do.",
+  "homeSubheadline": "Replay real EEG, inspect the task markers, and learn what BCI can really do. AI decoding is next.",
   "homeLabTitle": "Lab",
-  "homeLabSubtitle": "AI reads real EEG",
+  "homeLabSubtitle": "Replay real EEG",
   "homeLabAction": "Open Lab",
   "homeLabBadge": "DEMO",
   "homeLiveTitle": "Live",
@@ -24,17 +24,57 @@
   "homeLiveAction": "Enable camera",
   "homeLiveBadge": "SOON",
   "homeRecentTitle": "Latest session",
-  "homeRecentEmpty": "No sessions yet. Start with Live.",
-  "homeRecentAction": "Start Live",
+  "homeRecentEmpty": "No saved sessions yet. Try the Lab replay.",
+  "homeRecentAction": "Open Lab",
   "homeFooter": "Open source. Not a medical device. Not mind reading.",
   "navHome": "Home",
   "navInsights": "Insights",
   "navLearn": "Learn",
   "navSettings": "Settings",
   "labTitle": "Lab",
-  "labComingSoonTitle": "The EEG demo is being built",
-  "labComingSoonBody": "S1 brings real EEG data, an AI model, and brainwave charts here.",
-  "labBadge": "SOON",
+  "labReplayTitle": "EEG replay",
+  "labReplayIntro": "A real 60-second window from the PhysioNet motor-imagery dataset. Press play to inspect the raw signal and its task markers.",
+  "labReplayBadge": "REPLAY",
+  "labChannelSummary": "{count} channels · {rate} Hz",
+  "@labChannelSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "rate": {
+        "type": "int"
+      }
+    }
+  },
+  "labWindowLabel": "{seconds}-second window",
+  "@labWindowLabel": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "labPlay": "Play",
+  "labPause": "Pause",
+  "labRestart": "Restart",
+  "labNow": "Now",
+  "labRest": "Rest",
+  "labLeftFist": "Left fist imagery",
+  "labRightFist": "Right fist imagery",
+  "labDecoderTitle": "AI decoder",
+  "labDecoderBody": "The on-device decoder is the next step. This screen replays the raw signal and its task markers first, without pretending to read thoughts.",
+  "labNextBadge": "NEXT",
+  "labDisclaimer": "Research demo only. Not a medical device and not mind reading.",
+  "labDatasetTitle": "Dataset & license",
+  "labSourceLabel": "Source",
+  "labRecordingLabel": "Recording",
+  "labChannelsLabel": "Signal",
+  "labLicenseLabel": "License",
+  "labRunDescription": "S001 · run 4 · imagined left/right fist",
+  "labOpenDataset": "Open dataset page",
+  "labLoading": "Loading EEG…",
+  "labLoadError": "Could not load the EEG sample.",
+  "labRetry": "Retry",
   "liveTitle": "Live",
   "liveComingSoonTitle": "Attention tracking is being built",
   "liveComingSoonBody": "S2 uses the camera to estimate attention and fatigue, entirely on-device.",
@@ -79,7 +119,7 @@
   "aboutSources": "Sources",
   "aboutSourceEeg": "PhysioNet EEG Motor Movement/Imagery Dataset",
   "aboutSourceBci": "BCI Competition IV 2a",
-  "aboutSourceNote": "Data sources are credited in the docs and in the app.",
+  "aboutSourceNote": "The Lab bundles a 60-second excerpt from EEGMMIDB under the Open Data Commons Attribution License 1.0.",
   "aboutRepo": "Source on GitHub",
   "aboutLicense": "MIT License",
   "privacyTitle": "Privacy",

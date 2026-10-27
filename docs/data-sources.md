@@ -1,18 +1,22 @@
 # Data and model sources
 
-Nemro 0.1.0 does **not** bundle any EEG dataset or AI model. Lab and Live are placeholders. This page records the sources the next milestones will use and the rules for adding them.
+Nemro 0.1.0 bundles one **60-second EEG excerpt** from EEGMMIDB for the Lab replay. No AI model is bundled yet. Live remains a placeholder. This page records the sources the next milestones will use and the rules for adding them.
 
-## Planned datasets
+## Datasets
 
 ### PhysioNet EEG Motor Movement/Imagery Dataset (EEGMMIDB)
 
+**Status:** bundled excerpt in `assets/eeg/` (replay only; decoder next).
+
 - **What:** 64-channel EEG recordings from 109 subjects performing motor execution and motor imagery tasks.
-- **Use in Nemro:** a small, documented replay window for the Lab screen.
+- **Use in Nemro:** the Lab bundles a 60-second window from S001/R04 (8 of 64 channels: C3, Cz, C4, FC3, FC4, CP3, CP4, Pz; 160 Hz). The raw EDF is not redistributed.
 - **Source:** <https://physionet.org/content/eegmmidb/>
 - **Citation:** Schalk, G., McFarland, D. J., Hinterberger, T., Birbaumer, N., & Wolpaw, J. R. (2004). BCI2000: A General-Purpose Brain-Computer Interface (BCI) System. *IEEE Transactions on Biomedical Engineering*, 51(6), 1034–1043.
-- **Rules:** check the current PhysioNet license and attribution requirements before bundling; keep the raw archive out of the repository if the license requires it.
+- **License:** Open Data Commons Attribution License v1.0. The excerpt is redistributed with attribution in the app, `assets/eeg/README.md`, and this page. The raw archive stays out of the repository.
 
 ### BCI Competition IV Dataset 2a
+
+**Status:** planned for decoder evaluation.
 
 - **What:** four-class motor imagery EEG from nine subjects.
 - **Use in Nemro:** a second evaluation dataset for the Lab decoder, if the license allows redistribution.
@@ -34,5 +38,6 @@ The About screen credits the datasets above. When a dataset or model is actually
 
 1. `lib/features/about/about_screen.dart`;
 2. `lib/core/l10n/app_en.arb` and `app_vi.arb`;
-3. `docs/privacy.md` if data handling changes;
-4. `CHANGELOG.md`.
+3. `assets/eeg/README.md`;
+4. `docs/privacy.md` if data handling changes;
+5. `CHANGELOG.md`.

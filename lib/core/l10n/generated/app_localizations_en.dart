@@ -55,13 +55,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeSubheadline =>
-      'Watch AI decode real EEG, track attention, and learn what BCI can really do.';
+      'Replay real EEG, inspect the task markers, and learn what BCI can really do. AI decoding is next.';
 
   @override
   String get homeLabTitle => 'Lab';
 
   @override
-  String get homeLabSubtitle => 'AI reads real EEG';
+  String get homeLabSubtitle => 'Replay real EEG';
 
   @override
   String get homeLabAction => 'Open Lab';
@@ -85,10 +85,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeRecentTitle => 'Latest session';
 
   @override
-  String get homeRecentEmpty => 'No sessions yet. Start with Live.';
+  String get homeRecentEmpty => 'No saved sessions yet. Try the Lab replay.';
 
   @override
-  String get homeRecentAction => 'Start Live';
+  String get homeRecentAction => 'Open Lab';
 
   @override
   String get homeFooter =>
@@ -110,14 +110,89 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labTitle => 'Lab';
 
   @override
-  String get labComingSoonTitle => 'The EEG demo is being built';
+  String get labReplayTitle => 'EEG replay';
 
   @override
-  String get labComingSoonBody =>
-      'S1 brings real EEG data, an AI model, and brainwave charts here.';
+  String get labReplayIntro =>
+      'A real 60-second window from the PhysioNet motor-imagery dataset. Press play to inspect the raw signal and its task markers.';
 
   @override
-  String get labBadge => 'SOON';
+  String get labReplayBadge => 'REPLAY';
+
+  @override
+  String labChannelSummary(int count, int rate) {
+    return '$count channels · $rate Hz';
+  }
+
+  @override
+  String labWindowLabel(int seconds) {
+    return '$seconds-second window';
+  }
+
+  @override
+  String get labPlay => 'Play';
+
+  @override
+  String get labPause => 'Pause';
+
+  @override
+  String get labRestart => 'Restart';
+
+  @override
+  String get labNow => 'Now';
+
+  @override
+  String get labRest => 'Rest';
+
+  @override
+  String get labLeftFist => 'Left fist imagery';
+
+  @override
+  String get labRightFist => 'Right fist imagery';
+
+  @override
+  String get labDecoderTitle => 'AI decoder';
+
+  @override
+  String get labDecoderBody =>
+      'The on-device decoder is the next step. This screen replays the raw signal and its task markers first, without pretending to read thoughts.';
+
+  @override
+  String get labNextBadge => 'NEXT';
+
+  @override
+  String get labDisclaimer =>
+      'Research demo only. Not a medical device and not mind reading.';
+
+  @override
+  String get labDatasetTitle => 'Dataset & license';
+
+  @override
+  String get labSourceLabel => 'Source';
+
+  @override
+  String get labRecordingLabel => 'Recording';
+
+  @override
+  String get labChannelsLabel => 'Signal';
+
+  @override
+  String get labLicenseLabel => 'License';
+
+  @override
+  String get labRunDescription => 'S001 · run 4 · imagined left/right fist';
+
+  @override
+  String get labOpenDataset => 'Open dataset page';
+
+  @override
+  String get labLoading => 'Loading EEG…';
+
+  @override
+  String get labLoadError => 'Could not load the EEG sample.';
+
+  @override
+  String get labRetry => 'Retry';
 
   @override
   String get liveTitle => 'Live';
@@ -260,7 +335,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutSourceNote =>
-      'Data sources are credited in the docs and in the app.';
+      'The Lab bundles a 60-second excerpt from EEGMMIDB under the Open Data Commons Attribution License 1.0.';
 
   @override
   String get aboutRepo => 'Source on GitHub';

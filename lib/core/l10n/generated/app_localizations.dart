@@ -185,7 +185,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeSubheadline.
   ///
   /// In en, this message translates to:
-  /// **'Watch AI decode real EEG, track attention, and learn what BCI can really do.'**
+  /// **'Replay real EEG, inspect the task markers, and learn what BCI can really do. AI decoding is next.'**
   String get homeSubheadline;
 
   /// No description provided for @homeLabTitle.
@@ -197,7 +197,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeLabSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'AI reads real EEG'**
+  /// **'Replay real EEG'**
   String get homeLabSubtitle;
 
   /// No description provided for @homeLabAction.
@@ -245,13 +245,13 @@ abstract class AppLocalizations {
   /// No description provided for @homeRecentEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No sessions yet. Start with Live.'**
+  /// **'No saved sessions yet. Try the Lab replay.'**
   String get homeRecentEmpty;
 
   /// No description provided for @homeRecentAction.
   ///
   /// In en, this message translates to:
-  /// **'Start Live'**
+  /// **'Open Lab'**
   String get homeRecentAction;
 
   /// No description provided for @homeFooter.
@@ -290,23 +290,161 @@ abstract class AppLocalizations {
   /// **'Lab'**
   String get labTitle;
 
-  /// No description provided for @labComingSoonTitle.
+  /// No description provided for @labReplayTitle.
   ///
   /// In en, this message translates to:
-  /// **'The EEG demo is being built'**
-  String get labComingSoonTitle;
+  /// **'EEG replay'**
+  String get labReplayTitle;
 
-  /// No description provided for @labComingSoonBody.
+  /// No description provided for @labReplayIntro.
   ///
   /// In en, this message translates to:
-  /// **'S1 brings real EEG data, an AI model, and brainwave charts here.'**
-  String get labComingSoonBody;
+  /// **'A real 60-second window from the PhysioNet motor-imagery dataset. Press play to inspect the raw signal and its task markers.'**
+  String get labReplayIntro;
 
-  /// No description provided for @labBadge.
+  /// No description provided for @labReplayBadge.
   ///
   /// In en, this message translates to:
-  /// **'SOON'**
-  String get labBadge;
+  /// **'REPLAY'**
+  String get labReplayBadge;
+
+  /// No description provided for @labChannelSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} channels · {rate} Hz'**
+  String labChannelSummary(int count, int rate);
+
+  /// No description provided for @labWindowLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}-second window'**
+  String labWindowLabel(int seconds);
+
+  /// No description provided for @labPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get labPlay;
+
+  /// No description provided for @labPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get labPause;
+
+  /// No description provided for @labRestart.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart'**
+  String get labRestart;
+
+  /// No description provided for @labNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get labNow;
+
+  /// No description provided for @labRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest'**
+  String get labRest;
+
+  /// No description provided for @labLeftFist.
+  ///
+  /// In en, this message translates to:
+  /// **'Left fist imagery'**
+  String get labLeftFist;
+
+  /// No description provided for @labRightFist.
+  ///
+  /// In en, this message translates to:
+  /// **'Right fist imagery'**
+  String get labRightFist;
+
+  /// No description provided for @labDecoderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI decoder'**
+  String get labDecoderTitle;
+
+  /// No description provided for @labDecoderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The on-device decoder is the next step. This screen replays the raw signal and its task markers first, without pretending to read thoughts.'**
+  String get labDecoderBody;
+
+  /// No description provided for @labNextBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'NEXT'**
+  String get labNextBadge;
+
+  /// No description provided for @labDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Research demo only. Not a medical device and not mind reading.'**
+  String get labDisclaimer;
+
+  /// No description provided for @labDatasetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dataset & license'**
+  String get labDatasetTitle;
+
+  /// No description provided for @labSourceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get labSourceLabel;
+
+  /// No description provided for @labRecordingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording'**
+  String get labRecordingLabel;
+
+  /// No description provided for @labChannelsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Signal'**
+  String get labChannelsLabel;
+
+  /// No description provided for @labLicenseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'License'**
+  String get labLicenseLabel;
+
+  /// No description provided for @labRunDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'S001 · run 4 · imagined left/right fist'**
+  String get labRunDescription;
+
+  /// No description provided for @labOpenDataset.
+  ///
+  /// In en, this message translates to:
+  /// **'Open dataset page'**
+  String get labOpenDataset;
+
+  /// No description provided for @labLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading EEG…'**
+  String get labLoading;
+
+  /// No description provided for @labLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the EEG sample.'**
+  String get labLoadError;
+
+  /// No description provided for @labRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get labRetry;
 
   /// No description provided for @liveTitle.
   ///
@@ -575,7 +713,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutSourceNote.
   ///
   /// In en, this message translates to:
-  /// **'Data sources are credited in the docs and in the app.'**
+  /// **'The Lab bundles a 60-second excerpt from EEGMMIDB under the Open Data Commons Attribution License 1.0.'**
   String get aboutSourceNote;
 
   /// No description provided for @aboutRepo.

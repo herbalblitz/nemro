@@ -10,12 +10,12 @@ Nemro is a free, open-source Android app for exploring how AI and the brain can 
 
 ## Status
 
-**S0 — Foundation.** The app shell, onboarding, bilingual UI, navigation, settings, and privacy surfaces are in place. Lab and Live are honest placeholders for the next milestones.
+**S1 — Lab replay.** The app shell, onboarding, bilingual UI, navigation, settings, and privacy surfaces are in place. The Lab now replays a real 60-second EEG window from PhysioNet with task markers, a scrubber, and speed controls. The on-device AI decoder is next.
 
 | Milestone | Scope | Status |
 | --- | --- | --- |
 | S0 | Flutter scaffold, vi/en l10n, onboarding, navigation, settings, CI | Done |
-| S1 | Lab: replay public EEG, run an AI decoder on-device, show real charts | Next |
+| S1 | Lab: replay public EEG, run an AI decoder on-device, show real charts | In progress |
 | S2 | Live: camera-based attention proxy, entirely on-device | Planned |
 | S3 | Learn: bilingual lessons; Insights: local session history | Planned |
 | S4 | Polish, accessibility, release build, store-ready docs | Planned |
@@ -25,6 +25,8 @@ Nemro is a free, open-source Android app for exploring how AI and the brain can 
 - First-launch language choice (Tiếng Việt / English) and a clear consent screen.
 - Material 3 light and dark themes, selectable in Settings.
 - Home with Lab and Live entry points, Insights, Learn, and Settings tabs.
+- Lab replay of a real 60-second EEG window from EEGMMIDB (S001/R04, 8 channels, 160 Hz) with rest/left/right task markers, play/pause, scrubbing, and speed controls.
+- Dataset and ODC-BY 1.0 attribution in the Lab and About screens.
 - Privacy policy and open-source license screens inside the app.
 - Local settings stored with `shared_preferences`; no account, ads, or analytics.
 - No `INTERNET` permission in the release manifest.
@@ -48,6 +50,7 @@ A real brain–computer interface needs a signal, a decoder, and feedback. Consu
 - Riverpod for state
 - `shared_preferences` for local settings
 - `flutter_localizations` + ARB files for vi/en
+- Bundled, locally parsed EEG excerpt (ODC-BY 1.0); no network access
 - GitHub Actions for CI and release APK builds
 
 Future milestones add `drift` (local sessions), `tflite_flutter` (on-device models), `camera`, and `google_mlkit_face_detection`. Dataset and model rules are documented in [docs/data-sources.md](docs/data-sources.md).

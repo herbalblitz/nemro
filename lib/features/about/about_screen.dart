@@ -9,11 +9,11 @@ import 'package:nemro/core/widgets/brand_mark.dart';
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
-  Future<void> _openRepo(BuildContext context) async {
+  Future<void> _openUrl(BuildContext context, String url) async {
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     final launched = await launchUrl(
-      Uri.parse(AppConstants.repoUrl),
+      Uri.parse(url),
       mode: LaunchMode.externalApplication,
     );
     if (!launched) {
@@ -122,7 +122,9 @@ class AboutScreen extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.dataset_outlined),
                   title: Text(l10n.aboutSourceEeg),
-                  subtitle: const Text('PhysioNet'),
+                  subtitle: const Text('PhysioNet · ODC-BY 1.0'),
+                  trailing: const Icon(Icons.open_in_new_rounded, size: 18),
+                  onTap: () => _openUrl(context, AppConstants.eegDatasetUrl),
                 ),
                 const Divider(),
                 ListTile(
@@ -143,7 +145,7 @@ class AboutScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           FilledButton.tonalIcon(
-            onPressed: () => _openRepo(context),
+            onPressed: () => _openUrl(context, AppConstants.repoUrl),
             icon: const Icon(Icons.open_in_new_rounded),
             label: Text(l10n.aboutRepo),
           ),

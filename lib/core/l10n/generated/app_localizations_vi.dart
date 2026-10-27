@@ -56,13 +56,13 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeSubheadline =>
-      'Xem AI giải mã EEG thật, theo dõi chú ý và học đúng về BCI.';
+      'Phát lại EEG thật, xem các mốc nhiệm vụ và học đúng về BCI. Bước tiếp theo là AI giải mã.';
 
   @override
   String get homeLabTitle => 'Lab';
 
   @override
-  String get homeLabSubtitle => 'AI đọc EEG thật';
+  String get homeLabSubtitle => 'Phát lại EEG thật';
 
   @override
   String get homeLabAction => 'Mở Lab';
@@ -86,10 +86,11 @@ class AppLocalizationsVi extends AppLocalizations {
   String get homeRecentTitle => 'Phiên gần nhất';
 
   @override
-  String get homeRecentEmpty => 'Chưa có phiên nào. Bắt đầu với Live.';
+  String get homeRecentEmpty =>
+      'Chưa có phiên nào được lưu. Hãy thử phát lại EEG trong Lab.';
 
   @override
-  String get homeRecentAction => 'Bắt đầu Live';
+  String get homeRecentAction => 'Mở Lab';
 
   @override
   String get homeFooter =>
@@ -111,14 +112,90 @@ class AppLocalizationsVi extends AppLocalizations {
   String get labTitle => 'Lab';
 
   @override
-  String get labComingSoonTitle => 'Demo EEG đang được xây dựng';
+  String get labReplayTitle => 'Phát lại EEG';
 
   @override
-  String get labComingSoonBody =>
-      'S1 sẽ mang dữ liệu EEG thật, mô hình AI và biểu đồ sóng não vào đây.';
+  String get labReplayIntro =>
+      'Cửa sổ 60 giây thật từ bộ dữ liệu vận động–tưởng tượng của PhysioNet. Nhấn phát để xem tín hiệu thô và các mốc nhiệm vụ.';
 
   @override
-  String get labBadge => 'SẮP CÓ';
+  String get labReplayBadge => 'PHÁT LẠI';
+
+  @override
+  String labChannelSummary(int count, int rate) {
+    return '$count kênh · $rate Hz';
+  }
+
+  @override
+  String labWindowLabel(int seconds) {
+    return 'Cửa sổ $seconds giây';
+  }
+
+  @override
+  String get labPlay => 'Phát';
+
+  @override
+  String get labPause => 'Tạm dừng';
+
+  @override
+  String get labRestart => 'Chạy lại';
+
+  @override
+  String get labNow => 'Hiện tại';
+
+  @override
+  String get labRest => 'Nghỉ';
+
+  @override
+  String get labLeftFist => 'Tưởng tượng nắm tay trái';
+
+  @override
+  String get labRightFist => 'Tưởng tượng nắm tay phải';
+
+  @override
+  String get labDecoderTitle => 'Bộ giải mã AI';
+
+  @override
+  String get labDecoderBody =>
+      'Bộ giải mã trên thiết bị là bước tiếp theo. Màn hình này trước hết phát lại tín hiệu thô và các mốc nhiệm vụ, không giả vờ đọc suy nghĩ.';
+
+  @override
+  String get labNextBadge => 'TIẾP THEO';
+
+  @override
+  String get labDisclaimer =>
+      'Chỉ là bản demo nghiên cứu. Không phải thiết bị y tế và không đọc suy nghĩ.';
+
+  @override
+  String get labDatasetTitle => 'Dữ liệu & giấy phép';
+
+  @override
+  String get labSourceLabel => 'Nguồn';
+
+  @override
+  String get labRecordingLabel => 'Bản ghi';
+
+  @override
+  String get labChannelsLabel => 'Tín hiệu';
+
+  @override
+  String get labLicenseLabel => 'Giấy phép';
+
+  @override
+  String get labRunDescription =>
+      'S001 · lượt 4 · tưởng tượng nắm tay trái/phải';
+
+  @override
+  String get labOpenDataset => 'Mở trang dữ liệu';
+
+  @override
+  String get labLoading => 'Đang tải EEG…';
+
+  @override
+  String get labLoadError => 'Không tải được mẫu EEG.';
+
+  @override
+  String get labRetry => 'Thử lại';
 
   @override
   String get liveTitle => 'Live';
@@ -261,7 +338,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get aboutSourceNote =>
-      'Nguồn dữ liệu được ghi rõ trong tài liệu và trong app.';
+      'Lab đóng gói một đoạn 60 giây từ EEGMMIDB theo giấy phép Open Data Commons Attribution 1.0.';
 
   @override
   String get aboutRepo => 'Mã nguồn trên GitHub';

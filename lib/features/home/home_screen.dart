@@ -79,7 +79,7 @@ class HomeScreen extends StatelessWidget {
                 title: l10n.insightsEmptyTitle,
                 body: l10n.homeRecentEmpty,
                 actionLabel: l10n.homeRecentAction,
-                onAction: () => context.push('/live'),
+                onAction: () => context.push('/lab'),
               ),
               const SizedBox(height: 24),
               Text(

@@ -47,15 +47,24 @@ lib/
 - `l10n.yaml` sets `nullable-getter: false` and an explicit output directory.
 - The app uses `material_ui`'s `GlobalMaterialLocalizations.delegates` so Material widgets are localized with the same Material implementation as the app. The generated `AppLocalizations.localizationsDelegates` list is intentionally not used.
 
-## Future data flow
+## Data flow
 
 ### Lab (S1)
 
-1. Bundle a small, documented public EEG dataset window (or a deterministic replay file) with source metadata. See [data-sources.md](data-sources.md).
-2. Preprocess into the model's expected shape.
-3. Run an on-device TFLite EEG decoder.
-4. Show the waveform, model output, confidence, and a clear "demo / not medical" label.
-5. Store a session summary locally for Insights.
+Status: replay implemented; decoder next.
+
+1. **Done:** bundle a small, documented public EEG window with source metadata. See [data-sources.md](data-sources.md).
+2. **Next:** preprocess the replay window into the decoder's expected shape.
+3. **Next:** run an on-device TFLite EEG decoder.
+4. **Partial:** the waveform and task markers are shown with a clear "demo / not medical" label; model output and confidence come next.
+5. **Next:** store a session summary locally for Insights.
+
+### Lab replay implementation
+
+- `assets/eeg/s001_r04_60s.csv` is a 60-second, 8-channel excerpt from EEGMMIDB S001/R04 at 160 Hz. `s001_r04_60s.json` records the source, channel order, license, and task markers.
+- `lib/features/lab/data/eeg_recording.dart` parses and validates the CSV/metadata pair. It rejects mismatched channel orders, malformed rows, and non-increasing timestamps.
+- `lib/features/lab/widgets/eeg_chart.dart` paints the scrolling multi-channel waveform, task-marker bands, channel labels, and playhead.
+- Playback is a local timer in `LabScreen`; it never touches the network. The dataset page opens in the user's external browser.
 
 ### Live (S2)
 
@@ -82,7 +91,7 @@ lib/
 ## Testing
 
 - `flutter analyze` must be clean.
-- `flutter test` covers first-launch onboarding, onboarding completion, and ARB key parity.
+- `flutter test` covers first-launch onboarding, onboarding completion, ARB key parity, EEG CSV/metadata parsing, the bundled asset shape, Lab replay, and the Vietnamese narrow-screen layout.
 - CI builds a release APK on an x64 runner so ARM64 development machines are not a blocker.
 
 ## Build versions
