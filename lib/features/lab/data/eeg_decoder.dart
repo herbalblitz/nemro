@@ -322,13 +322,21 @@ String _readString(Object? value, {String fallback = ''}) {
 }
 
 double _readDouble(Object? value, {double? fallback}) {
-  if (value is num) return value.toDouble();
-  if (value is String) {
-    final parsed = double.tryParse(value);
-    if (parsed != null) return parsed;
+  // double.tryParse accepts 'NaN' and 'Infinity'. A NaN sampling rate or
+  // band edge would slip past the `<= 0` validation (NaN comparisons are
+  // false) and break decoding later, so a non-finite value counts as
+  // unusable: fall back when a fallback exists, otherwise throw.
+  double? parsed;
+  if (value is num) {
+    parsed = value.toDouble();
+  } else if (value is String) {
+    parsed = double.tryParse(value);
   }
-  if (fallback != null) return fallback;
-  throw const FormatException('Decoder model has an invalid number.');
+  if (parsed == null || !parsed.isFinite) {
+    if (fallback != null) return fallback;
+    throw const FormatException('Decoder model has an invalid number.');
+  }
+  return parsed;
 }
 
 int _readInt(Object? value, {int? fallback}) {

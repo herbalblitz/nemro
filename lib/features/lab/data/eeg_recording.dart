@@ -126,7 +126,7 @@ class EegRecording {
       }
 
       final time = double.tryParse(cells.first.trim());
-      if (time == null || time < 0) {
+      if (time == null || !time.isFinite || time < 0) {
         throw const FormatException('EEG CSV has an invalid timestamp.');
       }
       if (lastTime != null && time <= lastTime) {
@@ -136,7 +136,7 @@ class EegRecording {
 
       for (var channel = 0; channel < channels.length; channel++) {
         final value = double.tryParse(cells[channel + 1].trim());
-        if (value == null) {
+        if (value == null || !value.isFinite) {
           throw FormatException(
             'EEG CSV has an invalid value for ${channels[channel]}.',
           );
@@ -226,10 +226,18 @@ String _readString(Object? value, {String fallback = ''}) {
 }
 
 double _readDouble(Object? value) {
-  if (value is num) return value.toDouble();
-  if (value is String) {
-    final parsed = double.tryParse(value);
-    if (parsed != null) return parsed;
+  // double.tryParse accepts 'NaN' and 'Infinity', and a NaN sampling rate
+  // would slip past the `<= 0` checks below (NaN comparisons are false)
+  // and break duration math and the decoder later. Reject non-finite
+  // numbers at the parse boundary instead.
+  double? parsed;
+  if (value is num) {
+    parsed = value.toDouble();
+  } else if (value is String) {
+    parsed = double.tryParse(value);
   }
-  throw const FormatException('EEG metadata has an invalid number.');
+  if (parsed == null || !parsed.isFinite) {
+    throw const FormatException('EEG metadata has an invalid number.');
+  }
+  return parsed;
 }
