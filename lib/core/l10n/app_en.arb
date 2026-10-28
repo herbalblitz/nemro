@@ -185,7 +185,14 @@
   "aboutRepo": "Source on GitHub",
   "aboutLicense": "MIT License",
   "privacyTitle": "Privacy",
-  "privacyIntro": "Nemro is local-first. Version 0.3.0 has no Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.",
+  "privacyIntro": "Nemro is local-first. Version {version} has no Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.",
+  "@privacyIntro": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "privacyDataTitle": "What data is stored?",
   "privacyDataBody": "Language, theme, and onboarding state. Live session summaries are saved on this device only if you turn saving on in Settings, and deleting all data in Settings wipes them. The Lab decoder processes the bundled sample locally; no EEG is collected from you.",
   "privacyDecoderTitle": "On-device AI",
@@ -251,5 +258,6 @@
         "type": "int"
       }
     }
-  }
+  },
+  "labDecoderConfusionTitle": "Confusion matrix (rows = actual, columns = predicted)"
 }
