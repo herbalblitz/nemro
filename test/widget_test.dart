@@ -502,7 +502,146 @@ void main() {
 
     expect(find.text('Camera unavailable'), findsOneWidget);
     expect(find.textContaining('Camera permission was denied'), findsOneWidget);
+    expect(find.textContaining('If you permanently denied'), findsNothing);
     expect(find.byKey(const ValueKey('live-retry-button')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live permanently denied failure shows settings guidance',
+      (tester) async {
+    final gateway = _FakeLiveCameraGateway()
+      ..failure = const LiveCameraException(
+        LiveCameraFailure.permissionPermanentlyDenied,
+      );
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Camera unavailable'), findsOneWidget);
+    expect(find.textContaining('Camera access is blocked'), findsOneWidget);
+    expect(find.textContaining('If you permanently denied'), findsOneWidget);
+    expect(find.byKey(const ValueKey('live-retry-button')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live session can restart after stop', (tester) async {
+    final gateway = _FakeLiveCameraGateway();
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+
+    Future<void> runSession() async {
+      await tester.tap(find.byKey(const ValueKey('live-start-button')));
+      await tester.pump();
+      await tester.pump();
+      final session = gateway.session!;
+      for (var i = 0; i < 6; i++) {
+        session.addFrame(_liveCheckerboard());
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      await tester.pump();
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('live-stop-button')),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('live-stop-button')));
+      await tester.pump();
+      await tester.pumpAndSettle();
+      expect(find.text('Session summary'), findsOneWidget);
+    }
+
+    await runSession();
+    final firstSession = gateway.session!;
+    expect(firstSession.disposed, isTrue);
+
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('live-start-button')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await runSession();
+    expect(gateway.starts, 2);
+    expect(gateway.session, isNot(firstSession));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live session stops when the app leaves the foreground',
+      (tester) async {
+    final gateway = _FakeLiveCameraGateway();
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+
+    final session = gateway.session!;
+    for (var i = 0; i < 6; i++) {
+      session.addFrame(_liveCheckerboard());
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await tester.pump();
+    expect(find.byKey(const ValueKey('fake-live-preview')), findsOneWidget);
+
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    await tester.pump();
+    await tester.pumpAndSettle();
+    expect(session.disposed, isTrue);
+
+    // While backgrounded the framework delivers no frame, so the summary
+    // state only becomes visible once the app returns to the foreground —
+    // exactly as on a real device.
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Session summary'), findsOneWidget);
+    expect(
+      find.text('The session stopped when the app left the foreground.'),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 }

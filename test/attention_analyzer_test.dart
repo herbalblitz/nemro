@@ -71,6 +71,48 @@ void main() {
       expect(convert([0, 255, 0, 255])!.pixels[0], closeTo(0.587, 0.001));
       expect(convert([255, 0, 0, 255])!.pixels[0], closeTo(0.114, 0.001));
     });
+
+    test('Y plane honors a row stride wider than the width', () {
+      // Real Android Y planes are often stride-padded; the padding bytes
+      // must not leak into the downsampled frame.
+      final frame = lumaFrameFromYPlane(
+        bytes: Uint8List.fromList([0, 255, 0, 0, 128, 0, 0, 0]),
+        width: 2,
+        height: 2,
+        bytesPerRow: 4,
+        targetMaxDimension: 2,
+      );
+
+      expect(frame, isNotNull);
+      expect(frame!.pixels[0], closeTo(0.0, 0.001));
+      expect(frame.pixels[1], closeTo(1.0, 0.001));
+      expect(frame.pixels[2], closeTo(128 / 255, 0.001));
+      expect(frame.pixels[3], closeTo(0.0, 0.001));
+    });
+
+    test('Y plane rejects a buffer shorter than the frame', () {
+      final frame = lumaFrameFromYPlane(
+        bytes: Uint8List.fromList([0, 128, 255]),
+        width: 2,
+        height: 2,
+        bytesPerRow: 2,
+      );
+      expect(frame, isNull);
+    });
+
+    test('small frames are not upscaled', () {
+      final frame = lumaFrameFromYPlane(
+        bytes: Uint8List.fromList([0, 128, 255, 64]),
+        width: 2,
+        height: 2,
+        bytesPerRow: 2,
+        targetMaxDimension: 48,
+      );
+      expect(frame, isNotNull);
+      expect(frame!.width, 2);
+      expect(frame.height, 2);
+      expect(frame.pixels[1], closeTo(128 / 255, 0.001));
+    });
   });
 
   group('AttentionAnalyzer', () {
