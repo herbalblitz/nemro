@@ -67,7 +67,7 @@ docs/
 
 ### Lab replay implementation
 
-- `assets/eeg/s001_r04_60s.csv` is a 60-second, 8-channel excerpt from EEGMMIDB S001/R04 at 160 Hz. `s001_r04_60s.json` records the source, channel order, license, and task markers.
+- `assets/eeg/s001_r04_60s.csv` is a 60-second, 8-channel excerpt from EEGMMIDB S001/R04 at 160 Hz. `s001_r04_60s.json` records the source, channel order, license, and task markers. `assets/eeg/s002_r04_60s.csv` is a second excerpt with the same shape from S002/R04, selectable in Lab.
 - `lib/features/lab/data/eeg_recording.dart` parses and validates the CSV/metadata pair. It rejects mismatched channel orders, malformed rows, and non-increasing timestamps.
 - `lib/features/lab/widgets/eeg_chart.dart` paints the scrolling multi-channel waveform, task-marker bands, channel labels, and playhead.
 - Playback is a local timer in `LabScreen`; it never touches the network. The dataset page opens in the user's external browser.

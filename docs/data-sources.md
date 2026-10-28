@@ -1,6 +1,6 @@
 # Data and model sources
 
-Nemro 0.3.0 bundles one **60-second EEG excerpt** from EEGMMIDB and a small
+Nemro 0.3.0 bundles two **60-second EEG excerpts** from EEGMMIDB and a small
 **on-device decoder** trained on the same public dataset. Live uses the camera
 only as an on-device light/contrast/motion proxy and does not add a new dataset.
 This page records the sources, licenses, evaluation rules, and attribution
@@ -18,6 +18,12 @@ requirements for the bundled data and model.
   - The Lab bundles a 60-second window from **S001/R04** with 8 of 64 channels
     (C3, Cz, C4, FC3, FC4, CP3, CP4, Pz) at 160 Hz. The raw EDF is not
     redistributed.
+  - The Lab also bundles a second 60-second window from **S002/R04** with the
+    same 8 channels at 160 Hz, selectable in the Lab recording selector.
+    The decoder was trained and held-out evaluated on S001 only, so its
+    predictions on S002 are out-of-sample for a different subject: they
+    demonstrate the decoder running, not its 66.7% held-out accuracy, which
+    applies to S001/R04 alone.
   - The decoder uses four channels (C3, C4, CP3, CP4). It is trained on
     **S001/R08 + R12** and evaluated on the held-out **S001/R04**, which is the
     same run used for the replay. See [model-card.md](model-card.md).
