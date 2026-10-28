@@ -46,7 +46,8 @@ class _LabContent extends StatefulWidget {
   State<_LabContent> createState() => _LabContentState();
 }
 
-class _LabContentState extends State<_LabContent> {
+class _LabContentState extends State<_LabContent>
+    with WidgetsBindingObserver {
   static const _windowSeconds = 10.0;
   static const _tick = Duration(milliseconds: 50);
 
@@ -56,9 +57,23 @@ class _LabContentState extends State<_LabContent> {
   bool _playing = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused && _playing) {
+      _pause();
+    }
   }
 
   void _togglePlay() {
@@ -116,6 +131,18 @@ class _LabContentState extends State<_LabContent> {
     }
   }
 
+  Future<void> _openLicense() async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final launched = await launchUrl(
+      Uri.parse(AppConstants.eegLicenseUrl),
+      mode: LaunchMode.externalApplication,
+    );
+    if (!launched) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.commonError)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -163,7 +190,11 @@ class _LabContentState extends State<_LabContent> {
         const SizedBox(height: 16),
         _DecoderCard(recording: recording, event: event),
         const SizedBox(height: 16),
-        _DatasetCard(recording: recording, onOpenDataset: _openDataset),
+        _DatasetCard(
+          recording: recording,
+          onOpenDataset: _openDataset,
+          onOpenLicense: _openLicense,
+        ),
         const SizedBox(height: 24),
         FilledButton.tonal(
           onPressed: () {
@@ -1044,10 +1075,15 @@ class _DecoderStatus extends StatelessWidget {
 }
 
 class _DatasetCard extends StatelessWidget {
-  const _DatasetCard({required this.recording, required this.onOpenDataset});
+  const _DatasetCard({
+    required this.recording,
+    required this.onOpenDataset,
+    required this.onOpenLicense,
+  });
 
   final EegRecording recording;
   final VoidCallback onOpenDataset;
+  final VoidCallback onOpenLicense;
 
   @override
   Widget build(BuildContext context) {
@@ -1100,7 +1136,11 @@ class _DatasetCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            _InfoRow(label: l10n.labLicenseLabel, value: 'ODC-BY 1.0'),
+            _InfoRow(
+              label: l10n.labLicenseLabel,
+              value: 'ODC-BY 1.0',
+              onTap: onOpenLicense,
+            ),
             const SizedBox(height: 12),
             Text(
               l10n.labRunDescription,
@@ -1123,14 +1163,23 @@ class _DatasetCard extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.label, required this.value});
+  const _InfoRow({required this.label, required this.value, this.onTap});
 
   final String label;
   final String value;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final valueText = Text(
+      value,
+      style: theme.textTheme.bodyMedium?.copyWith(
+        fontWeight: FontWeight.w600,
+        color: onTap == null ? null : theme.colorScheme.primary,
+        decoration: onTap == null ? null : TextDecoration.underline,
+      ),
+    );
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1144,12 +1193,16 @@ class _InfoRow extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: Text(
-            value,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          child: onTap == null
+              ? valueText
+              : InkWell(
+                  onTap: onTap,
+                  borderRadius: BorderRadius.circular(4),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: valueText,
+                  ),
+                ),
         ),
       ],
     );
