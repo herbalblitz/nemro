@@ -881,8 +881,8 @@ abstract class AppLocalizations {
   /// No description provided for @privacyIntro.
   ///
   /// In en, this message translates to:
-  /// **'Nemro is local-first. Version 0.3.0 has no Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.'**
-  String get privacyIntro;
+  /// **'Nemro is local-first. Version {version} has no Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.'**
+  String privacyIntro(String version);
 
   /// No description provided for @privacyDataTitle.
   ///
@@ -1237,6 +1237,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Attention proxy score: {score} out of 100'**
   String liveScoreSemantics(int score);
+
+  /// No description provided for @labDecoderConfusionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confusion matrix (rows = actual, columns = predicted)'**
+  String get labDecoderConfusionTitle;
 }
 
 class _AppLocalizationsDelegate

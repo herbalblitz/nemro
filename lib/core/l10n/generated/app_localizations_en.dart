@@ -437,8 +437,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyTitle => 'Privacy';
 
   @override
-  String get privacyIntro =>
-      'Nemro is local-first. Version 0.3.0 has no Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.';
+  String privacyIntro(String version) {
+    return 'Nemro is local-first. Version $version has no Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.';
+  }
 
   @override
   String get privacyDataTitle => 'What data is stored?';
@@ -637,4 +638,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String liveScoreSemantics(int score) {
     return 'Attention proxy score: $score out of 100';
   }
+
+  @override
+  String get labDecoderConfusionTitle =>
+      'Confusion matrix (rows = actual, columns = predicted)';
 }

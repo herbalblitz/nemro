@@ -440,8 +440,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get privacyTitle => 'Quyền riêng tư';
 
   @override
-  String get privacyIntro =>
-      'Nemro được thiết kế local-first. Phiên bản 0.3.0 không có quyền truy cập Internet. Mẫu EEG, bộ giải mã và proxy camera Live chạy hoàn toàn trên thiết bị.';
+  String privacyIntro(String version) {
+    return 'Nemro được thiết kế local-first. Phiên bản $version không có quyền truy cập Internet. Mẫu EEG, bộ giải mã và proxy camera Live chạy hoàn toàn trên thiết bị.';
+  }
 
   @override
   String get privacyDataTitle => 'Dữ liệu nào được lưu?';
@@ -640,4 +641,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String liveScoreSemantics(int score) {
     return 'Điểm proxy chú ý: $score trên 100';
   }
+
+  @override
+  String get labDecoderConfusionTitle =>
+      'Ma trận nhầm lẫn (hàng = thực tế, cột = dự đoán)';
 }
