@@ -488,7 +488,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get liveLiveBadge => 'TRỰC TIẾP';
 
   @override
-  String get liveScoreTitle => 'Proxy chú ý';
+  String get liveScoreTitle => 'Điểm proxy';
 
   @override
   String get liveScoreCaption =>

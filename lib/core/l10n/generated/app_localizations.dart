@@ -977,7 +977,7 @@ abstract class AppLocalizations {
   /// No description provided for @liveScoreTitle.
   ///
   /// In en, this message translates to:
-  /// **'Attention proxy'**
+  /// **'Proxy score'**
   String get liveScoreTitle;
 
   /// No description provided for @liveScoreCaption.

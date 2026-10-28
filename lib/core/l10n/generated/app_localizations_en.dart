@@ -485,7 +485,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get liveLiveBadge => 'LIVE';
 
   @override
-  String get liveScoreTitle => 'Attention proxy';
+  String get liveScoreTitle => 'Proxy score';
 
   @override
   String get liveScoreCaption =>
