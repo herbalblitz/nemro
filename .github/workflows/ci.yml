@@ -109,6 +109,37 @@ jobs:
       - name: Build release APK
         run: flutter build apk --release
 
+      - name: Verify release APK contents and permissions
+        run: |
+          set -euo pipefail
+          APK=build/app/outputs/flutter-apk/app-release.apk
+          unzip -l "$APK" > /tmp/nemro-apk-contents.txt
+          for asset in \
+            assets/flutter_assets/assets/eeg/s001_r04_60s.csv \
+            assets/flutter_assets/assets/eeg/s001_r04_60s.json \
+            assets/flutter_assets/assets/models/eeg_decoder.json; do
+            if ! grep -q "$asset" /tmp/nemro-apk-contents.txt; then
+              echo "::error::Missing $asset in the release APK."
+              exit 1
+            fi
+          done
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+          if [ -z "$SDK_ROOT" ]; then
+            echo "::error::Android SDK root is not set."
+            exit 1
+          fi
+          AAPT2="$(find "$SDK_ROOT/build-tools" -type f -name aapt2 | sort -V | tail -n 1)"
+          if [ -z "$AAPT2" ]; then
+            echo "::error::aapt2 not found in the Android SDK."
+            exit 1
+          fi
+          "$AAPT2" dump permissions "$APK" > /tmp/nemro-permissions.txt
+          cat /tmp/nemro-permissions.txt
+          if grep -q 'android.permission.INTERNET' /tmp/nemro-permissions.txt; then
+            echo "::error::Release APK requests the INTERNET permission."
+            exit 1
+          fi
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
