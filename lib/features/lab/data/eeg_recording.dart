@@ -174,6 +174,15 @@ class EegRecording {
     if (duration <= 0) {
       throw const FormatException('EEG duration must be positive.');
     }
+    if (declaredDuration is num) {
+      final impliedDuration = lastTime + 1 / samplingRate;
+      if ((declaredDuration.toDouble() - impliedDuration).abs() >
+          1 / samplingRate) {
+        throw const FormatException(
+          'EEG declared duration does not match the samples.',
+        );
+      }
+    }
 
     return EegRecording(
       source: _readString(metadata['source'], fallback: 'Unknown dataset'),
@@ -196,15 +205,6 @@ class EegRecording {
       if (event.contains(seconds)) return event;
     }
     return null;
-  }
-
-  /// Returns the sample nearest to [seconds] for [channel].
-  double valueAt(int channel, double seconds) {
-    final index = (seconds * samplingRate)
-        .round()
-        .clamp(0, sampleCount - 1)
-        .toInt();
-    return samples[channel][index];
   }
 }
 
