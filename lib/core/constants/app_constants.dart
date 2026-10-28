@@ -6,8 +6,6 @@ abstract final class AppConstants {
   static const eegLicenseUrl = 'https://opendatacommons.org/licenses/by/1-0/';
   static const modelCardUrl =
       'https://github.com/herbalblitz/nemro/blob/main/docs/model-card.md';
-  static const privacyUrl =
-      'https://github.com/herbalblitz/nemro/blob/main/docs/privacy.md';
 
   static const prefLocale = 'locale';
   static const prefThemeMode = 'theme_mode';
