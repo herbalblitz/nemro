@@ -39,7 +39,9 @@ abstract interface class LiveCameraSession {
 }
 
 abstract interface class LiveCameraGateway {
-  Future<LiveCameraSession> start();
+  Future<LiveCameraSession> start({
+    CameraLensDirection lensDirection = CameraLensDirection.front,
+  });
 }
 
 final liveCameraGatewayProvider = Provider<LiveCameraGateway>(
@@ -50,7 +52,9 @@ class DeviceLiveCameraGateway implements LiveCameraGateway {
   const DeviceLiveCameraGateway();
 
   @override
-  Future<LiveCameraSession> start() async {
+  Future<LiveCameraSession> start({
+    CameraLensDirection lensDirection = CameraLensDirection.front,
+  }) async {
     try {
       final cameras = await availableCameras();
       if (cameras.isEmpty) {
@@ -58,8 +62,11 @@ class DeviceLiveCameraGateway implements LiveCameraGateway {
       }
 
       final description = cameras.firstWhere(
-        (camera) => camera.lensDirection == CameraLensDirection.front,
-        orElse: () => cameras.first,
+        (camera) => camera.lensDirection == lensDirection,
+        orElse: () => cameras.firstWhere(
+          (camera) => camera.lensDirection == CameraLensDirection.front,
+          orElse: () => cameras.first,
+        ),
       );
       final controller = CameraController(
         description,
