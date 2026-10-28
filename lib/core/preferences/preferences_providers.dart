@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -62,6 +63,57 @@ class ThemeModeController extends Notifier<ThemeMode> {
 final onboardingCompleteProvider = NotifierProvider<OnboardingController, bool>(
   OnboardingController.new,
 );
+
+final saveLiveSummariesProvider =
+    NotifierProvider<SaveLiveSummariesController, bool>(
+      SaveLiveSummariesController.new,
+    );
+
+/// Whether completed Live session summaries are saved on this device.
+///
+/// Defaults to OFF: with the toggle off, summaries stay memory-only and
+/// nothing about a session is persisted.
+class SaveLiveSummariesController extends Notifier<bool> {
+  @override
+  bool build() {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    return prefs.getBool(AppConstants.prefSaveLiveSummaries) ?? false;
+  }
+
+  Future<void> setValue(bool value) async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    await prefs.setBool(AppConstants.prefSaveLiveSummaries, value);
+    state = value;
+  }
+}
+
+final liveCameraLensProvider =
+    NotifierProvider<LiveCameraLensController, CameraLensDirection>(
+      LiveCameraLensController.new,
+    );
+
+/// Which camera Live prefers. Defaults to front; the choice persists
+/// across sessions. The gateway still falls back to the first available
+/// camera when the preferred direction does not exist on the device.
+class LiveCameraLensController extends Notifier<CameraLensDirection> {
+  @override
+  CameraLensDirection build() {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    return switch (prefs.getString(AppConstants.prefLiveCameraLens)) {
+      'back' => CameraLensDirection.back,
+      _ => CameraLensDirection.front,
+    };
+  }
+
+  Future<void> setLens(CameraLensDirection direction) async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    final code = direction == CameraLensDirection.back ? 'back' : 'front';
+    await prefs.setString(AppConstants.prefLiveCameraLens, code);
+    state = direction == CameraLensDirection.back
+        ? CameraLensDirection.back
+        : CameraLensDirection.front;
+  }
+}
 
 class OnboardingController extends Notifier<bool> {
   @override
