@@ -12,6 +12,8 @@ abstract final class AppConstants {
   static const prefLocale = 'locale';
   static const prefThemeMode = 'theme_mode';
   static const prefOnboardingComplete = 'onboarding_complete';
+  static const prefSaveLiveSummaries = 'save_live_summaries';
+  static const prefLiveCameraLens = 'live_camera_lens';
 
   static const supportedLocaleCodes = ['vi', 'en'];
 }
