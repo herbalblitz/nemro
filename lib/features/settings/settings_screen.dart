@@ -17,6 +17,7 @@ class SettingsScreen extends ConsumerWidget {
         ref.watch(localeProvider)?.languageCode ??
         Localizations.localeOf(context).languageCode;
     final themeMode = ref.watch(themeModeProvider);
+    final saveLiveSummaries = ref.watch(saveLiveSummariesProvider);
 
     return CustomScrollView(
       slivers: [
@@ -100,6 +101,21 @@ class SettingsScreen extends ConsumerWidget {
                       subtitle: Text(l10n.settingsPrivacyBody),
                       trailing: const Icon(Icons.chevron_right_rounded),
                       onTap: () => context.push('/privacy'),
+                    ),
+                    const Divider(),
+                    SwitchListTile(
+                      secondary: Icon(
+                        Icons.history_rounded,
+                        color: theme.colorScheme.primary,
+                      ),
+                      title: Text(l10n.settingsSaveLiveSummaries),
+                      subtitle: Text(l10n.settingsSaveLiveSummariesBody),
+                      value: saveLiveSummaries,
+                      onChanged: (value) {
+                        ref
+                            .read(saveLiveSummariesProvider.notifier)
+                            .setValue(value);
+                      },
                     ),
                   ],
                 ),
@@ -208,6 +224,8 @@ class SettingsScreen extends ConsumerWidget {
     ref.invalidate(localeProvider);
     ref.invalidate(themeModeProvider);
     ref.invalidate(onboardingCompleteProvider);
+    ref.invalidate(saveLiveSummariesProvider);
+    ref.invalidate(liveCameraLensProvider);
 
     if (context.mounted) {
       ScaffoldMessenger.of(context)
