@@ -32,7 +32,7 @@ class PrivacyScreen extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    l10n.privacyIntro,
+                    l10n.privacyIntro(AppConstants.version),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onPrimaryContainer,
                       height: 1.45,
