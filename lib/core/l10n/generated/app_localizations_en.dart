@@ -42,7 +42,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingConsentPoint4 =>
-      'When Live arrives, camera frames will be processed on-device and never recorded.';
+      'Camera frames are processed on-device and never recorded or uploaded.';
 
   @override
   String get onboardingConsentCheckbox => 'I understand and agree';
@@ -55,7 +55,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeSubheadline =>
-      'Replay real EEG, watch an on-device decoder estimate the imagined hand, and learn what BCI can really do.';
+      'Replay real EEG, watch an on-device decoder estimate the imagined hand, and try a camera-based attention proxy.';
 
   @override
   String get homeLabTitle => 'Lab';
@@ -73,13 +73,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeLiveTitle => 'Live';
 
   @override
-  String get homeLiveSubtitle => 'Track attention';
+  String get homeLiveSubtitle => 'Camera attention proxy';
 
   @override
-  String get homeLiveAction => 'Preview';
+  String get homeLiveAction => 'Open Live';
 
   @override
-  String get homeLiveBadge => 'SOON';
+  String get homeLiveBadge => 'DEMO';
 
   @override
   String get homeRecentTitle => 'Latest session';
@@ -234,14 +234,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get liveTitle => 'Live';
 
   @override
-  String get liveComingSoonTitle => 'Attention tracking is being built';
-
-  @override
-  String get liveComingSoonBody =>
-      'S2 uses the camera to estimate attention and fatigue, entirely on-device.';
-
-  @override
-  String get liveBadge => 'SOON';
+  String get liveBadge => 'ON-DEVICE';
 
   @override
   String get insightsTitle => 'Insights';
@@ -250,7 +243,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get insightsEmptyTitle => 'No data yet';
 
   @override
-  String get insightsEmptyBody => 'Live and Lab sessions will appear here.';
+  String get insightsEmptyBody =>
+      'Saved Live and Lab sessions will appear here when session history is added.';
 
   @override
   String get insightsStart => 'Start Live';
@@ -316,7 +310,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsDataBody =>
-      'Nemro stores settings locally. Sessions will be added in later versions.';
+      'Nemro stores settings locally. Live session summaries are not saved yet.';
 
   @override
   String get settingsDeleteData => 'Delete all local data';
@@ -390,14 +384,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyIntro =>
-      'Nemro is local-first. Version 0.2.0 has no Internet permission. The bundled EEG sample and decoder run entirely on-device.';
+      'Nemro is local-first. Version 0.3.0 has no Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.';
 
   @override
   String get privacyDataTitle => 'What data is stored?';
 
   @override
   String get privacyDataBody =>
-      'Language, theme, and onboarding state. Lab and Live sessions will be stored locally when added in later versions. The Lab decoder processes the bundled sample locally; no EEG is collected from you.';
+      'Language, theme, and onboarding state. Live session summaries are shown on screen but are not saved in 0.3.0. The Lab decoder processes the bundled sample locally; no EEG is collected from you.';
 
   @override
   String get privacyDecoderTitle => 'On-device AI';
@@ -411,7 +405,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyCameraBody =>
-      'When Live is enabled, the camera processes frames on-device to estimate attention. No video is stored or sent.';
+      'Live opens the camera only after you tap Start. Frames are downsampled and processed on-device to estimate a rough light/contrast/motion proxy. No video or images are recorded, stored, or uploaded. The camera is released when you stop or leave the app; Nemro does not request microphone or storage access.';
 
   @override
   String get privacyStorageTitle => 'Storage';
@@ -425,7 +419,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacySharingBody =>
-      'No analytics, ads, or third-party data-collecting SDKs. The bundled decoder does not call a server.';
+      'No analytics, ads, or third-party data-collecting SDKs. The bundled decoder and camera proxy do not call a server.';
 
   @override
   String get privacyContactTitle => 'Contact';
@@ -450,4 +444,131 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonRetry => 'Retry';
+
+  @override
+  String get liveStartTitle => 'Camera attention proxy';
+
+  @override
+  String get liveStartBody =>
+      'A rough, on-device proxy built from light, contrast, and motion. It is not mind reading and not a medical measurement.';
+
+  @override
+  String get liveStartBullet1 => 'The camera starts only when you tap Start.';
+
+  @override
+  String get liveStartBullet2 =>
+      'Frames are processed on-device. No video is recorded or uploaded.';
+
+  @override
+  String get liveStartBullet3 =>
+      'Stop anytime. The camera is released when the session ends.';
+
+  @override
+  String get liveStartButton => 'Start camera session';
+
+  @override
+  String get liveStarting => 'Starting camera…';
+
+  @override
+  String get liveStartingBody =>
+      'If prompted, allow camera access. Nemro does not use the microphone.';
+
+  @override
+  String get livePermissionHint =>
+      'If you permanently denied access, enable Camera for Nemro in Android Settings.';
+
+  @override
+  String get livePreviewSemantics =>
+      'Live camera preview. Frames are processed on-device.';
+
+  @override
+  String get liveLiveBadge => 'LIVE';
+
+  @override
+  String get liveScoreTitle => 'Attention proxy';
+
+  @override
+  String get liveScoreCaption =>
+      'Heuristic score from light, contrast, and stability. Not a measurement of thoughts.';
+
+  @override
+  String get liveScoreWarmingUp => 'Calibrating…';
+
+  @override
+  String get liveScoreWaiting => 'Waiting for frames…';
+
+  @override
+  String get liveScoreHigh => 'High';
+
+  @override
+  String get liveScoreMedium => 'Medium';
+
+  @override
+  String get liveScoreLow => 'Low';
+
+  @override
+  String get liveLightLabel => 'Light';
+
+  @override
+  String get liveStabilityLabel => 'Stability';
+
+  @override
+  String get liveFramesLabel => 'Frames analyzed';
+
+  @override
+  String get liveStopButton => 'Stop session';
+
+  @override
+  String get livePrivacyNote =>
+      'Camera frames stay on this device. Nothing is recorded or uploaded.';
+
+  @override
+  String get liveSummaryTitle => 'Session summary';
+
+  @override
+  String get liveSummaryAverage => 'Average score';
+
+  @override
+  String get liveSummaryDuration => 'Duration';
+
+  @override
+  String get liveSummaryFrames => 'Frames';
+
+  @override
+  String get liveSummaryNoFrames =>
+      'No frames were analyzed. Check camera access and try again.';
+
+  @override
+  String get liveSummaryPaused =>
+      'The session stopped when the app left the foreground.';
+
+  @override
+  String get liveStartAgain => 'Start again';
+
+  @override
+  String get liveErrorTitle => 'Camera unavailable';
+
+  @override
+  String get liveErrorPermissionDenied =>
+      'Camera permission was denied. Tap Retry to request it again.';
+
+  @override
+  String get liveErrorPermissionPermanentlyDenied =>
+      'Camera access is blocked. Enable Camera for Nemro in Android Settings, then try again.';
+
+  @override
+  String get liveErrorRestricted =>
+      'Camera access is restricted on this device.';
+
+  @override
+  String get liveErrorNoCamera => 'No camera was found on this device.';
+
+  @override
+  String get liveErrorUnavailable =>
+      'Could not start the camera. Close other camera apps and try again.';
+
+  @override
+  String liveScoreSemantics(int score) {
+    return 'Attention proxy score: $score out of 100';
+  }
 }

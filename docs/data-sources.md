@@ -1,9 +1,10 @@
 # Data and model sources
 
-Nemro 0.2.0 bundles one **60-second EEG excerpt** from EEGMMIDB and a small
-**on-device decoder** trained on the same public dataset. Live remains a
-placeholder. This page records the sources, licenses, evaluation rules, and
-attribution requirements for the bundled data and model.
+Nemro 0.3.0 bundles one **60-second EEG excerpt** from EEGMMIDB and a small
+**on-device decoder** trained on the same public dataset. Live uses the camera
+only as an on-device light/contrast/motion proxy and does not add a new dataset.
+This page records the sources, licenses, evaluation rules, and attribution
+requirements for the bundled data and model.
 
 ## Datasets
 
@@ -36,7 +37,7 @@ attribution requirements for the bundled data and model.
 
 ### BCI Competition IV Dataset 2a
 
-**Status:** planned for future evaluation; **not used in 0.2.0**.
+**Status:** planned for future evaluation; **not used in 0.3.0**.
 
 - **What:** four-class motor imagery EEG from nine subjects.
 - **Use in Nemro:** a possible second evaluation dataset for the Lab decoder, if

@@ -2,6 +2,36 @@
 
 All notable changes to Nemro are documented here.
 
+## [0.3.0] - 2026-10-28
+
+### Added
+
+- Live camera proxy with explicit **Start** and **Stop**, a camera preview, a 3-frame warmup, a smoothed 0–100 score, light/stability bars, and an in-memory session summary.
+- `camera`/CameraX integration that prefers the front camera, falls back to the first available camera, disables audio, and requests a low-resolution YUV420 stream.
+- Pure-Dart frame converter (Y-plane and BGRA) and a transparent analyzer based on central contrast, lighting, and frame-to-frame stability. No face, eye, or attention detection.
+- Camera gateway abstraction so widget tests can run without a physical camera.
+- Tests for frame conversion, analyzer behavior, Live start/permission/error states, and the session summary.
+- `CAMERA` permission for Live, plus manifest rules that remove the camera plugin's `RECORD_AUDIO` and `WRITE_EXTERNAL_STORAGE` declarations, suppress the implied `READ_EXTERNAL_STORAGE` permission, and make `android.hardware.camera.any` optional.
+- CI assertions that the release APK contains `CAMERA` and does not contain `INTERNET`, `RECORD_AUDIO`, `READ_EXTERNAL_STORAGE`, or `WRITE_EXTERNAL_STORAGE`.
+
+### Changed
+
+- Live is no longer a placeholder; the Home card opens the working Live screen.
+- Home, onboarding, privacy, README, architecture, data-source, and model-card copy now describe the Live proxy and its limits.
+- Version bumped to 0.3.0+3.
+- Live session summaries are not persisted in this release; Insights history remains planned for S3.
+
+### Security
+
+- Live frames are processed on-device and are never recorded, stored, or uploaded.
+- The camera is released on **Stop**, on leaving the screen, and when the app goes to the background.
+- The release build keeps no `INTERNET` permission and requests no microphone or storage permission.
+
+### Known limitations
+
+- The Live score is a rough light/contrast/stability heuristic, not a measurement of attention, fatigue, or any medical state.
+- Analyzer and UI tests use a fake camera gateway. A physical Android camera smoke test is still pending.
+
 ## [0.2.0] - 2026-10-27
 
 ### Added

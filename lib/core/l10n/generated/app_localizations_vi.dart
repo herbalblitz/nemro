@@ -43,7 +43,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get onboardingConsentPoint4 =>
-      'Khi Live ra mắt, camera sẽ xử lý khung hình trên thiết bị và không lưu video.';
+      'Camera xử lý trên thiết bị, không ghi hay tải video lên.';
 
   @override
   String get onboardingConsentCheckbox => 'Tôi đã hiểu và đồng ý';
@@ -56,7 +56,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeSubheadline =>
-      'Phát lại EEG thật, xem bộ giải mã trên thiết bị ước lượng bàn tay đang tưởng tượng và học đúng về BCI.';
+      'Phát lại EEG thật, xem bộ giải mã trên thiết bị ước lượng bàn tay đang tưởng tượng và thử proxy chú ý bằng camera.';
 
   @override
   String get homeLabTitle => 'Lab';
@@ -74,13 +74,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get homeLiveTitle => 'Live';
 
   @override
-  String get homeLiveSubtitle => 'Theo dõi chú ý';
+  String get homeLiveSubtitle => 'Proxy chú ý bằng camera';
 
   @override
-  String get homeLiveAction => 'Xem trước';
+  String get homeLiveAction => 'Mở Live';
 
   @override
-  String get homeLiveBadge => 'SẮP CÓ';
+  String get homeLiveBadge => 'DEMO';
 
   @override
   String get homeRecentTitle => 'Phiên gần nhất';
@@ -237,14 +237,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get liveTitle => 'Live';
 
   @override
-  String get liveComingSoonTitle => 'Theo dõi chú ý đang được xây dựng';
-
-  @override
-  String get liveComingSoonBody =>
-      'S2 sẽ dùng camera để ước lượng chú ý, mệt mỏi — hoàn toàn trên thiết bị.';
-
-  @override
-  String get liveBadge => 'SẮP CÓ';
+  String get liveBadge => 'TRÊN THIẾT BỊ';
 
   @override
   String get insightsTitle => 'Lịch sử';
@@ -253,7 +246,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get insightsEmptyTitle => 'Chưa có dữ liệu';
 
   @override
-  String get insightsEmptyBody => 'Các phiên Live và Lab sẽ xuất hiện ở đây.';
+  String get insightsEmptyBody =>
+      'Các phiên Live và Lab đã lưu sẽ xuất hiện ở đây khi có lịch sử phiên.';
 
   @override
   String get insightsStart => 'Bắt đầu Live';
@@ -319,7 +313,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get settingsDataBody =>
-      'Nemro lưu cài đặt cục bộ. Các phiên sẽ được thêm ở phiên bản sau.';
+      'Nemro lưu cài đặt cục bộ. Tóm tắt phiên Live chưa được lưu.';
 
   @override
   String get settingsDeleteData => 'Xóa toàn bộ dữ liệu cục bộ';
@@ -393,14 +387,14 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get privacyIntro =>
-      'Nemro được thiết kế local-first. Phiên bản 0.2.0 không có quyền truy cập Internet. Mẫu EEG và bộ giải mã đi kèm chạy hoàn toàn trên thiết bị.';
+      'Nemro được thiết kế local-first. Phiên bản 0.3.0 không có quyền truy cập Internet. Mẫu EEG, bộ giải mã và proxy camera Live chạy hoàn toàn trên thiết bị.';
 
   @override
   String get privacyDataTitle => 'Dữ liệu nào được lưu?';
 
   @override
   String get privacyDataBody =>
-      'Cài đặt ngôn ngữ, giao diện và trạng thái onboarding. Các phiên Lab/Live sẽ được lưu cục bộ khi được thêm ở phiên bản sau. Bộ giải mã Lab xử lý mẫu đi kèm ngay trên thiết bị; không EEG nào được thu thập từ bạn.';
+      'Cài đặt ngôn ngữ, giao diện và trạng thái onboarding. Tóm tắt phiên Live chỉ hiển thị trên màn hình, chưa được lưu trong 0.3.0. Bộ giải mã Lab xử lý mẫu đi kèm ngay trên thiết bị; không EEG nào được thu thập từ bạn.';
 
   @override
   String get privacyDecoderTitle => 'AI trên thiết bị';
@@ -414,7 +408,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get privacyCameraBody =>
-      'Khi Live được bật, camera xử lý khung hình trên thiết bị để ước lượng chú ý. Không video nào được lưu hoặc gửi đi.';
+      'Live chỉ mở camera sau khi bạn nhấn Bắt đầu. Khung hình được thu nhỏ và xử lý trên thiết bị để ước lượng proxy thô từ ánh sáng, độ tương phản và chuyển động. Không video hay hình ảnh nào bị ghi, lưu hoặc tải lên. Camera được giải phóng khi bạn dừng hoặc rời ứng dụng; Nemro không yêu cầu quyền micro hay bộ nhớ.';
 
   @override
   String get privacyStorageTitle => 'Lưu trữ';
@@ -428,7 +422,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get privacySharingBody =>
-      'Không có analytics, quảng cáo hay SDK bên thứ ba thu thập dữ liệu. Bộ giải mã đi kèm không gọi máy chủ.';
+      'Không có analytics, quảng cáo hay SDK bên thứ ba thu thập dữ liệu. Bộ giải mã và proxy camera đi kèm không gọi máy chủ.';
 
   @override
   String get privacyContactTitle => 'Liên hệ';
@@ -453,4 +447,131 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get commonRetry => 'Thử lại';
+
+  @override
+  String get liveStartTitle => 'Proxy chú ý bằng camera';
+
+  @override
+  String get liveStartBody =>
+      'Một proxy thô, chạy trên thiết bị, dựa trên ánh sáng, độ tương phản và chuyển động. Đây không phải đọc suy nghĩ hay đo lường y tế.';
+
+  @override
+  String get liveStartBullet1 => 'Camera chỉ bật khi bạn nhấn Bắt đầu.';
+
+  @override
+  String get liveStartBullet2 =>
+      'Khung hình được xử lý trên thiết bị. Không ghi hay tải video lên.';
+
+  @override
+  String get liveStartBullet3 =>
+      'Dừng bất cứ lúc nào. Camera được giải phóng khi phiên kết thúc.';
+
+  @override
+  String get liveStartButton => 'Bắt đầu phiên camera';
+
+  @override
+  String get liveStarting => 'Đang bật camera…';
+
+  @override
+  String get liveStartingBody =>
+      'Nếu được hỏi, hãy cho phép truy cập camera. Nemro không dùng micro.';
+
+  @override
+  String get livePermissionHint =>
+      'Nếu bạn đã từ chối vĩnh viễn, hãy bật Camera cho Nemro trong Cài đặt Android.';
+
+  @override
+  String get livePreviewSemantics =>
+      'Xem trước camera trực tiếp. Khung hình được xử lý trên thiết bị.';
+
+  @override
+  String get liveLiveBadge => 'TRỰC TIẾP';
+
+  @override
+  String get liveScoreTitle => 'Proxy chú ý';
+
+  @override
+  String get liveScoreCaption =>
+      'Điểm heuristic từ ánh sáng, độ tương phản và độ ổn định. Không đo suy nghĩ.';
+
+  @override
+  String get liveScoreWarmingUp => 'Đang hiệu chỉnh…';
+
+  @override
+  String get liveScoreWaiting => 'Đang chờ khung hình…';
+
+  @override
+  String get liveScoreHigh => 'Cao';
+
+  @override
+  String get liveScoreMedium => 'Trung bình';
+
+  @override
+  String get liveScoreLow => 'Thấp';
+
+  @override
+  String get liveLightLabel => 'Ánh sáng';
+
+  @override
+  String get liveStabilityLabel => 'Độ ổn định';
+
+  @override
+  String get liveFramesLabel => 'Số khung đã phân tích';
+
+  @override
+  String get liveStopButton => 'Dừng phiên';
+
+  @override
+  String get livePrivacyNote =>
+      'Khung hình camera ở lại trên thiết bị. Không ghi hay tải lên.';
+
+  @override
+  String get liveSummaryTitle => 'Tóm tắt phiên';
+
+  @override
+  String get liveSummaryAverage => 'Điểm trung bình';
+
+  @override
+  String get liveSummaryDuration => 'Thời lượng';
+
+  @override
+  String get liveSummaryFrames => 'Số khung';
+
+  @override
+  String get liveSummaryNoFrames =>
+      'Không có khung hình nào được phân tích. Hãy kiểm tra quyền camera và thử lại.';
+
+  @override
+  String get liveSummaryPaused =>
+      'Phiên đã dừng khi ứng dụng rời khỏi màn hình.';
+
+  @override
+  String get liveStartAgain => 'Bắt đầu lại';
+
+  @override
+  String get liveErrorTitle => 'Camera không khả dụng';
+
+  @override
+  String get liveErrorPermissionDenied =>
+      'Quyền camera đã bị từ chối. Nhấn Thử lại để yêu cầu lại.';
+
+  @override
+  String get liveErrorPermissionPermanentlyDenied =>
+      'Quyền camera bị chặn. Hãy bật Camera cho Nemro trong Cài đặt Android rồi thử lại.';
+
+  @override
+  String get liveErrorRestricted =>
+      'Quyền camera bị hạn chế trên thiết bị này.';
+
+  @override
+  String get liveErrorNoCamera => 'Không tìm thấy camera trên thiết bị này.';
+
+  @override
+  String get liveErrorUnavailable =>
+      'Không thể bật camera. Hãy đóng ứng dụng camera khác và thử lại.';
+
+  @override
+  String liveScoreSemantics(int score) {
+    return 'Điểm proxy chú ý: $score trên 100';
+  }
 }

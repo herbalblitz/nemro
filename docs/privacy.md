@@ -1,11 +1,12 @@
 # Nemro Privacy Policy / Chính sách riêng tư
 
-**Effective date / Ngày hiệu lực:** 2026-10-27  
-**App version / Phiên bản:** 0.2.0
+**Effective date / Ngày hiệu lực:** 2026-10-28
 
-Nemro is a local-first educational app. This policy explains what the app stores, what it does not collect, and how future features will handle data.
+**App version / Phiên bản:** 0.3.0
 
-Nemro là ứng dụng giáo dục ưu tiên cục bộ. Chính sách này giải thích ứng dụng lưu gì, không thu thập gì và các tính năng tương lai sẽ xử lý dữ liệu như thế nào.
+Nemro is a local-first educational app. This policy explains what the app stores, what it does not collect, and how the Lab and Live features handle data.
+
+Nemro là ứng dụng giáo dục ưu tiên cục bộ. Chính sách này giải thích ứng dụng lưu gì, không thu thập gì và cách Lab và Live xử lý dữ liệu.
 
 ## Summary / Tóm tắt
 
@@ -13,61 +14,67 @@ Nemro là ứng dụng giáo dục ưu tiên cục bộ. Chính sách này giả
 - The release build has no `INTERNET` permission.
 - Settings are stored on your device.
 - The Lab includes a read-only EEG sample and a bundled decoder that run on-device; neither is collected from you.
-- Camera frames in future Live sessions will be processed on-device and will not be recorded or uploaded.
+- Live opens the camera only after you tap Start. Frames are processed on-device and are not recorded, stored, or uploaded.
+- Live does not request microphone or storage permission.
 - You can delete local data in **Settings → Data**.
 
 - Không tài khoản, không quảng cáo, không analytics, không tracking.
 - Bản release không có quyền `INTERNET`.
 - Cài đặt được lưu trên thiết bị.
 - Lab có sẵn một mẫu EEG chỉ đọc và bộ giải mã đi kèm, chạy trên thiết bị; cả hai đều không được thu thập từ bạn.
-- Khung hình camera trong Live (tương lai) được xử lý trên thiết bị, không ghi lại và không tải lên.
+- Live chỉ mở camera sau khi bạn nhấn Bắt đầu. Khung hình được xử lý trên thiết bị, không bị ghi, lưu hay tải lên.
+- Live không yêu cầu quyền micro hay quyền truy cập bộ nhớ.
 - Bạn có thể xóa dữ liệu cục bộ trong **Cài đặt → Dữ liệu**.
 
 ## What is stored / Dữ liệu được lưu
 
-Version 0.2.0 stores:
+Version 0.3.0 stores:
 
 - your selected language (`vi` or `en`);
 - your theme choice (system, light, or dark);
 - whether onboarding has been completed.
 
-Phiên bản 0.2.0 lưu:
+Phiên bản 0.3.0 lưu:
 
 - ngôn ngữ đã chọn (`vi` hoặc `en`);
 - lựa chọn giao diện (theo hệ thống, sáng hoặc tối);
 - trạng thái đã hoàn tất onboarding.
 
-No EEG is recorded from you in 0.2.0. The Lab replay uses a read-only excerpt bundled with the app, and the decoder processes that excerpt locally. The app does not store your predictions. Future versions may store Lab and Live session results locally (for example, model scores and timestamps) so that the Insights screen can show your history. Those records will remain on the device unless you explicitly export them.
+No EEG is recorded from you in 0.3.0. The Lab replay uses a read-only excerpt bundled with the app, and the decoder processes that excerpt locally. The app does not store your predictions. A Live session summary (average proxy score, duration, and frame count) is shown on screen but is not saved in 0.3.0. Future versions may store Lab and Live session results locally so that the Insights screen can show your history; those records will remain on the device unless you explicitly export them.
 
-Phiên bản 0.2.0 không ghi lại EEG của bạn. Màn hình Lab phát lại một đoạn dữ liệu chỉ đọc đi kèm ứng dụng và bộ giải mã xử lý đoạn dữ liệu đó ngay trên thiết bị. Ứng dụng không lưu dự đoán của bạn. Các phiên bản sau có thể lưu kết quả Lab và Live cục bộ (ví dụ điểm mô hình và thời gian) để màn hình Lịch sử hiển thị. Các bản ghi này ở lại trên thiết bị trừ khi bạn chủ động xuất.
+Phiên bản 0.3.0 không ghi lại EEG của bạn. Màn hình Lab phát lại một đoạn dữ liệu chỉ đọc đi kèm ứng dụng và bộ giải mã xử lý đoạn dữ liệu đó ngay trên thiết bị. Ứng dụng không lưu dự đoán của bạn. Tóm tắt phiên Live (điểm proxy trung bình, thời lượng và số khung) được hiển thị trên màn hình nhưng chưa được lưu trong 0.3.0. Các phiên bản sau có thể lưu kết quả Lab và Live cục bộ để màn hình Lịch sử hiển thị; các bản ghi này ở lại trên thiết bị trừ khi bạn chủ động xuất.
 
 ## On-device AI decoder / Bộ giải mã AI trên thiết bị
 
-Version 0.2.0 includes a small logistic-regression model in the Lab. The model file and the EEG excerpt are bundled with the app. Feature extraction and inference run entirely on the device; no EEG, prediction, or confidence score is uploaded. The decoder is a research demo, not a medical device and not mind reading. See [`model-card.md`](model-card.md) for its held-out accuracy and limitations.
+Version 0.3.0 includes a small logistic-regression model in the Lab. The model file and the EEG excerpt are bundled with the app. Feature extraction and inference run entirely on the device; no EEG, prediction, or confidence score is uploaded. The decoder is a research demo, not a medical device and not mind reading. See [`model-card.md`](model-card.md) for its held-out accuracy and limitations.
 
-Phiên bản 0.2.0 có một mô hình hồi quy logistic nhỏ trong Lab. Tệp mô hình và mẫu EEG đi kèm ứng dụng. Việc trích xuất đặc trưng và suy luận chạy hoàn toàn trên thiết bị; không EEG, dự đoán hay điểm tin cậy nào được tải lên. Bộ giải mã là demo nghiên cứu, không phải thiết bị y tế và không đọc suy nghĩ. Xem [`model-card.md`](model-card.md) để biết độ chính xác trên tập giữ lại và các giới hạn.
+Phiên bản 0.3.0 có một mô hình hồi quy logistic nhỏ trong Lab. Tệp mô hình và mẫu EEG đi kèm ứng dụng. Việc trích xuất đặc trưng và suy luận chạy hoàn toàn trên thiết bị; không EEG, dự đoán hay điểm tin cậy nào được tải lên. Bộ giải mã là demo nghiên cứu, không phải thiết bị y tế và không đọc suy nghĩ. Xem [`model-card.md`](model-card.md) để biết độ chính xác trên tập giữ lại và các giới hạn.
+
+## Live camera proxy / Proxy camera Live
+
+Live is available in 0.3.0. It is a rough, transparent heuristic, not face or eye tracking and not a measurement of attention or medical state.
+
+- The camera is opened only after you tap **Start** in Live. Opening the screen does not start the camera.
+- Frames are downsampled to a small luminance grid and processed on-device. The score combines central contrast, lighting, and frame-to-frame stability.
+- No video or images are recorded, stored, or uploaded.
+- The camera is released when you tap **Stop** or when the app leaves the foreground.
+- The app does not request microphone or storage access. The Android manifest removes the camera plugin's `RECORD_AUDIO` and `WRITE_EXTERNAL_STORAGE` declarations, along with the implied `READ_EXTERNAL_STORAGE` permission; the only runtime permission for this feature is `CAMERA`.
+- Live session summaries are not saved in 0.3.0.
+
+Live đã có trong 0.3.0. Đây là một heuristic thô, minh bạch, không theo dõi khuôn mặt hay mắt và không đo chú ý hay tình trạng y tế.
+
+- Camera chỉ được mở sau khi bạn nhấn **Bắt đầu** trong Live. Mở màn hình không bật camera.
+- Khung hình được thu nhỏ thành lưới độ sáng nhỏ và xử lý trên thiết bị. Điểm số kết hợp độ tương phản vùng trung tâm, ánh sáng và độ ổn định giữa các khung.
+- Không video hay hình ảnh nào bị ghi, lưu hoặc tải lên.
+- Camera được giải phóng khi bạn nhấn **Dừng** hoặc khi ứng dụng rời khỏi màn hình.
+- Ứng dụng không yêu cầu quyền micro hay bộ nhớ. Android manifest loại bỏ khai báo `RECORD_AUDIO` và `WRITE_EXTERNAL_STORAGE` của plugin camera, cùng quyền `READ_EXTERNAL_STORAGE` đi kèm; quyền runtime duy nhất cho tính năng này là `CAMERA`.
+- Tóm tắt phiên Live chưa được lưu trong 0.3.0.
 
 ## What is not collected / Dữ liệu không thu thập
 
 Nemro does not collect names, email addresses, contacts, location, advertising identifiers, or usage analytics. There is no account system and no third-party analytics SDK.
 
 Nemro không thu thập tên, email, danh bạ, vị trí, mã nhận dạng quảng cáo hay số liệu sử dụng. Không có hệ thống tài khoản và không có SDK analytics bên thứ ba.
-
-## Camera / Camera
-
-Live is not implemented in 0.2.0. When it is added:
-
-- camera access will be requested only when you start a Live session;
-- frames will be processed on-device to estimate attention-related signals;
-- video will not be recorded, stored, or uploaded;
-- you can stop the session at any time.
-
-Live chưa được triển khai trong 0.2.0. Khi được thêm:
-
-- quyền camera chỉ được yêu cầu khi bạn bắt đầu phiên Live;
-- khung hình được xử lý trên thiết bị để ước lượng các tín hiệu liên quan đến chú ý;
-- video không bị ghi lại, lưu trữ hay tải lên;
-- bạn có thể dừng phiên bất cứ lúc nào.
 
 ## Storage and deletion / Lưu trữ và xóa dữ liệu
 
@@ -89,9 +96,9 @@ Nemro là công cụ giáo dục, không phải dịch vụ hướng đến tr�
 
 ## Medical disclaimer / Miễn trừ y tế
 
-Nemro is not a medical device. It does not diagnose, treat, cure, or prevent any condition, and it is not a substitute for professional medical advice.
+Nemro is not a medical device. It does not diagnose, treat, cure, or prevent any condition, and it is not a substitute for professional medical advice. The Live camera proxy is not an attention test, fatigue monitor, or mental-state measurement.
 
-Nemro không phải thiết bị y tế. Ứng dụng không chẩn đoán, điều trị, chữa khỏi hay phòng ngừa bất kỳ tình trạng nào và không thay thế tư vấn y tế chuyên môn.
+Nemro không phải thiết bị y tế. Ứng dụng không chẩn đoán, điều trị, chữa khỏi hay phòng ngừa bất kỳ tình trạng nào và không thay thế tư vấn y tế chuyên môn. Proxy camera Live không phải bài kiểm tra chú ý, công cụ theo dõi mệt mỏi hay phép đo trạng thái tinh thần.
 
 ## Changes / Thay đổi
 

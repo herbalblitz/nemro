@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -9,6 +12,8 @@ import 'package:nemro/features/lab/data/eeg_decoder.dart';
 import 'package:nemro/features/lab/data/eeg_decoder_repository.dart';
 import 'package:nemro/features/lab/data/eeg_recording.dart';
 import 'package:nemro/features/lab/data/eeg_repository.dart';
+import 'package:nemro/features/live/data/attention_analyzer.dart';
+import 'package:nemro/features/live/data/live_camera_gateway.dart';
 
 Future<void> _pumpApp(
   WidgetTester tester, {
@@ -17,6 +22,7 @@ Future<void> _pumpApp(
   EegDecoder? labDecoder,
   Map<double, EegPrediction>? labPredictions,
   ValueNotifier<bool>? failLabLoad,
+  LiveCameraGateway? liveCameraGateway,
 }) async {
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 3.0;
@@ -43,6 +49,8 @@ Future<void> _pumpApp(
           eegDecoderProvider.overrideWith((ref) => labDecoder),
         if (labPredictions != null)
           eegPredictionsProvider.overrideWith((ref) => labPredictions),
+        if (liveCameraGateway != null)
+          liveCameraGatewayProvider.overrideWithValue(liveCameraGateway),
       ],
       child: const NemroApp(),
     ),
@@ -113,6 +121,58 @@ Map<double, EegPrediction> _testPredictions() {
     0.0: const EegPrediction(rightProbability: 0.72),
     6.0: const EegPrediction(rightProbability: 0.36),
   };
+}
+
+class _FakeLiveCameraGateway implements LiveCameraGateway {
+  _FakeLiveCameraSession? session;
+  LiveCameraException? failure;
+  int starts = 0;
+
+  @override
+  Future<LiveCameraSession> start() async {
+    starts++;
+    final error = failure;
+    if (error != null) throw error;
+    final next = _FakeLiveCameraSession();
+    session = next;
+    return next;
+  }
+}
+
+class _FakeLiveCameraSession implements LiveCameraSession {
+  final StreamController<LumaFrame> _controller =
+      StreamController<LumaFrame>.broadcast();
+  bool disposed = false;
+
+  @override
+  Stream<LumaFrame> get frames => _controller.stream;
+
+  @override
+  double get aspectRatio => 4 / 3;
+
+  @override
+  Widget buildPreview() =>
+      Container(key: const ValueKey('fake-live-preview'), color: Colors.black);
+
+  void addFrame(LumaFrame frame) {
+    if (!_controller.isClosed) _controller.add(frame);
+  }
+
+  @override
+  Future<void> dispose() async {
+    disposed = true;
+    await _controller.close();
+  }
+}
+
+LumaFrame _liveCheckerboard({int size = 16}) {
+  final pixels = Float32List(size * size);
+  for (var y = 0; y < size; y++) {
+    for (var x = 0; x < size; x++) {
+      pixels[y * size + x] = (x + y).isEven ? 0.85 : 0.15;
+    }
+  }
+  return LumaFrame(width: size, height: size, pixels: pixels);
 }
 
 void main() {
@@ -304,8 +364,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Settings delete clears data and returns to onboarding',
-      (tester) async {
+  testWidgets('Settings delete clears data and returns to onboarding', (
+    tester,
+  ) async {
     await _pumpApp(
       tester,
       values: {'locale': 'en', 'onboarding_complete': true},
@@ -327,6 +388,121 @@ void main() {
 
     expect(find.byType(Checkbox), findsOneWidget);
     expect(find.text('Agree and continue'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live explains the on-device proxy before starting', (
+    tester,
+  ) async {
+    final gateway = _FakeLiveCameraGateway();
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Camera attention proxy'), findsOneWidget);
+    expect(find.byKey(const ValueKey('live-start-button')), findsOneWidget);
+    expect(find.textContaining('No video is recorded'), findsOneWidget);
+    expect(gateway.starts, 0);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live session shows a score and a local summary', (tester) async {
+    final gateway = _FakeLiveCameraGateway();
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(gateway.starts, 1);
+    expect(gateway.session, isNotNull);
+    expect(find.byKey(const ValueKey('fake-live-preview')), findsOneWidget);
+
+    final session = gateway.session!;
+    for (var i = 0; i < 6; i++) {
+      session.addFrame(_liveCheckerboard());
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await tester.pump();
+
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('live-score')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    final score = tester.widget<Text>(find.byKey(const ValueKey('live-score')));
+    expect(int.parse(score.data!), greaterThan(90));
+
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('live-stop-button')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-stop-button')));
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Session summary'), findsOneWidget);
+    expect(session.disposed, isTrue);
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, 800));
+    await tester.pumpAndSettle();
+    expect(find.text('Session summary'), findsOneWidget);
+    expect(find.text('Average score'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live permission failure shows retry guidance', (tester) async {
+    final gateway = _FakeLiveCameraGateway()
+      ..failure = const LiveCameraException(LiveCameraFailure.permissionDenied);
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Camera unavailable'), findsOneWidget);
+    expect(find.textContaining('Camera permission was denied'), findsOneWidget);
+    expect(find.byKey(const ValueKey('live-retry-button')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

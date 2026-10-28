@@ -3,7 +3,7 @@ description: "Nemro — an open-source AI–brain loop lab for Android."
 publish_to: "none"
 repository: https://github.com/herbalblitz/nemro
 issue_tracker: https://github.com/herbalblitz/nemro/issues
-version: 0.2.0+2
+version: 0.3.0+3
 
 environment:
   sdk: ^3.13.0
@@ -21,6 +21,7 @@ dependencies:
   shared_preferences: ^2.5.6
   intl: ^0.20.3
   url_launcher: ^6.3.3
+  camera: ^0.12.2
 
 dev_dependencies:
   flutter_test:

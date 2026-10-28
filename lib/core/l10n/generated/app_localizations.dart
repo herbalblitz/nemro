@@ -161,7 +161,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingConsentPoint4.
   ///
   /// In en, this message translates to:
-  /// **'When Live arrives, camera frames will be processed on-device and never recorded.'**
+  /// **'Camera frames are processed on-device and never recorded or uploaded.'**
   String get onboardingConsentPoint4;
 
   /// No description provided for @onboardingConsentCheckbox.
@@ -185,7 +185,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeSubheadline.
   ///
   /// In en, this message translates to:
-  /// **'Replay real EEG, watch an on-device decoder estimate the imagined hand, and learn what BCI can really do.'**
+  /// **'Replay real EEG, watch an on-device decoder estimate the imagined hand, and try a camera-based attention proxy.'**
   String get homeSubheadline;
 
   /// No description provided for @homeLabTitle.
@@ -221,19 +221,19 @@ abstract class AppLocalizations {
   /// No description provided for @homeLiveSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Track attention'**
+  /// **'Camera attention proxy'**
   String get homeLiveSubtitle;
 
   /// No description provided for @homeLiveAction.
   ///
   /// In en, this message translates to:
-  /// **'Preview'**
+  /// **'Open Live'**
   String get homeLiveAction;
 
   /// No description provided for @homeLiveBadge.
   ///
   /// In en, this message translates to:
-  /// **'SOON'**
+  /// **'DEMO'**
   String get homeLiveBadge;
 
   /// No description provided for @homeRecentTitle.
@@ -512,22 +512,10 @@ abstract class AppLocalizations {
   /// **'Live'**
   String get liveTitle;
 
-  /// No description provided for @liveComingSoonTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Attention tracking is being built'**
-  String get liveComingSoonTitle;
-
-  /// No description provided for @liveComingSoonBody.
-  ///
-  /// In en, this message translates to:
-  /// **'S2 uses the camera to estimate attention and fatigue, entirely on-device.'**
-  String get liveComingSoonBody;
-
   /// No description provided for @liveBadge.
   ///
   /// In en, this message translates to:
-  /// **'SOON'**
+  /// **'ON-DEVICE'**
   String get liveBadge;
 
   /// No description provided for @insightsTitle.
@@ -545,7 +533,7 @@ abstract class AppLocalizations {
   /// No description provided for @insightsEmptyBody.
   ///
   /// In en, this message translates to:
-  /// **'Live and Lab sessions will appear here.'**
+  /// **'Saved Live and Lab sessions will appear here when session history is added.'**
   String get insightsEmptyBody;
 
   /// No description provided for @insightsStart.
@@ -671,7 +659,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsDataBody.
   ///
   /// In en, this message translates to:
-  /// **'Nemro stores settings locally. Sessions will be added in later versions.'**
+  /// **'Nemro stores settings locally. Live session summaries are not saved yet.'**
   String get settingsDataBody;
 
   /// No description provided for @settingsDeleteData.
@@ -809,7 +797,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyIntro.
   ///
   /// In en, this message translates to:
-  /// **'Nemro is local-first. Version 0.2.0 has no Internet permission. The bundled EEG sample and decoder run entirely on-device.'**
+  /// **'Nemro is local-first. Version 0.3.0 has no Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.'**
   String get privacyIntro;
 
   /// No description provided for @privacyDataTitle.
@@ -821,7 +809,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyDataBody.
   ///
   /// In en, this message translates to:
-  /// **'Language, theme, and onboarding state. Lab and Live sessions will be stored locally when added in later versions. The Lab decoder processes the bundled sample locally; no EEG is collected from you.'**
+  /// **'Language, theme, and onboarding state. Live session summaries are shown on screen but are not saved in 0.3.0. The Lab decoder processes the bundled sample locally; no EEG is collected from you.'**
   String get privacyDataBody;
 
   /// No description provided for @privacyDecoderTitle.
@@ -845,7 +833,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyCameraBody.
   ///
   /// In en, this message translates to:
-  /// **'When Live is enabled, the camera processes frames on-device to estimate attention. No video is stored or sent.'**
+  /// **'Live opens the camera only after you tap Start. Frames are downsampled and processed on-device to estimate a rough light/contrast/motion proxy. No video or images are recorded, stored, or uploaded. The camera is released when you stop or leave the app; Nemro does not request microphone or storage access.'**
   String get privacyCameraBody;
 
   /// No description provided for @privacyStorageTitle.
@@ -869,7 +857,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacySharingBody.
   ///
   /// In en, this message translates to:
-  /// **'No analytics, ads, or third-party data-collecting SDKs. The bundled decoder does not call a server.'**
+  /// **'No analytics, ads, or third-party data-collecting SDKs. The bundled decoder and camera proxy do not call a server.'**
   String get privacySharingBody;
 
   /// No description provided for @privacyContactTitle.
@@ -919,6 +907,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get commonRetry;
+
+  /// No description provided for @liveStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera attention proxy'**
+  String get liveStartTitle;
+
+  /// No description provided for @liveStartBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A rough, on-device proxy built from light, contrast, and motion. It is not mind reading and not a medical measurement.'**
+  String get liveStartBody;
+
+  /// No description provided for @liveStartBullet1.
+  ///
+  /// In en, this message translates to:
+  /// **'The camera starts only when you tap Start.'**
+  String get liveStartBullet1;
+
+  /// No description provided for @liveStartBullet2.
+  ///
+  /// In en, this message translates to:
+  /// **'Frames are processed on-device. No video is recorded or uploaded.'**
+  String get liveStartBullet2;
+
+  /// No description provided for @liveStartBullet3.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop anytime. The camera is released when the session ends.'**
+  String get liveStartBullet3;
+
+  /// No description provided for @liveStartButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start camera session'**
+  String get liveStartButton;
+
+  /// No description provided for @liveStarting.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting camera…'**
+  String get liveStarting;
+
+  /// No description provided for @liveStartingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If prompted, allow camera access. Nemro does not use the microphone.'**
+  String get liveStartingBody;
+
+  /// No description provided for @livePermissionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'If you permanently denied access, enable Camera for Nemro in Android Settings.'**
+  String get livePermissionHint;
+
+  /// No description provided for @livePreviewSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Live camera preview. Frames are processed on-device.'**
+  String get livePreviewSemantics;
+
+  /// No description provided for @liveLiveBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'LIVE'**
+  String get liveLiveBadge;
+
+  /// No description provided for @liveScoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attention proxy'**
+  String get liveScoreTitle;
+
+  /// No description provided for @liveScoreCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Heuristic score from light, contrast, and stability. Not a measurement of thoughts.'**
+  String get liveScoreCaption;
+
+  /// No description provided for @liveScoreWarmingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Calibrating…'**
+  String get liveScoreWarmingUp;
+
+  /// No description provided for @liveScoreWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for frames…'**
+  String get liveScoreWaiting;
+
+  /// No description provided for @liveScoreHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get liveScoreHigh;
+
+  /// No description provided for @liveScoreMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get liveScoreMedium;
+
+  /// No description provided for @liveScoreLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get liveScoreLow;
+
+  /// No description provided for @liveLightLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get liveLightLabel;
+
+  /// No description provided for @liveStabilityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Stability'**
+  String get liveStabilityLabel;
+
+  /// No description provided for @liveFramesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Frames analyzed'**
+  String get liveFramesLabel;
+
+  /// No description provided for @liveStopButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop session'**
+  String get liveStopButton;
+
+  /// No description provided for @livePrivacyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera frames stay on this device. Nothing is recorded or uploaded.'**
+  String get livePrivacyNote;
+
+  /// No description provided for @liveSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Session summary'**
+  String get liveSummaryTitle;
+
+  /// No description provided for @liveSummaryAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average score'**
+  String get liveSummaryAverage;
+
+  /// No description provided for @liveSummaryDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get liveSummaryDuration;
+
+  /// No description provided for @liveSummaryFrames.
+  ///
+  /// In en, this message translates to:
+  /// **'Frames'**
+  String get liveSummaryFrames;
+
+  /// No description provided for @liveSummaryNoFrames.
+  ///
+  /// In en, this message translates to:
+  /// **'No frames were analyzed. Check camera access and try again.'**
+  String get liveSummaryNoFrames;
+
+  /// No description provided for @liveSummaryPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'The session stopped when the app left the foreground.'**
+  String get liveSummaryPaused;
+
+  /// No description provided for @liveStartAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Start again'**
+  String get liveStartAgain;
+
+  /// No description provided for @liveErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera unavailable'**
+  String get liveErrorTitle;
+
+  /// No description provided for @liveErrorPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera permission was denied. Tap Retry to request it again.'**
+  String get liveErrorPermissionDenied;
+
+  /// No description provided for @liveErrorPermissionPermanentlyDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is blocked. Enable Camera for Nemro in Android Settings, then try again.'**
+  String get liveErrorPermissionPermanentlyDenied;
+
+  /// No description provided for @liveErrorRestricted.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is restricted on this device.'**
+  String get liveErrorRestricted;
+
+  /// No description provided for @liveErrorNoCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'No camera was found on this device.'**
+  String get liveErrorNoCamera;
+
+  /// No description provided for @liveErrorUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start the camera. Close other camera apps and try again.'**
+  String get liveErrorUnavailable;
+
+  /// No description provided for @liveScoreSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Attention proxy score: {score} out of 100'**
+  String liveScoreSemantics(int score);
 }
 
 class _AppLocalizationsDelegate

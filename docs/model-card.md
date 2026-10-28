@@ -1,8 +1,8 @@
 # Model card: S001 mu/beta logistic regression
 
 - **Model version:** 1
-- **App version:** Nemro 0.2.0
-- **Date:** 2026-10-27
+- **App version:** Nemro 0.3.0
+- **Date:** 2026-10-28
 - **Weights:** `assets/models/eeg_decoder.json`
 - **Training tool:** `tool/train_eeg_decoder.py`
 - **License:** MIT for the code and weights; EEG data under ODC-BY 1.0

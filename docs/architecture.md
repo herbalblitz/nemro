@@ -25,7 +25,7 @@ lib/
     shell/                 bottom navigation shell
     home/                  landing screen
     lab/                   EEG replay + on-device decoder
-    live/                  camera attention placeholder
+    live/                  camera gateway, YUV converter, frame analyzer, UI
     insights/              history placeholder
     learn/                 lesson list placeholder
     settings/              language, theme, privacy, data, about
@@ -81,13 +81,16 @@ docs/
 - The model is trained on S001/R08 + R12 and evaluated on the held-out S001/R04, the same run used for the replay. Held-out accuracy is 66.7% (chance 50%); leave-one-run-out mean is 60.0%. Full details and limitations: [model-card.md](model-card.md).
 - The EDF+ TAL onsets are absolute seconds. The excerpt exporter uses them directly; earlier record-relative handling was a bug and was fixed before the decoder was trained.
 
-### Live (S2)
+### Live (S2) — complete
 
-1. Camera permission is requested only when the user starts a session.
-2. Face/eye signals are extracted on-device.
-3. A transparent heuristic (blink rate, eye closure, head stability) produces an attention proxy.
-4. No frames are recorded; only aggregate scores may be stored.
-5. The UI labels the result as a proxy, not a measurement of thoughts or medical state.
+1. The camera is untouched until the user taps **Start**. `DeviceLiveCameraGateway` then asks the camera plugin for available cameras, prefers the front lens, and falls back to the first available camera.
+2. It opens a `CameraController` with `enableAudio: false`, `ResolutionPreset.low`, and `ImageFormatGroup.yuv420`, initializes it, and starts an image stream. The microphone is never opened.
+3. `lumaFrameFromCameraImage` reads the Y plane (and BGRA on iOS-style frames), downsamples to at most 48 pixels on the long edge, and normalizes luminance to 0–1. Unsupported or malformed frames are dropped rather than crashing the stream.
+4. `AttentionAnalyzer` computes mean brightness, central-region contrast, and mean absolute frame-to-frame motion. The proxy is `100 × presence × (0.6 × stability + 0.4 × lighting)`, smoothed over time; the first three frames are a warmup. A blank wall has near-zero central contrast and therefore stays low.
+5. The UI shows the preview, a 0–100 proxy, light and stability bars, a warmup state, and a session summary (average score, duration, frames). The summary is held in memory only in 0.3.0 and is not persisted.
+6. **Stop**, leaving the screen, or the app going to the background cancels the frame subscription, stops the image stream, and disposes the controller. No video or images are written.
+
+This path does **not** detect faces, eyes, blinks, head pose, or attention. It uses no ML Kit, no face model, and no server. The UI labels the number as a rough proxy, not a measurement of thoughts, fatigue, or medical state.
 
 ### Insights (S3+)
 
@@ -98,8 +101,10 @@ docs/
 ## Privacy boundary
 
 - No analytics SDK, ad SDK, account system, or remote logging.
-- No `INTERNET` permission in `android/app/src/main/AndroidManifest.xml`.
+- The release manifest requests `CAMERA` for Live, but no `INTERNET`, `RECORD_AUDIO`, `READ_EXTERNAL_STORAGE`, or `WRITE_EXTERNAL_STORAGE`.
+- The camera plugin declares audio and storage permissions; `tools:node="remove"` entries in the app manifest remove them from the merged release manifest.
 - Debug/profile manifests add `INTERNET` only for Flutter tooling.
+- Live camera frames stay in memory and are never recorded, persisted, or uploaded. Only the on-screen session summary exists, and it is not saved in 0.3.0.
 - Model files and datasets are bundled or generated locally; inference does not call a server.
 - External links open in the user's browser and are outside the app's data boundary.
 
@@ -107,14 +112,16 @@ docs/
 
 - `flutter analyze` must be clean.
 - `flutter test` covers first-launch onboarding, onboarding completion, ARB key parity, EEG CSV/metadata parsing, the bundled asset shape, decoder model parsing, inference on the bundled replay, synthetic band-power behavior, incomplete-window rejection, Lab replay, and the Vietnamese narrow-screen layout.
-- CI builds a release APK on an x64 runner so ARM64 development machines are not a blocker.
+- Live tests cover Y-plane/BGRA conversion, the analyzer's blank-wall, texture, motion, warmup, reset, and range behavior, and the Live UI with a fake camera gateway (start, permission failure, no-camera/error states, and session summary).
+- A physical Android camera smoke test is still pending; the fake-gateway tests cannot validate CameraX behavior on a real device.
+- CI builds a release APK on an x64 runner so ARM64 development machines are not a blocker, and checks the APK's permission set.
 
 ## Build versions
 
 The Android template is aligned with Flutter 3.47 stable's verified matrix:
 
 - Java 17
-- Kotlin 2.4.0
+- Kotlin 2.4.10
 - AGP 9.1.1
 - Gradle 9.5.0
 - compile/target SDK 36, min SDK 24

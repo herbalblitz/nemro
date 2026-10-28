@@ -39,10 +39,29 @@ jobs:
 
       # Locks in the local-first promise: the release manifest must never
       # request INTERNET permission. Debug builds keep it (hot reload).
-      - name: Assert release manifest has no INTERNET permission
+      # Live needs CAMERA, but not the camera plugin's audio/storage extras.
+      - name: Assert release manifest permissions
         run: |
-          if grep -q "android.permission.INTERNET" android/app/src/main/AndroidManifest.xml; then
+          set -euo pipefail
+          MANIFEST=android/app/src/main/AndroidManifest.xml
+          if grep -q "android.permission.INTERNET" "$MANIFEST"; then
             echo "::error::Release manifest must not request INTERNET permission."
+            exit 1
+          fi
+          if ! grep -q "android.permission.CAMERA" "$MANIFEST"; then
+            echo "::error::Release manifest must request CAMERA for Live."
+            exit 1
+          fi
+          if ! grep -Eq 'android.permission.RECORD_AUDIO[^>]*tools:node="remove"' "$MANIFEST"; then
+            echo "::error::Release manifest must remove RECORD_AUDIO from the camera plugin merge."
+            exit 1
+          fi
+          if ! grep -Eq 'android.permission.READ_EXTERNAL_STORAGE[^>]*tools:node="remove"' "$MANIFEST"; then
+            echo "::error::Release manifest must remove READ_EXTERNAL_STORAGE from the camera plugin merge."
+            exit 1
+          fi
+          if ! grep -Eq 'android.permission.WRITE_EXTERNAL_STORAGE[^>]*tools:node="remove"' "$MANIFEST"; then
+            echo "::error::Release manifest must remove WRITE_EXTERNAL_STORAGE from the camera plugin merge."
             exit 1
           fi
 
@@ -135,10 +154,16 @@ jobs:
           fi
           "$AAPT2" dump permissions "$APK" > /tmp/nemro-permissions.txt
           cat /tmp/nemro-permissions.txt
-          if grep -q 'android.permission.INTERNET' /tmp/nemro-permissions.txt; then
-            echo "::error::Release APK requests the INTERNET permission."
+          if ! grep -q 'android.permission.CAMERA' /tmp/nemro-permissions.txt; then
+            echo "::error::Release APK is missing the CAMERA permission required by Live."
             exit 1
           fi
+          for permission in INTERNET RECORD_AUDIO READ_EXTERNAL_STORAGE WRITE_EXTERNAL_STORAGE; do
+            if grep -q "android.permission.$permission" /tmp/nemro-permissions.txt; then
+              echo "::error::Release APK requests forbidden permission: $permission."
+              exit 1
+            fi
+          done
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
