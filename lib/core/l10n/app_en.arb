@@ -122,7 +122,14 @@
   "labRecordingLabel": "Recording",
   "labChannelsLabel": "Signal",
   "labLicenseLabel": "License",
-  "labRunDescription": "S001 · run 4 · imagined left/right fist",
+  "labRunDescription": "{subject} · run 4 · imagined left/right fist",
+  "@labRunDescription": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
   "labOpenDataset": "Open dataset page",
   "labLoading": "Loading EEG…",
   "labLoadError": "Could not load the EEG sample.",
@@ -136,6 +143,31 @@
   "insightsStart": "Start Live",
   "insightsSavedTitle": "Saved Live sessions",
   "insightsDelete": "Delete session",
+  "insightsTrendsTitle": "Trends",
+  "insightsTrendCurrentStreak": "Current streak",
+  "insightsTrendLongestStreak": "Longest streak",
+  "insightsTrendStreakDays": "{days, plural, =1{1 day} other{{days} days}}",
+  "@insightsTrendStreakDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "insightsTrendBest": "Best session",
+  "insightsTrendWorst": "Weakest session",
+  "insightsTrendWeeklyTitle": "Weekly averages",
+  "insightsTrendSessions": "{count, plural, =1{1 session} other{{count} sessions}}",
+  "@insightsTrendSessions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insightsExport": "Export CSV",
+  "insightsExportDone": "Session history exported.",
+  "insightsExportFailed": "Could not export session history.",
   "learnTitle": "Learn",
   "learnSubtitle": "A clear look at BCI, EEG, and the limits of the technology.",
   "lesson1Title": "Neurons and EEG",
@@ -236,6 +268,52 @@
   "liveLightLabel": "Light",
   "liveStabilityLabel": "Stability",
   "liveFramesLabel": "Frames analyzed",
+  "liveBaselineTitle": "Your baseline",
+  "liveBaselineBody": "Calibrate once in your usual room and lighting. Later scores show relative to your usual range — still a camera proxy, never a brain measurement.",
+  "liveBaselineRange": "Usual range: {low}–{high}",
+  "@liveBaselineRange": {
+    "placeholders": {
+      "low": {
+        "type": "int"
+      },
+      "high": {
+        "type": "int"
+      }
+    }
+  },
+  "liveBaselineCalibrate": "Calibrate baseline",
+  "liveBaselineRecalibrate": "Recalibrate",
+  "liveBaselineCapturing": "Calibrating… sit normally and stay in frame.",
+  "liveBaselineProgress": "{count, plural, =1{1 frame captured} other{{count} frames captured}}",
+  "@liveBaselineProgress": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "liveBaselineNeeds": "Needs at least {min} frames to save.",
+  "@liveBaselineNeeds": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "liveBaselineStopSave": "Stop and save baseline",
+  "liveBaselineCancel": "Cancel calibration",
+  "liveBaselineSaved": "Baseline saved.",
+  "liveBaselineSaveFailed": "Could not save the baseline. Try again.",
+  "liveBaselineTooShort": "Not enough frames to set a baseline. Stay in frame a little longer and try again.",
+  "liveBaselineRelativeNote": "Relative to your usual range. Still a camera proxy, not a brain measurement.",
+  "liveBaselineAbsolute": "Absolute proxy score: {score}",
+  "@liveBaselineAbsolute": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
   "liveStopButton": "Stop session",
   "livePrivacyNote": "Camera frames stay on this device. Nothing is recorded or uploaded.",
   "liveSummaryTitle": "Session summary",

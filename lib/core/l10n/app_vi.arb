@@ -122,7 +122,14 @@
   "labRecordingLabel": "Bản ghi",
   "labChannelsLabel": "Tín hiệu",
   "labLicenseLabel": "Giấy phép",
-  "labRunDescription": "S001 · lượt 4 · tưởng tượng nắm tay trái/phải",
+  "labRunDescription": "{subject} · lượt 4 · tưởng tượng nắm tay trái/phải",
+  "@labRunDescription": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
   "labOpenDataset": "Mở trang dữ liệu",
   "labLoading": "Đang tải EEG…",
   "labLoadError": "Không tải được mẫu EEG.",
@@ -136,6 +143,31 @@
   "insightsStart": "Bắt đầu Live",
   "insightsSavedTitle": "Phiên Live đã lưu",
   "insightsDelete": "Xóa phiên",
+  "insightsTrendsTitle": "Xu hướng",
+  "insightsTrendCurrentStreak": "Chuỗi hiện tại",
+  "insightsTrendLongestStreak": "Chuỗi dài nhất",
+  "insightsTrendStreakDays": "{days, plural, =1{1 ngày} other{{days} ngày}}",
+  "@insightsTrendStreakDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "insightsTrendBest": "Phiên tốt nhất",
+  "insightsTrendWorst": "Phiên thấp nhất",
+  "insightsTrendWeeklyTitle": "Trung bình theo tuần",
+  "insightsTrendSessions": "{count, plural, =1{1 phiên} other{{count} phiên}}",
+  "@insightsTrendSessions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insightsExport": "Xuất CSV",
+  "insightsExportDone": "Đã xuất lịch sử phiên.",
+  "insightsExportFailed": "Không xuất được lịch sử phiên.",
   "learnTitle": "Học",
   "learnSubtitle": "Hiểu đúng về BCI, EEG và giới hạn của công nghệ.",
   "lesson1Title": "Neuron và EEG",
@@ -236,6 +268,52 @@
   "liveLightLabel": "Ánh sáng",
   "liveStabilityLabel": "Độ ổn định",
   "liveFramesLabel": "Số khung đã phân tích",
+  "liveBaselineTitle": "Ngưỡng riêng của bạn",
+  "liveBaselineBody": "Chuẩn hóa một lần trong phòng và ánh sáng thường dùng của bạn. Điểm sau đó hiển thị tương đối theo ngưỡng riêng — vẫn là proxy camera, không phải đo não.",
+  "liveBaselineRange": "Ngưỡng thường gặp: {low}–{high}",
+  "@liveBaselineRange": {
+    "placeholders": {
+      "low": {
+        "type": "int"
+      },
+      "high": {
+        "type": "int"
+      }
+    }
+  },
+  "liveBaselineCalibrate": "Chuẩn hóa ngưỡng",
+  "liveBaselineRecalibrate": "Chuẩn hóa lại",
+  "liveBaselineCapturing": "Đang chuẩn hóa… ngồi bình thường và ở trong khung hình.",
+  "liveBaselineProgress": "{count, plural, =1{Đã ghi 1 khung hình} other{Đã ghi {count} khung hình}}",
+  "@liveBaselineProgress": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "liveBaselineNeeds": "Cần ít nhất {min} khung hình để lưu.",
+  "@liveBaselineNeeds": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "liveBaselineStopSave": "Dừng và lưu ngưỡng",
+  "liveBaselineCancel": "Hủy chuẩn hóa",
+  "liveBaselineSaved": "Đã lưu ngưỡng.",
+  "liveBaselineSaveFailed": "Không lưu được ngưỡng. Thử lại.",
+  "liveBaselineTooShort": "Chưa đủ khung hình để đặt ngưỡng. Ở trong khung hình lâu hơn một chút rồi thử lại.",
+  "liveBaselineRelativeNote": "Tương đối theo ngưỡng riêng của bạn. Vẫn là proxy camera, không phải đo não.",
+  "liveBaselineAbsolute": "Điểm proxy tuyệt đối: {score}",
+  "@liveBaselineAbsolute": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
   "liveStopButton": "Dừng phiên",
   "livePrivacyNote": "Khung hình camera ở lại trên thiết bị. Không ghi hay tải lên.",
   "liveSummaryTitle": "Tóm tắt phiên",
