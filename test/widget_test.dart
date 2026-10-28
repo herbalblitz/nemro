@@ -4,11 +4,15 @@ import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:nemro/app.dart';
 import 'package:nemro/core/preferences/preferences_providers.dart';
+import 'package:nemro/core/router/app_router.dart';
+import 'package:nemro/features/home/home_screen.dart';
+import 'package:nemro/features/insights/insights_screen.dart';
 import 'package:nemro/features/lab/data/eeg_decoder.dart';
 import 'package:nemro/features/lab/data/eeg_decoder_repository.dart';
 import 'package:nemro/features/lab/data/eeg_recording.dart';
@@ -17,6 +21,7 @@ import 'package:nemro/features/live/data/attention_analyzer.dart';
 import 'package:nemro/features/live/data/frame_throttler.dart';
 import 'package:nemro/features/live/data/live_camera_gateway.dart';
 import 'package:nemro/features/live/data/system_settings_opener.dart';
+import 'package:nemro/features/live/live_screen.dart';
 
 Future<void> _pumpApp(
   WidgetTester tester, {
@@ -28,6 +33,7 @@ Future<void> _pumpApp(
   LiveCameraGateway? liveCameraGateway,
   SystemSettingsOpener? systemSettingsOpener,
   FrameThrottler? frameThrottler,
+  GoRouter? routerOverride,
 }) async {
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 3.0;
@@ -60,6 +66,8 @@ Future<void> _pumpApp(
           systemSettingsOpenerProvider.overrideWithValue(systemSettingsOpener),
         if (frameThrottler != null)
           frameThrottlerProvider.overrideWithValue(frameThrottler),
+        if (routerOverride != null)
+          routerProvider.overrideWithValue(routerOverride),
       ],
       child: const NemroApp(),
     ),
@@ -130,6 +138,47 @@ Map<double, EegPrediction> _testPredictions() {
     0.0: const EegPrediction(rightProbability: 0.72),
     6.0: const EegPrediction(rightProbability: 0.36),
   };
+}
+
+/// Same as [_testDecoder] but with no held-out run: the accuracy line
+/// must fall back to the leave-one-run-out value and say so.
+EegDecoder _testDecoderNoTestRun() {
+  return const EegDecoder(
+    EegDecoderModel(
+      name: 'Test decoder',
+      type: 'logistic_regression',
+      classes: ['left_fist', 'right_fist'],
+      channels: ['C3', 'Cz'],
+      muLow: 8,
+      muHigh: 13,
+      betaLow: 13,
+      betaHigh: 30,
+      frequencyStep: 0.5,
+      samplingRate: 160,
+      windowSeconds: 4.1,
+      featureOrder: 'channel-major, mu then beta',
+      mean: [0, 0, 0, 0],
+      std: [1, 1, 1, 1],
+      weights: [0, 0, 0, 0],
+      bias: 0,
+      training: EegDecoderTraining(
+        dataset: 'Test dataset',
+        subject: 'S001',
+        trainRuns: ['R08', 'R12'],
+        testRun: '',
+        trainEpochs: 4000,
+        heldOutAccuracy: 0.667,
+        leaveOneRunOutAccuracy: 0.6,
+        chanceAccuracy: 0.5,
+        heldOutConfusion: [
+          [5, 3],
+          [2, 5],
+        ],
+      ),
+      preprocessing: 'Test preprocessing',
+      limitations: 'Test limitations',
+    ),
+  );
 }
 
 class _FakeLiveCameraGateway implements LiveCameraGateway {
@@ -337,7 +386,8 @@ void main() {
 
     await tester.tap(find.text('Học'));
     await tester.pumpAndSettle();
-    expect(find.text('Nội dung song ngữ sẽ có ở S3.'), findsOneWidget);
+    expect(find.text('Neuron và EEG'), findsOneWidget);
+    expect(find.text('Nội dung song ngữ sẽ có ở S3.'), findsNothing);
 
     await tester.tap(find.text('Cài đặt'));
     await tester.pumpAndSettle();
@@ -1103,6 +1153,305 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('28/10/2026 09:30'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Back navigation mid-session saves the summary when on',
+      (tester) async {
+    final gateway = _FakeLiveCameraGateway();
+    await _pumpApp(
+      tester,
+      values: {
+        'locale': 'en',
+        'onboarding_complete': true,
+        'save_live_summaries': true,
+      },
+      liveCameraGateway: gateway,
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+
+    final session = gateway.session!;
+    for (var i = 0; i < 6; i++) {
+      session.addFrame(_liveCheckerboard());
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await tester.pump();
+    expect(find.byKey(const ValueKey('fake-live-preview')), findsOneWidget);
+
+    // Leaving with the system back button must end the session like
+    // Stop does, not discard it silently.
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    expect(session.disposed, isTrue);
+    expect(find.text('Open Live'), findsOneWidget);
+
+    await tester.tap(find.text('Insights'));
+    await tester.pumpAndSettle();
+    expect(find.text('Saved Live sessions'), findsOneWidget);
+    expect(find.text('100'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Back navigation mid-session saves nothing when off',
+      (tester) async {
+    final gateway = _FakeLiveCameraGateway();
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+
+    final session = gateway.session!;
+    for (var i = 0; i < 6; i++) {
+      session.addFrame(_liveCheckerboard());
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await tester.pump();
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    expect(session.disposed, isTrue);
+    await tester.tap(find.text('Insights'));
+    await tester.pumpAndSettle();
+    expect(find.text('No data yet'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live close button ends the session before leaving',
+      (tester) async {
+    final gateway = _FakeLiveCameraGateway();
+    // Live as the initial route is the only way to reach the close
+    // button: with nothing below it, the AppBar shows close instead of
+    // the back arrow.
+    final router = GoRouter(
+      initialLocation: '/live',
+      routes: [
+        GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
+        GoRoute(
+          path: '/live',
+          builder: (context, state) => const LiveScreen(),
+        ),
+        GoRoute(
+          path: '/insights',
+          builder: (context, state) => const InsightsScreen(),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await _pumpApp(
+      tester,
+      values: {
+        'locale': 'en',
+        'onboarding_complete': true,
+        'save_live_summaries': true,
+      },
+      liveCameraGateway: gateway,
+      routerOverride: router,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+
+    final session = gateway.session!;
+    for (var i = 0; i < 6; i++) {
+      session.addFrame(_liveCheckerboard());
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await tester.pump();
+
+    // The close button navigates with go(), not pop(), so it must stop
+    // the session first instead of relying on the PopScope.
+    await tester.tap(find.byIcon(Icons.close_rounded));
+    await tester.pumpAndSettle();
+
+    expect(session.disposed, isTrue);
+    expect(find.text('Open Live'), findsOneWidget);
+
+    // The latest-session card sits below the fold, so scroll it into
+    // view before tapping its Insights action.
+    await tester.scrollUntilVisible(
+      find.text('Latest session'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.widgetWithText(FilledButton, 'Insights'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Insights'));
+    await tester.pumpAndSettle();
+    expect(find.text('Saved Live sessions'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Lab accuracy line wears the LORO label without a held-out run',
+      (tester) async {
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      labRecording: _testRecording(),
+      labDecoder: _testDecoderNoTestRun(),
+      labPredictions: _testPredictions(),
+    );
+
+    final openLab = find.text('Open Lab');
+    await tester.ensureVisible(openLab);
+    await tester.tap(openLab);
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('AI decoder'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.textContaining('Leave-one-run-out accuracy: 60%'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('leave-one-run-out evaluation'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Held-out accuracy'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Lab card shows the model preprocessing and limitations text',
+      (tester) async {
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      labRecording: _testRecording(),
+      labDecoder: _testDecoder(),
+      labPredictions: _testPredictions(),
+    );
+
+    final openLab = find.text('Open Lab');
+    await tester.ensureVisible(openLab);
+    await tester.tap(openLab);
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('AI decoder'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Test preprocessing'), findsOneWidget);
+    expect(find.textContaining('Test limitations'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Insights deletes exactly one session and Home follows',
+      (tester) async {
+    await _pumpApp(
+      tester,
+      values: {
+        'locale': 'en',
+        'onboarding_complete': true,
+        'live_session_summaries':
+            '[{"averageScore":80,"durationMs":60000,"frames":120,"endedAt":"2026-10-28T09:30:00.000"},'
+            '{"averageScore":90,"durationMs":90000,"frames":130,"endedAt":"2026-10-28T10:30:00.000"},'
+            '{"averageScore":70,"durationMs":45000,"frames":140,"endedAt":"2026-10-28T11:30:00.000"}]',
+      },
+    );
+
+    await tester.tap(find.text('Insights'));
+    await tester.pumpAndSettle();
+    expect(find.text('Saved Live sessions'), findsOneWidget);
+
+    // Stored order is oldest first; the middle session (90) is stored
+    // at index 1 and shown between the other two.
+    final deleteMiddle = find.byKey(const ValueKey('insights-delete-1'));
+    await tester.scrollUntilVisible(
+      deleteMiddle,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(deleteMiddle);
+    await tester.pumpAndSettle();
+
+    expect(find.text('90'), findsNothing);
+    expect(find.text('80'), findsOneWidget);
+    expect(find.text('70'), findsOneWidget);
+
+    // Home's latest-session card now follows the deletion: the newest
+    // remaining session is the 70, not the deleted 90.
+    await tester.tap(find.text('Home'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Latest session'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Average score: 70 · Frames: 140'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Learn lessons expand with real content', (tester) async {
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+    );
+
+    await tester.tap(find.text('Learn'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Neurons and EEG'), findsOneWidget);
+    expect(find.text('Bilingual lessons arrive in S3.'), findsNothing);
+    expect(find.byIcon(Icons.lock_outline_rounded), findsNothing);
+
+    await tester.tap(find.text('Neurons and EEG'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('blurry, noisy window'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.text('Can Wi-Fi read the brain?'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Can Wi-Fi read the brain?'));
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('never touches brain activity'),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 }

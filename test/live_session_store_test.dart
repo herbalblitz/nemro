@@ -51,6 +51,23 @@ void main() {
     expect(loaded.last.averageScore, LiveSessionStore.maxSaved + 4);
   });
 
+  test('deleteAt removes exactly one session by position', () async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final store = LiveSessionStore(prefs);
+    await store.save(_summary(80));
+    await store.save(_summary(90));
+    await store.save(_summary(70));
+
+    await store.deleteAt(1);
+    expect(store.loadSync().map((entry) => entry.averageScore), [80, 70]);
+
+    // Out-of-range deletes are no-ops, never crashes.
+    await store.deleteAt(-1);
+    await store.deleteAt(5);
+    expect(store.loadSync().map((entry) => entry.averageScore), [80, 70]);
+  });
+
   test('save toggle defaults to off and persists', () async {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
