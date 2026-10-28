@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -13,7 +14,9 @@ import 'package:nemro/features/lab/data/eeg_decoder_repository.dart';
 import 'package:nemro/features/lab/data/eeg_recording.dart';
 import 'package:nemro/features/lab/data/eeg_repository.dart';
 import 'package:nemro/features/live/data/attention_analyzer.dart';
+import 'package:nemro/features/live/data/frame_throttler.dart';
 import 'package:nemro/features/live/data/live_camera_gateway.dart';
+import 'package:nemro/features/live/data/system_settings_opener.dart';
 
 Future<void> _pumpApp(
   WidgetTester tester, {
@@ -23,6 +26,8 @@ Future<void> _pumpApp(
   Map<double, EegPrediction>? labPredictions,
   ValueNotifier<bool>? failLabLoad,
   LiveCameraGateway? liveCameraGateway,
+  SystemSettingsOpener? systemSettingsOpener,
+  FrameThrottler? frameThrottler,
 }) async {
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 3.0;
@@ -51,6 +56,10 @@ Future<void> _pumpApp(
           eegPredictionsProvider.overrideWith((ref) => labPredictions),
         if (liveCameraGateway != null)
           liveCameraGatewayProvider.overrideWithValue(liveCameraGateway),
+        if (systemSettingsOpener != null)
+          systemSettingsOpenerProvider.overrideWithValue(systemSettingsOpener),
+        if (frameThrottler != null)
+          frameThrottlerProvider.overrideWithValue(frameThrottler),
       ],
       child: const NemroApp(),
     ),
@@ -126,16 +135,29 @@ Map<double, EegPrediction> _testPredictions() {
 class _FakeLiveCameraGateway implements LiveCameraGateway {
   _FakeLiveCameraSession? session;
   LiveCameraException? failure;
+  CameraLensDirection? lastLensDirection;
   int starts = 0;
 
   @override
-  Future<LiveCameraSession> start() async {
+  Future<LiveCameraSession> start({
+    CameraLensDirection lensDirection = CameraLensDirection.front,
+  }) async {
     starts++;
+    lastLensDirection = lensDirection;
     final error = failure;
     if (error != null) throw error;
     final next = _FakeLiveCameraSession();
     session = next;
     return next;
+  }
+}
+
+class _FakeSystemSettingsOpener implements SystemSettingsOpener {
+  int calls = 0;
+
+  @override
+  Future<void> openAppSettings() async {
+    calls++;
   }
 }
 
@@ -170,6 +192,26 @@ LumaFrame _liveCheckerboard({int size = 16}) {
   for (var y = 0; y < size; y++) {
     for (var x = 0; x < size; x++) {
       pixels[y * size + x] = (x + y).isEven ? 0.85 : 0.15;
+    }
+  }
+  return LumaFrame(width: size, height: size, pixels: pixels);
+}
+
+LumaFrame _liveBlank({int size = 16}) {
+  final pixels = Float32List(size * size);
+  for (var i = 0; i < pixels.length; i++) {
+    pixels[i] = 0.5;
+  }
+  return LumaFrame(width: size, height: size, pixels: pixels);
+}
+
+/// Low-contrast checkerboard: same mean as blank, but a central contrast
+/// of 0.05, so it scores in the middle band instead of near zero.
+LumaFrame _liveSoftCheckerboard({int size = 16}) {
+  final pixels = Float32List(size * size);
+  for (var y = 0; y < size; y++) {
+    for (var x = 0; x < size; x++) {
+      pixels[y * size + x] = (x + y).isEven ? 0.55 : 0.45;
     }
   }
   return LumaFrame(width: size, height: size, pixels: pixels);
@@ -376,7 +418,14 @@ void main() {
     await tester.pumpAndSettle();
 
     final deleteTile = find.text('Delete all local data');
-    await tester.ensureVisible(deleteTile);
+    // scrollUntilVisible, not ensureVisible: the Data section is built
+    // lazily and sits below the initial viewport once the Privacy
+    // section grew a tile, so the tile may not exist until scrolled to.
+    await tester.scrollUntilVisible(
+      deleteTile,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(deleteTile);
     await tester.pumpAndSettle();
 
@@ -425,6 +474,9 @@ void main() {
       tester,
       values: {'locale': 'en', 'onboarding_complete': true},
       liveCameraGateway: gateway,
+      // This test is about score display, not throttling: analyze every
+      // frame so all six rapid test frames reach the UI.
+      frameThrottler: FrameThrottler(minInterval: Duration.zero),
     );
 
     final openLive = find.text('Open Live');
@@ -644,4 +696,380 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('Live permanently denied shows an Open Settings button',
+      (tester) async {
+    final gateway = _FakeLiveCameraGateway()
+      ..failure = const LiveCameraException(
+        LiveCameraFailure.permissionPermanentlyDenied,
+      );
+    final opener = _FakeSystemSettingsOpener();
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+      systemSettingsOpener: opener,
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+
+    final settingsButton = find.byKey(
+      const ValueKey('live-open-settings-button'),
+    );
+    expect(settingsButton, findsOneWidget);
+    await tester.tap(settingsButton);
+    await tester.pump();
+    expect(opener.calls, 1);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live plain denied shows no Open Settings button',
+      (tester) async {
+    final gateway = _FakeLiveCameraGateway()
+      ..failure = const LiveCameraException(LiveCameraFailure.permissionDenied);
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(
+      find.byKey(const ValueKey('live-open-settings-button')),
+      findsNothing,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Settings save toggle defaults to off and flips',
+      (tester) async {
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+    );
+
+    await tester.tap(find.text('Settings'));
+    await tester.pumpAndSettle();
+
+    final toggle = find.byType(SwitchListTile);
+    expect(toggle, findsOneWidget);
+    expect(tester.widget<SwitchListTile>(toggle).value, isFalse);
+
+    await tester.tap(find.text('Save Live session summaries'));
+    await tester.pump();
+    expect(tester.widget<SwitchListTile>(toggle).value, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Insights lists saved Live sessions', (tester) async {
+    await _pumpApp(
+      tester,
+      values: {
+        'locale': 'en',
+        'onboarding_complete': true,
+        'live_session_summaries':
+            '[{"averageScore":80,"durationMs":60000,"frames":120,"endedAt":"2026-10-28T09:30:00.000"}]',
+      },
+    );
+
+    await tester.tap(find.text('Insights'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Saved Live sessions'), findsOneWidget);
+    expect(find.text('80'), findsOneWidget);
+    expect(find.text('28/10/2026 09:30'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Insights empty state prompts to turn saving on',
+      (tester) async {
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+    );
+
+    await tester.tap(find.text('Insights'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('No data yet'), findsOneWidget);
+    expect(
+      find.text(
+        'Turn on saving Live session summaries in Settings to keep them here.',
+      ),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live session is saved to Insights when saving is on',
+      (tester) async {
+    final gateway = _FakeLiveCameraGateway();
+    await _pumpApp(
+      tester,
+      values: {
+        'locale': 'en',
+        'onboarding_complete': true,
+        'save_live_summaries': true,
+      },
+      liveCameraGateway: gateway,
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+
+    final session = gateway.session!;
+    for (var i = 0; i < 6; i++) {
+      session.addFrame(_liveCheckerboard());
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await tester.pump();
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('live-stop-button')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-stop-button')));
+    await tester.pump();
+    await tester.pumpAndSettle();
+    expect(find.text('Session summary'), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Insights'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Saved Live sessions'), findsOneWidget);
+    expect(find.text('100'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live camera selector switches cameras cleanly',
+      (tester) async {
+    final gateway = _FakeLiveCameraGateway();
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(gateway.starts, 1);
+    expect(gateway.lastLensDirection, CameraLensDirection.front);
+    final firstSession = gateway.session!;
+
+    await tester.scrollUntilVisible(
+      find.text('Back'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Back'));
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    expect(gateway.starts, 2);
+    expect(gateway.lastLensDirection, CameraLensDirection.back);
+    expect(firstSession.disposed, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live camera selector picks the back camera before start',
+      (tester) async {
+    final gateway = _FakeLiveCameraGateway();
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('Back'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Back'));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(gateway.starts, 1);
+    expect(gateway.lastLensDirection, CameraLensDirection.back);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live analysis throttles rapid frames', (tester) async {
+    final gateway = _FakeLiveCameraGateway();
+    // A controllable clock: widget tests fake timers but not
+    // DateTime.now, so the throttle window is advanced explicitly.
+    var now = DateTime(2026, 10, 28, 10, 0, 0);
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+      frameThrottler: FrameThrottler(clock: () => now),
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+
+    final session = gateway.session!;
+    for (var i = 0; i < 10; i++) {
+      session.addFrame(_liveCheckerboard());
+    }
+    await tester.pump();
+    // Advance the throttle window explicitly, then send one more frame.
+    now = now.add(const Duration(milliseconds: 120));
+    session.addFrame(_liveCheckerboard());
+    await tester.pump();
+    await tester.pump();
+
+    // 11 frames were sent but only 2 were analyzed: the burst collapsed
+    // to one, and the delayed frame opened the next throttle window.
+    await tester.scrollUntilVisible(
+      find.text('Frames analyzed: 2'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Frames analyzed: 2'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live spoken score only moves when the band changes',
+      (tester) async {
+    final semanticsHandle = tester.ensureSemantics();
+    final gateway = _FakeLiveCameraGateway();
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+      frameThrottler: FrameThrottler(minInterval: Duration.zero),
+    );
+
+    final openLive = find.text('Open Live');
+    await tester.scrollUntilVisible(
+      openLive,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(openLive);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+
+    final session = gateway.session!;
+    String spokenScore() {
+      final node = tester.getSemantics(
+        find.byKey(const ValueKey('live-score-semantics')),
+      );
+      return node.getSemanticsData().label;
+    }
+
+    Future<void> pumpFrames(LumaFrame frame, int count) async {
+      for (var i = 0; i < count; i++) {
+        session.addFrame(frame);
+        await tester.pump();
+      }
+      await tester.pump();
+    }
+
+    await pumpFrames(_liveCheckerboard(), 2);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('live-score')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(spokenScore(), 'Attention proxy score: 100 out of 100');
+
+    await pumpFrames(_liveBlank(), 2);
+    expect(spokenScore(), 'Attention proxy score: 56 out of 100');
+
+    // Two soft frames land in the same Medium band: the visual score
+    // moves but the spoken score must not.
+    await pumpFrames(_liveSoftCheckerboard(), 2);
+    final visual = tester.widget<Text>(
+      find.byKey(const ValueKey('live-score')),
+    );
+    expect(visual.data, '51');
+    expect(spokenScore(), 'Attention proxy score: 56 out of 100');
+
+    await pumpFrames(_liveBlank(), 2);
+    expect(spokenScore(), 'Attention proxy score: 29 out of 100');
+    // Dispose explicitly here, not via addTearDown: the framework
+    // verifies handles before tearDown callbacks run.
+    semanticsHandle.dispose();
+    expect(tester.takeException(), isNull);
+  });
+
+
+
 }
