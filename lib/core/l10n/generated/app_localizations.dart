@@ -161,7 +161,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingConsentPoint4.
   ///
   /// In en, this message translates to:
-  /// **'Camera frames are processed on-device and never recorded.'**
+  /// **'When Live arrives, camera frames will be processed on-device and never recorded.'**
   String get onboardingConsentPoint4;
 
   /// No description provided for @onboardingConsentCheckbox.
@@ -227,7 +227,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeLiveAction.
   ///
   /// In en, this message translates to:
-  /// **'Enable camera'**
+  /// **'Preview'**
   String get homeLiveAction;
 
   /// No description provided for @homeLiveBadge.
