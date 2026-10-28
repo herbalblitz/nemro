@@ -726,6 +726,15 @@ class _ModelSummary extends StatelessWidget {
         ? training.heldOutAccuracy
         : training.leaveOneRunOutAccuracy;
     final percent = (accuracy * 100).round();
+    // The held-out confusion matrix, documented in docs/model-card.md as
+    // rows = actual, columns = predicted. Shown only for a model with a
+    // held-out run and a complete 2x2 matrix: a leave-one-run-out
+    // fallback has no held-out matrix to show, even if the JSON happens
+    // to carry one.
+    final confusion = training.heldOutConfusion;
+    final hasConfusion = hasHeldOut &&
+        confusion.length == 2 &&
+        confusion.every((row) => row.length == 2);
 
     return Container(
       width: double.infinity,
@@ -763,6 +772,42 @@ class _ModelSummary extends StatelessWidget {
                 : l10n.labDecoderAccuracyLoro(percent),
             theme: theme,
           ),
+          if (hasConfusion) ...[
+            const SizedBox(height: 8),
+            Text(
+              l10n.labDecoderConfusionTitle,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Table(
+              children: [
+                TableRow(
+                  children: [
+                    const SizedBox.shrink(),
+                    _ConfusionCell(l10n.labLeftFist, theme: theme, center: true),
+                    _ConfusionCell(l10n.labRightFist, theme: theme, center: true),
+                  ],
+                ),
+                TableRow(
+                  children: [
+                    _ConfusionCell(l10n.labLeftFist, theme: theme),
+                    _ConfusionCell('${confusion[0][0]}', theme: theme, center: true),
+                    _ConfusionCell('${confusion[0][1]}', theme: theme, center: true),
+                  ],
+                ),
+                TableRow(
+                  children: [
+                    _ConfusionCell(l10n.labRightFist, theme: theme),
+                    _ConfusionCell('${confusion[1][0]}', theme: theme, center: true),
+                    _ConfusionCell('${confusion[1][1]}', theme: theme, center: true),
+                  ],
+                ),
+              ],
+            ),
+          ],
           // The model's own preprocessing and limitations text: parsed
           // for a while, never shown until now. Shown only when the
           // model actually provides them; the static italic caveat below
@@ -821,6 +866,29 @@ class _SummaryLine extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ConfusionCell extends StatelessWidget {
+  const _ConfusionCell(this.text, {required this.theme, this.center = false});
+
+  final String text;
+  final ThemeData theme;
+  final bool center;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Text(
+        text,
+        textAlign: center ? TextAlign.center : TextAlign.start,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+          height: 1.35,
+        ),
+      ),
     );
   }
 }
