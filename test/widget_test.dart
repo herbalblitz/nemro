@@ -1070,6 +1070,39 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Home latest session shows the newest saved session',
+      (tester) async {
+    await _pumpApp(
+      tester,
+      values: {
+        'locale': 'en',
+        'onboarding_complete': true,
+        'live_session_summaries':
+            '[{"averageScore":80,"durationMs":60000,"frames":120,"endedAt":"2026-10-28T09:30:00.000"}]',
+      },
+    );
 
+    // The Latest session card sits below the fold on a phone screen, so
+    // the sliver list only builds it once scrolled into view.
+    await tester.scrollUntilVisible(
+      find.text('Latest session'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
 
+    expect(find.text('Saved Live sessions'), findsOneWidget);
+    expect(find.text('Average score: 80 · Frames: 120'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.widgetWithText(FilledButton, 'Insights'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Insights'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('28/10/2026 09:30'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

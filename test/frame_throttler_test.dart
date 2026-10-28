@@ -29,4 +29,15 @@ void main() {
     throttler.reset();
     expect(throttler.shouldAnalyze(), isTrue);
   });
+
+  test('a backwards clock jump does not block analysis', () {
+    var now = DateTime(2026, 10, 28, 10, 0, 0);
+    final throttler = FrameThrottler(clock: () => now);
+    expect(throttler.shouldAnalyze(), isTrue);
+    now = now.add(const Duration(milliseconds: 50));
+    expect(throttler.shouldAnalyze(), isFalse);
+    // The system clock jumps back past the last accepted frame.
+    now = DateTime(2026, 10, 28, 9, 59, 0);
+    expect(throttler.shouldAnalyze(), isTrue);
+  });
 }
