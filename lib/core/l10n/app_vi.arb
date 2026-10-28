@@ -83,8 +83,24 @@
       }
     }
   },
+  "labDecoderTrainingLoro": "Huấn luyện trên run {train}; đánh giá leave-one-run-out.",
+  "@labDecoderTrainingLoro": {
+    "placeholders": {
+      "train": {
+        "type": "String"
+      }
+    }
+  },
   "labDecoderAccuracy": "Độ chính xác trên run giữ lại: {percent}% (ngẫu nhiên 50%)",
   "@labDecoderAccuracy": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "labDecoderAccuracyLoro": "Độ chính xác leave-one-run-out: {percent}% (ngẫu nhiên 50%)",
+  "@labDecoderAccuracyLoro": {
     "placeholders": {
       "percent": {
         "type": "int"
@@ -99,6 +115,8 @@
   "labDecoderPrediction": "Dự đoán",
   "labDecoderMarker": "Mốc",
   "labDecoderLimitations": "Một người tham gia (S001). Chỉ là demo; không phải thiết bị y tế và không đọc suy nghĩ.",
+  "labDecoderPreprocessingLabel": "Tiền xử lý",
+  "labDecoderLimitationsLabel": "Giới hạn",
   "labDatasetTitle": "Dữ liệu & giấy phép",
   "labSourceLabel": "Nguồn",
   "labRecordingLabel": "Bản ghi",
@@ -117,15 +135,21 @@
   "insightsEmptySavedOn": "Chưa có phiên nào được lưu. Hoàn thành một phiên Live, nó sẽ xuất hiện ở đây.",
   "insightsStart": "Bắt đầu Live",
   "insightsSavedTitle": "Phiên Live đã lưu",
+  "insightsDelete": "Xóa phiên",
   "learnTitle": "Học",
   "learnSubtitle": "Hiểu đúng về BCI, EEG và giới hạn của công nghệ.",
-  "learnComingSoon": "Nội dung song ngữ sẽ có ở S3.",
   "lesson1Title": "Neuron và EEG",
   "lesson2Title": "BCI là gì?",
   "lesson3Title": "Xâm lấn và không xâm lấn",
   "lesson4Title": "Siêu âm, từ trường, ánh sáng",
   "lesson5Title": "WiFi có đọc được não?",
   "lesson6Title": "Đạo đức và quyền riêng tư",
+  "lesson1Body": "Neuron giao tiếp bằng xung điện rất nhỏ. EEG lắng nghe từ da đầu, thu tín hiệu tổng hợp của hàng triệu neuron cùng lúc \u2014 một cửa sổ mờ và nhiễu, không bao giờ là một suy nghĩ đơn lẻ.",
+  "lesson2Body": "Giao diện não\u2013máy tính biến tín hiệu não thành lệnh hoặc phản hồi: tín hiệu, giải mã, đáp lại. Vòng lặp của Nemro đúng là như vậy \u2014 và nó chỉ tốt bằng tín hiệu mà nó đọc được.",
+  "lesson3Body": "Điện cực cấy ghép nghe rõ từng neuron, nhưng cần phẫu thuật. EEG da đầu an toàn và dễ dùng, nhưng thô và nhiễu. Nemro chỉ dùng phía không xâm lấn \u2014 và Live thậm chí không dùng EEG, chỉ dùng proxy camera.",
+  "lesson4Body": "Siêu âm, MEG và ánh sáng hồng ngoại gần mỗi loại cảm nhận não theo cách khác nhau, đánh đổi độ chính xác lấy chi phí và tính di động. Không loại nào đọc được suy nghĩ \u2014 tất cả đều đo tín hiệu gián tiếp và nhiễu.",
+  "lesson5Body": "Không. Cảm biến Wi-Fi chỉ nhận ra chuyển động và tư thế qua sóng radio bị nhiễu \u2014 nó không chạm tới hoạt động não. Mọi sản phẩm quảng cáo đọc suy nghĩ qua Wi-Fi đều là thổi phồng, hoặc lừa đảo.",
+  "lesson6Body": "Dữ liệu não rất riêng tư, dù nó có nhiễu. Nemro giữ mọi thứ trên thiết bị này: không tài khoản, không theo dõi, không tải lên. Lịch sử phiên là tùy chọn, và bạn có thể xóa bất cứ lúc nào.",
   "settingsTitle": "Cài đặt",
   "settingsLanguage": "Ngôn ngữ",
   "settingsAppearance": "Giao diện",

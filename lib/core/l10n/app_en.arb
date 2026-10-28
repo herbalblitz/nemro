@@ -83,8 +83,24 @@
       }
     }
   },
+  "labDecoderTrainingLoro": "Trained on runs {train}; leave-one-run-out evaluation.",
+  "@labDecoderTrainingLoro": {
+    "placeholders": {
+      "train": {
+        "type": "String"
+      }
+    }
+  },
   "labDecoderAccuracy": "Held-out accuracy: {percent}% (chance 50%)",
   "@labDecoderAccuracy": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "labDecoderAccuracyLoro": "Leave-one-run-out accuracy: {percent}% (chance 50%)",
+  "@labDecoderAccuracyLoro": {
     "placeholders": {
       "percent": {
         "type": "int"
@@ -99,6 +115,8 @@
   "labDecoderPrediction": "Prediction",
   "labDecoderMarker": "Marker",
   "labDecoderLimitations": "Single subject (S001). Demo only; not a medical device and not mind reading.",
+  "labDecoderPreprocessingLabel": "Preprocessing",
+  "labDecoderLimitationsLabel": "Limitations",
   "labDatasetTitle": "Dataset & license",
   "labSourceLabel": "Source",
   "labRecordingLabel": "Recording",
@@ -117,15 +135,21 @@
   "insightsEmptySavedOn": "No saved sessions yet. Complete a Live session and it will appear here.",
   "insightsStart": "Start Live",
   "insightsSavedTitle": "Saved Live sessions",
+  "insightsDelete": "Delete session",
   "learnTitle": "Learn",
   "learnSubtitle": "A clear look at BCI, EEG, and the limits of the technology.",
-  "learnComingSoon": "Bilingual lessons arrive in S3.",
   "lesson1Title": "Neurons and EEG",
   "lesson2Title": "What is a BCI?",
   "lesson3Title": "Invasive vs non-invasive",
   "lesson4Title": "Ultrasound, magnetism, light",
   "lesson5Title": "Can Wi-Fi read the brain?",
   "lesson6Title": "Ethics and privacy",
+  "lesson1Body": "Neurons talk in tiny electrical pulses. EEG listens from the scalp, picking up the summed activity of millions of neurons at once \u2014 a blurry, noisy window, never a single thought.",
+  "lesson2Body": "A brain\u2013computer interface turns brain signals into commands or feedback: signal, decode, respond. Nemro\u2019s loop is exactly that \u2014 and it is only as good as the signal it reads.",
+  "lesson3Body": "Implanted electrodes hear single neurons clearly, but need surgery. Scalp EEG is safe and easy, but coarse and noisy. Nemro stays on the non-invasive side \u2014 and Live uses no EEG at all, only a camera proxy.",
+  "lesson4Body": "Ultrasound, MEG, and near-infrared light each sense the brain differently, trading precision for cost and portability. None of them reads thoughts either \u2014 they all measure indirect, noisy signals.",
+  "lesson5Body": "No. Wi-Fi sensing notices movement and posture from disturbed radio waves \u2014 it never touches brain activity. Any product claiming to read your mind over Wi-Fi is hype, or a scam.",
+  "lesson6Body": "Brain data is intimate, even when it is noisy. Nemro keeps everything on this device: no accounts, no tracking, no uploads. Session history is opt-in, and you can delete it any time.",
   "settingsTitle": "Settings",
   "settingsLanguage": "Language",
   "settingsAppearance": "Appearance",
