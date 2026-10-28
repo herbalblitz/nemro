@@ -1375,6 +1375,68 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Lab card shows the held-out confusion matrix', (tester) async {
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      labRecording: _testRecording(),
+      labDecoder: _testDecoder(),
+      labPredictions: _testPredictions(),
+    );
+
+    final openLab = find.text('Open Lab');
+    await tester.ensureVisible(openLab);
+    await tester.tap(openLab);
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('AI decoder'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Confusion matrix (rows = actual, columns = predicted)'),
+      findsOneWidget,
+    );
+    // The test matrix is [[5, 3], [2, 5]]; the off-diagonal 3 is the
+    // only bare '3' cell in the card.
+    expect(find.text('3'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Lab card hides the confusion matrix for a LORO fallback',
+      (tester) async {
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      labRecording: _testRecording(),
+      labDecoder: _testDecoderNoTestRun(),
+      labPredictions: _testPredictions(),
+    );
+
+    final openLab = find.text('Open Lab');
+    await tester.ensureVisible(openLab);
+    await tester.tap(openLab);
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('AI decoder'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    // The no-test-run double still carries a matrix, but without a
+    // held-out run there is no held-out matrix to show.
+    expect(
+      find.text('Confusion matrix (rows = actual, columns = predicted)'),
+      findsNothing,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Insights deletes exactly one session and Home follows',
       (tester) async {
     await _pumpApp(

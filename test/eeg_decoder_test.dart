@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flutter/services.dart';
@@ -142,4 +143,33 @@ void main() {
       throwsStateError,
     );
   });
+
+  test(
+    'rejects a non-finite model number and falls back for chance accuracy',
+    () async {
+      final source = await rootBundle.loadString(eegDecoderModelAsset);
+
+      // A string 'NaN' sampling rate must not slip past validation: NaN
+      // comparisons are false, so the old `<= 0` check would have passed
+      // it and broken decoding later.
+      final mutated = jsonDecode(source) as Map<String, dynamic>;
+      mutated['sampling_rate_hz'] = 'NaN';
+      expect(
+        () => EegDecoderModel.fromJson(jsonEncode(mutated)),
+        throwsFormatException,
+      );
+
+      // Chance accuracy has a default, so an unusable value falls back
+      // to it instead of failing the whole model.
+      final chanceMutated = jsonDecode(source) as Map<String, dynamic>;
+      (chanceMutated['training'] as Map<String, dynamic>)['chance_accuracy'] =
+          'NaN';
+      expect(
+        EegDecoderModel.fromJson(
+          jsonEncode(chanceMutated),
+        ).training.chanceAccuracy,
+        0.5,
+      );
+    },
+  );
 }

@@ -89,6 +89,35 @@ void main() {
     );
   });
 
+  test('rejects non-finite sample values and timestamps', () {
+    // double.tryParse accepts 'NaN', and a NaN sample would poison the
+    // decoder (NaN probability, then a crash rounding it for display),
+    // so non-finite values must fail at the parse boundary.
+    expect(
+      () => EegRecording.parse(
+        csv: 'time_s,C3,Cz\n0.0000,NaN,2\n0.00625,3,4\n0.0125,5,6\n',
+        metadataJson: _metadata(),
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => EegRecording.parse(
+        csv: 'time_s,C3,Cz\nNaN,1,2\n0.00625,3,4\n0.0125,5,6\n',
+        metadataJson: _metadata(),
+      ),
+      throwsFormatException,
+    );
+  });
+
+  test('rejects a non-finite metadata number', () {
+    final mutated = jsonDecode(_metadata()) as Map<String, dynamic>;
+    mutated['sampling_rate_hz'] = 'NaN';
+    expect(
+      () => EegRecording.parse(csv: _csv, metadataJson: jsonEncode(mutated)),
+      throwsFormatException,
+    );
+  });
+
   test('the bundled sample has the expected shape and markers', () async {
     final csv = await rootBundle.loadString(eegSampleCsvAsset);
     final metadata = await rootBundle.loadString(eegSampleMetadataAsset);
