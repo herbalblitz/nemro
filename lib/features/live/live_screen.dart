@@ -193,6 +193,10 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
   Future<void> _stopSession({bool pausedByLifecycle = false}) async {
     if (!_isRunning) return;
     _operation++;
+    // Mark stopped synchronously, before the save below awaits: a second
+    // stop (double back press, lifecycle event) must be a no-op instead
+    // of computing and saving a duplicate summary.
+    _isRunning = false;
 
     final session = _session;
     final subscription = _frameSubscription;
@@ -256,27 +260,43 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
     final theme = Theme.of(context);
     final lensDirection = ref.watch(liveCameraLensProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.liveTitle),
-        leading: context.canPop()
-            ? null
-            : IconButton(
-                onPressed: () => context.go('/'),
-                tooltip: l10n.navHome,
-                icon: const Icon(Icons.close_rounded),
-              ),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
-        children: [
-          if (_isRunning)
-            ..._buildRunning(l10n, theme, lensDirection)
-          else if (_isStarting)
-            ..._buildStarting(l10n, theme)
-          else
-            ..._buildIdle(l10n, theme, lensDirection),
-        ],
+    // Leaving mid-session must end the session like Stop does — with a
+    // summary (persisted when saving is on) and the camera released —
+    // instead of silently discarding it in dispose(). While running, a
+    // pop is intercepted here; the close button below stops first too,
+    // because it navigates with go() rather than popping.
+    return PopScope(
+      canPop: !_isRunning,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop || !_isRunning) return;
+        await _stopSession();
+        if (mounted) this.context.pop();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(l10n.liveTitle),
+          leading: context.canPop()
+              ? null
+              : IconButton(
+                  onPressed: () async {
+                    if (_isRunning) await _stopSession();
+                    if (mounted) this.context.go('/');
+                  },
+                  tooltip: l10n.navHome,
+                  icon: const Icon(Icons.close_rounded),
+                ),
+        ),
+        body: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+          children: [
+            if (_isRunning)
+              ..._buildRunning(l10n, theme, lensDirection)
+            else if (_isStarting)
+              ..._buildStarting(l10n, theme)
+            else
+              ..._buildIdle(l10n, theme, lensDirection),
+          ],
+        ),
       ),
     );
   }
