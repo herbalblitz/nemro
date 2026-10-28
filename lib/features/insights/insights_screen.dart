@@ -13,11 +13,19 @@ import 'package:nemro/features/live/data/live_session_summary.dart';
 /// Summaries only exist here when the user turns saving on in Settings;
 /// with saving off, Live sessions stay memory-only and this screen keeps
 /// its empty state. Deleting all local data in Settings wipes this list.
-class InsightsScreen extends ConsumerWidget {
+/// Stateful so a per-session delete rebuilds this screen from storage
+/// right away; Home's latest-session card picks the change up when the
+/// user navigates back to it.
+class InsightsScreen extends ConsumerStatefulWidget {
   const InsightsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<InsightsScreen> createState() => _InsightsScreenState();
+}
+
+class _InsightsScreenState extends ConsumerState<InsightsScreen> {
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final summaries = ref.watch(liveSessionStoreProvider).loadSync();
@@ -62,11 +70,22 @@ class InsightsScreen extends ConsumerWidget {
                           ),
                         );
                       }
-                      final summary = summaries[summaries.length - index];
+                      // Displayed newest first; storage is oldest first.
+                      final storedIndex = summaries.length - index;
+                      final summary = summaries[storedIndex];
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: _SavedSessionCard(
                           summary: summary,
+                          deleteKey: ValueKey(
+                            'insights-delete-$storedIndex',
+                          ),
+                          onDelete: () async {
+                            await ref
+                                .read(liveSessionStoreProvider)
+                                .deleteAt(storedIndex);
+                            if (mounted) setState(() {});
+                          },
                           l10n: l10n,
                         ),
                       );
@@ -81,9 +100,16 @@ class InsightsScreen extends ConsumerWidget {
 }
 
 class _SavedSessionCard extends StatelessWidget {
-  const _SavedSessionCard({required this.summary, required this.l10n});
+  const _SavedSessionCard({
+    required this.summary,
+    required this.deleteKey,
+    required this.onDelete,
+    required this.l10n,
+  });
 
   final LiveSessionSummary summary;
+  final ValueKey<String> deleteKey;
+  final VoidCallback onDelete;
   final AppLocalizations l10n;
 
   @override
@@ -108,6 +134,12 @@ class _SavedSessionCard extends StatelessWidget {
         subtitle: Text(
           '${l10n.liveSummaryDuration}: ${_formatDuration(summary.duration)}'
           ' · ${l10n.liveSummaryFrames}: ${summary.frames}',
+        ),
+        trailing: IconButton(
+          key: deleteKey,
+          onPressed: onDelete,
+          tooltip: l10n.insightsDelete,
+          icon: const Icon(Icons.delete_outline_rounded),
         ),
       ),
     );
