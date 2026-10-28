@@ -50,6 +50,19 @@ class LiveSessionStore {
     );
   }
 
+  /// Removes exactly one session by its position in storage order
+  /// (oldest first). Index-based, not value-based, so two sessions
+  /// with identical scores and timestamps cannot be confused.
+  Future<void> deleteAt(int index) async {
+    final summaries = loadSync();
+    if (index < 0 || index >= summaries.length) return;
+    summaries.removeAt(index);
+    await _prefs.setString(
+      storageKey,
+      jsonEncode(summaries.map((entry) => entry.toJson()).toList()),
+    );
+  }
+
   Future<void> clear() async {
     await _prefs.remove(storageKey);
   }
