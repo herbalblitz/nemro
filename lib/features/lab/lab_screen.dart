@@ -718,7 +718,11 @@ class _ModelSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final training = decoder.model.training;
-    final accuracy = training.testRun.isNotEmpty
+    // The accuracy value and its label must travel together: a model
+    // with a held-out run wears the held-out label, while a model
+    // without one falls back to leave-one-run-out — and must say so.
+    final hasHeldOut = training.testRun.isNotEmpty;
+    final accuracy = hasHeldOut
         ? training.heldOutAccuracy
         : training.leaveOneRunOutAccuracy;
     final percent = (accuracy * 100).round();
@@ -741,18 +745,48 @@ class _ModelSummary extends StatelessWidget {
           const SizedBox(height: 6),
           _SummaryLine(
             icon: Icons.science_outlined,
-            text: l10n.labDecoderTraining(
-              training.trainRuns.join(' & '),
-              training.testRun,
-            ),
+            text: hasHeldOut
+                ? l10n.labDecoderTraining(
+                    training.trainRuns.join(' & '),
+                    training.testRun,
+                  )
+                : l10n.labDecoderTrainingLoro(
+                    training.trainRuns.join(' & '),
+                  ),
             theme: theme,
           ),
           const SizedBox(height: 6),
           _SummaryLine(
             icon: Icons.verified_outlined,
-            text: l10n.labDecoderAccuracy(percent),
+            text: hasHeldOut
+                ? l10n.labDecoderAccuracy(percent)
+                : l10n.labDecoderAccuracyLoro(percent),
             theme: theme,
           ),
+          // The model's own preprocessing and limitations text: parsed
+          // for a while, never shown until now. Shown only when the
+          // model actually provides them; the static italic caveat below
+          // the card stays as the general disclaimer for all states.
+          if (decoder.model.preprocessing.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            _SummaryLine(
+              icon: Icons.filter_alt_outlined,
+              text:
+                  '${l10n.labDecoderPreprocessingLabel}: '
+                  '${decoder.model.preprocessing}',
+              theme: theme,
+            ),
+          ],
+          if (decoder.model.limitations.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            _SummaryLine(
+              icon: Icons.warning_amber_rounded,
+              text:
+                  '${l10n.labDecoderLimitationsLabel}: '
+                  '${decoder.model.limitations}',
+              theme: theme,
+            ),
+          ],
         ],
       ),
     );
