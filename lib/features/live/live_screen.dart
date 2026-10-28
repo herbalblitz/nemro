@@ -1,14 +1,19 @@
 import 'dart:async';
 
+import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'package:nemro/core/l10n/generated/app_localizations.dart';
+import 'package:nemro/core/preferences/preferences_providers.dart';
 import 'package:nemro/core/theme/app_theme.dart';
 import 'package:nemro/features/live/data/attention_analyzer.dart';
+import 'package:nemro/features/live/data/frame_throttler.dart';
 import 'package:nemro/features/live/data/live_camera_gateway.dart';
+import 'package:nemro/features/live/data/live_session_store.dart';
 import 'package:nemro/features/live/data/live_session_summary.dart';
+import 'package:nemro/features/live/data/system_settings_opener.dart';
 
 class LiveScreen extends ConsumerStatefulWidget {
   const LiveScreen({super.key});
@@ -29,6 +34,9 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
   LiveSessionSummary? _summary;
   LiveCameraFailure? _failure;
   DateTime? _startedAt;
+  FrameThrottler? _throttler;
+  String? _semanticBand;
+  int? _semanticScore;
   int _operation = 0;
   int _frameCount = 0;
   int _framesSinceUiUpdate = 0;
@@ -81,7 +89,10 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
     });
 
     try {
-      final session = await ref.read(liveCameraGatewayProvider).start();
+      final lensDirection = ref.read(liveCameraLensProvider);
+      final session = await ref
+          .read(liveCameraGatewayProvider)
+          .start(lensDirection: lensDirection);
       if (!mounted || operation != _operation) {
         try {
           await session.dispose();
@@ -94,12 +105,21 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
       _session = session;
       _analyzer.reset();
       _sample = null;
+      _semanticBand = null;
+      _semanticScore = null;
+      _throttler = ref.read(frameThrottlerProvider);
+      _throttler!.reset();
       _startedAt = DateTime.now();
       _frameCount = 0;
       _framesSinceUiUpdate = 0;
       _scoreCount = 0;
       _scoreSum = 0;
-      _frameSubscription = session.frames.listen(_onFrame);
+      _frameSubscription = session.frames.listen((frame) {
+        // Ignore frames from a session that is no longer current (its
+        // teardown runs detached, so a queued frame could otherwise land
+        // after a stop or a camera switch).
+        if (identical(session, _session)) _onFrame(frame);
+      });
 
       setState(() {
         _isStarting = false;
@@ -131,6 +151,9 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
   void _onFrame(LumaFrame frame) {
     if (!_isRunning || _disposed) return;
 
+    final throttler = _throttler;
+    if (throttler != null && !throttler.shouldAnalyze()) return;
+
     final sample = _analyzer.addFrame(frame);
     _frameCount++;
     _scoreSum += sample.score;
@@ -139,7 +162,32 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
     if (_framesSinceUiUpdate < _uiFrameInterval) return;
     _framesSinceUiUpdate = 0;
     if (!mounted) return;
-    setState(() => _sample = sample);
+    setState(() {
+      _sample = sample;
+      // The spoken score only moves when the band changes, so a screen
+      // reader is not spammed by every frame while the visual score
+      // keeps updating live.
+      final band = _bandForScore(sample.roundedScore);
+      if (band != _semanticBand) {
+        _semanticBand = band;
+        _semanticScore = sample.roundedScore;
+      }
+    });
+  }
+
+  static String _bandForScore(int score) {
+    if (score >= 67) return 'high';
+    if (score >= 34) return 'medium';
+    return 'low';
+  }
+
+  Future<void> _onLensChanged(CameraLensDirection direction) async {
+    await ref.read(liveCameraLensProvider.notifier).setLens(direction);
+    if (!_isRunning) return;
+    // Switching cameras disposes the old controller before a new session
+    // starts with the selected direction.
+    await _stopSession();
+    await _startSession();
   }
 
   Future<void> _stopSession({bool pausedByLifecycle = false}) async {
@@ -164,6 +212,16 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
       endedAt: endedAt,
     );
 
+    // Session history is opt-in: with saving off, the summary stays
+    // memory-only and nothing about the session is persisted.
+    if (mounted && ref.read(saveLiveSummariesProvider)) {
+      try {
+        await ref.read(liveSessionStoreProvider).save(summary);
+      } catch (_) {
+        // Saving history must never break ending a session.
+      }
+    }
+
     if (mounted) {
       setState(() {
         _isRunning = false;
@@ -175,19 +233,25 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
       });
     }
 
-    final cancelFuture = subscription?.cancel();
-    try {
-      await session?.dispose();
-    } catch (_) {
-      // The camera may already have been released by the platform.
-    }
-    await cancelFuture;
+    // Teardown runs detached, not awaited: awaiting a broadcast
+    // stream's cancel/close here can stall anything chained after the
+    // stop (e.g. a camera switch), because each waits on the other.
+    // The session object is already dropped above, and frames are only
+    // processed for the current session (see _startSession), so detached
+    // teardown cannot leak frames into a later session.
+    unawaited(
+      subscription?.cancel().then((_) {}).catchError((_) {}),
+    );
+    unawaited(
+      session?.dispose().then((_) {}).catchError((_) {}),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final lensDirection = ref.watch(liveCameraLensProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -204,17 +268,21 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
         children: [
           if (_isRunning)
-            ..._buildRunning(l10n, theme)
+            ..._buildRunning(l10n, theme, lensDirection)
           else if (_isStarting)
             ..._buildStarting(l10n, theme)
           else
-            ..._buildIdle(l10n, theme),
+            ..._buildIdle(l10n, theme, lensDirection),
         ],
       ),
     );
   }
 
-  List<Widget> _buildIdle(AppLocalizations l10n, ThemeData theme) {
+  List<Widget> _buildIdle(
+    AppLocalizations l10n,
+    ThemeData theme,
+    CameraLensDirection lensDirection,
+  ) {
     final failure = _failure;
     final summary = _summary;
     final showPrivacyBullets = failure == null && summary == null;
@@ -226,6 +294,15 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
         _ErrorCard(
           failure: failure,
           onRetry: _startSession,
+          onOpenSettings: () async {
+            try {
+              await ref
+                  .read(systemSettingsOpenerProvider)
+                  .openAppSettings();
+            } catch (_) {
+              // Opening system settings must not crash the screen.
+            }
+          },
           l10n: l10n,
           theme: theme,
         ),
@@ -248,6 +325,15 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
           ),
           const SizedBox(height: 16),
         ],
+        _CameraLensSelector(
+          selected: lensDirection,
+          onChanged: (direction) {
+            unawaited(_onLensChanged(direction));
+          },
+          l10n: l10n,
+          theme: theme,
+        ),
+        const SizedBox(height: 16),
         FilledButton.icon(
           key: const ValueKey('live-start-button'),
           onPressed: _startSession,
@@ -330,14 +416,28 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
     ];
   }
 
-  List<Widget> _buildRunning(AppLocalizations l10n, ThemeData theme) {
+  List<Widget> _buildRunning(
+    AppLocalizations l10n,
+    ThemeData theme,
+    CameraLensDirection lensDirection,
+  ) {
     final session = _session;
     return [
       if (session != null) _PreviewCard(session: session, l10n: l10n),
       const SizedBox(height: 16),
       _ScoreCard(
         sample: _sample,
+        semanticScore: _semanticScore,
         frameCount: _frameCount,
+        l10n: l10n,
+        theme: theme,
+      ),
+      const SizedBox(height: 16),
+      _CameraLensSelector(
+        selected: lensDirection,
+        onChanged: (direction) {
+          unawaited(_onLensChanged(direction));
+        },
         l10n: l10n,
         theme: theme,
       ),
@@ -555,15 +655,69 @@ class _OnDeviceChip extends StatelessWidget {
   }
 }
 
+class _CameraLensSelector extends StatelessWidget {
+  const _CameraLensSelector({
+    required this.selected,
+    required this.onChanged,
+    required this.l10n,
+    required this.theme,
+  });
+
+  final CameraLensDirection selected;
+  final ValueChanged<CameraLensDirection> onChanged;
+  final AppLocalizations l10n;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.liveCameraLabel,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 8),
+        SegmentedButton<CameraLensDirection>(
+          key: const ValueKey('live-camera-lens-selector'),
+          segments: [
+            ButtonSegment(
+              value: CameraLensDirection.front,
+              label: Text(l10n.liveCameraFront),
+            ),
+            ButtonSegment(
+              value: CameraLensDirection.back,
+              label: Text(l10n.liveCameraBack),
+            ),
+          ],
+          selected: {selected},
+          showSelectedIcon: false,
+          onSelectionChanged: (selection) {
+            if (selection.first != selected) onChanged(selection.first);
+          },
+        ),
+      ],
+    );
+  }
+}
+
 class _ScoreCard extends StatelessWidget {
   const _ScoreCard({
     required this.sample,
+    required this.semanticScore,
     required this.frameCount,
     required this.l10n,
     required this.theme,
   });
 
   final AttentionSample? sample;
+
+  /// The score announced to screen readers. It only moves when the score
+  /// band changes, while the visual score updates every frame.
+  final int? semanticScore;
   final int frameCount;
   final AppLocalizations l10n;
   final ThemeData theme;
@@ -571,7 +725,11 @@ class _ScoreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final current = sample;
+    // Opt out of the Card's default semantic merging so the score keeps
+    // its own announcement node: otherwise the whole card (meters
+    // included) would be re-announced on every frame update.
     return Card(
+      semanticContainer: false,
       elevation: 0,
       margin: EdgeInsets.zero,
       color: theme.colorScheme.surface,
@@ -607,7 +765,10 @@ class _ScoreCard extends StatelessWidget {
               )
             else ...[
               Semantics(
-                label: l10n.liveScoreSemantics(current.roundedScore),
+                key: const ValueKey('live-score-semantics'),
+                label: l10n.liveScoreSemantics(
+                  semanticScore ?? current.roundedScore,
+                ),
                 excludeSemantics: true,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -934,12 +1095,14 @@ class _ErrorCard extends StatelessWidget {
   const _ErrorCard({
     required this.failure,
     required this.onRetry,
+    required this.onOpenSettings,
     required this.l10n,
     required this.theme,
   });
 
   final LiveCameraFailure failure;
   final VoidCallback onRetry;
+  final VoidCallback onOpenSettings;
   final AppLocalizations l10n;
   final ThemeData theme;
 
@@ -1005,6 +1168,13 @@ class _ErrorCard extends StatelessWidget {
                         color: theme.colorScheme.onErrorContainer,
                         height: 1.4,
                       ),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      key: const ValueKey('live-open-settings-button'),
+                      onPressed: onOpenSettings,
+                      icon: const Icon(Icons.settings_outlined),
+                      label: Text(l10n.liveOpenSettings),
                     ),
                   ],
                   const SizedBox(height: 12),
