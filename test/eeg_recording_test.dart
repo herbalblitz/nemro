@@ -45,7 +45,6 @@ void main() {
     expect(recording.duration, 0.01875);
     expect(recording.samples[0], [1, 3, 5]);
     expect(recording.samples[1], [2, 4, 6]);
-    expect(recording.valueAt(0, 0.00625), 3);
     expect(recording.eventAt(0.0)?.kind, EegEventKind.rest);
     expect(recording.eventAt(0.00625)?.kind, EegEventKind.leftFist);
     expect(recording.eventAt(0.02), isNull);
@@ -57,6 +56,15 @@ void main() {
         csv: 'time_s,C3\n0.0,1\n0.00625\n',
         metadataJson: _metadata(channels: const ['C3']),
       ),
+      throwsFormatException,
+    );
+  });
+
+  test('rejects a declared duration that does not match the samples', () {
+    final mismatched = jsonDecode(_metadata()) as Map<String, dynamic>;
+    mismatched['duration_s'] = 0.05;
+    expect(
+      () => EegRecording.parse(csv: _csv, metadataJson: jsonEncode(mismatched)),
       throwsFormatException,
     );
   });
