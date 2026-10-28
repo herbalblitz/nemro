@@ -99,7 +99,7 @@ Debug APKs are large because they bundle every ABI and the debug Flutter engine.
 flutter build apk --release
 ```
 
-Until a release keystore is configured, release builds are signed with the debug key. The CI workflow uploads `nemro-release-apk` from the **Actions** tab, which is useful when you do not have a local Android toolchain.
+Until a release keystore is configured, release builds are signed with the debug key. To configure a real release key locally or in GitHub Actions, see [docs/release-signing.md](docs/release-signing.md). The CI workflow uploads `nemro-release-apk` from the **Actions** tab, which is useful when you do not have a local Android toolchain.
 
 The Android implementation of `shared_preferences` is pinned to 2.4.28. Version 2.5+ pulls in `package:jni`, which requires the Android NDK and CMake at build time; Nemro has no native code, so the pure-Kotlin implementation keeps builds simple.
 

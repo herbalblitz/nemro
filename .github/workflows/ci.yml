@@ -94,6 +94,10 @@ jobs:
             echo "Release-signing secrets not configured; falling back to the debug key."
             exit 0
           fi
+          if [ -z "$ANDROID_KEY_ALIAS" ] || [ -z "$ANDROID_KEY_PASSWORD" ] || [ -z "$ANDROID_STORE_PASSWORD" ]; then
+            echo "::error::Release signing is partially configured. Set ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD, and ANDROID_STORE_PASSWORD."
+            exit 1
+          fi
           echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/release.keystore
           {
             printf 'storePassword=%s\n' "$ANDROID_STORE_PASSWORD"

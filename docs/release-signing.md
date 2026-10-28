@@ -1,7 +1,7 @@
 # Release signing
 
-Nemro 0.1.0 builds a release APK signed with the debug key. That is fine for
-testing, but a public release needs its own keystore:
+By default, Nemro builds a release APK signed with the debug key. That is fine
+for testing, but a public release needs its own keystore:
 
 - A debug-signed APK cannot be published to Google Play.
 - Once users install a build signed with the real key, every later update must
