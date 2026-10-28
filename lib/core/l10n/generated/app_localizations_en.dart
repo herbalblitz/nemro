@@ -42,7 +42,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingConsentPoint4 =>
-      'Camera frames are processed on-device and never recorded.';
+      'When Live arrives, camera frames will be processed on-device and never recorded.';
 
   @override
   String get onboardingConsentCheckbox => 'I understand and agree';
@@ -76,7 +76,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeLiveSubtitle => 'Track attention';
 
   @override
-  String get homeLiveAction => 'Enable camera';
+  String get homeLiveAction => 'Preview';
 
   @override
   String get homeLiveBadge => 'SOON';
