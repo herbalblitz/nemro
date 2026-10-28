@@ -530,17 +530,29 @@ abstract class AppLocalizations {
   /// **'No data yet'**
   String get insightsEmptyTitle;
 
-  /// No description provided for @insightsEmptyBody.
+  /// No description provided for @insightsEmptySavedOff.
   ///
   /// In en, this message translates to:
-  /// **'Saved Live and Lab sessions will appear here when session history is added.'**
-  String get insightsEmptyBody;
+  /// **'Turn on saving Live session summaries in Settings to keep them here.'**
+  String get insightsEmptySavedOff;
+
+  /// No description provided for @insightsEmptySavedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved sessions yet. Complete a Live session and it will appear here.'**
+  String get insightsEmptySavedOn;
 
   /// No description provided for @insightsStart.
   ///
   /// In en, this message translates to:
   /// **'Start Live'**
   String get insightsStart;
+
+  /// No description provided for @insightsSavedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Live sessions'**
+  String get insightsSavedTitle;
 
   /// No description provided for @learnTitle.
   ///
@@ -650,6 +662,18 @@ abstract class AppLocalizations {
   /// **'Privacy policy'**
   String get settingsPrivacyPolicy;
 
+  /// No description provided for @settingsSaveLiveSummaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Live session summaries'**
+  String get settingsSaveLiveSummaries;
+
+  /// No description provided for @settingsSaveLiveSummariesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'When on, completed Live session summaries are saved on this device only. Turn off to stop saving new ones.'**
+  String get settingsSaveLiveSummariesBody;
+
   /// No description provided for @settingsData.
   ///
   /// In en, this message translates to:
@@ -659,7 +683,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsDataBody.
   ///
   /// In en, this message translates to:
-  /// **'Nemro stores settings locally. Live session summaries are not saved yet.'**
+  /// **'Nemro stores settings locally. Live session summaries are saved only when you turn that on.'**
   String get settingsDataBody;
 
   /// No description provided for @settingsDeleteData.
@@ -961,6 +985,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'If you permanently denied access, enable Camera for Nemro in Android Settings.'**
   String get livePermissionHint;
+
+  /// No description provided for @liveOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get liveOpenSettings;
+
+  /// No description provided for @liveCameraLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get liveCameraLabel;
+
+  /// No description provided for @liveCameraFront.
+  ///
+  /// In en, this message translates to:
+  /// **'Front'**
+  String get liveCameraFront;
+
+  /// No description provided for @liveCameraBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get liveCameraBack;
 
   /// No description provided for @livePreviewSemantics.
   ///

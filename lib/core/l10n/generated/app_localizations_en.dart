@@ -243,11 +243,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get insightsEmptyTitle => 'No data yet';
 
   @override
-  String get insightsEmptyBody =>
-      'Saved Live and Lab sessions will appear here when session history is added.';
+  String get insightsEmptySavedOff =>
+      'Turn on saving Live session summaries in Settings to keep them here.';
+
+  @override
+  String get insightsEmptySavedOn =>
+      'No saved sessions yet. Complete a Live session and it will appear here.';
 
   @override
   String get insightsStart => 'Start Live';
+
+  @override
+  String get insightsSavedTitle => 'Saved Live sessions';
 
   @override
   String get learnTitle => 'Learn';
@@ -306,11 +313,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsPrivacyPolicy => 'Privacy policy';
 
   @override
+  String get settingsSaveLiveSummaries => 'Save Live session summaries';
+
+  @override
+  String get settingsSaveLiveSummariesBody =>
+      'When on, completed Live session summaries are saved on this device only. Turn off to stop saving new ones.';
+
+  @override
   String get settingsData => 'Data';
 
   @override
   String get settingsDataBody =>
-      'Nemro stores settings locally. Live session summaries are not saved yet.';
+      'Nemro stores settings locally. Live session summaries are saved only when you turn that on.';
 
   @override
   String get settingsDeleteData => 'Delete all local data';
@@ -476,6 +490,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get livePermissionHint =>
       'If you permanently denied access, enable Camera for Nemro in Android Settings.';
+
+  @override
+  String get liveOpenSettings => 'Open Settings';
+
+  @override
+  String get liveCameraLabel => 'Camera';
+
+  @override
+  String get liveCameraFront => 'Front';
+
+  @override
+  String get liveCameraBack => 'Back';
 
   @override
   String get livePreviewSemantics =>

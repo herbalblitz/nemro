@@ -246,11 +246,18 @@ class AppLocalizationsVi extends AppLocalizations {
   String get insightsEmptyTitle => 'Chưa có dữ liệu';
 
   @override
-  String get insightsEmptyBody =>
-      'Các phiên Live và Lab đã lưu sẽ xuất hiện ở đây khi có lịch sử phiên.';
+  String get insightsEmptySavedOff =>
+      'Bật lưu tóm tắt phiên Live trong Cài đặt để giữ chúng ở đây.';
+
+  @override
+  String get insightsEmptySavedOn =>
+      'Chưa có phiên nào được lưu. Hoàn thành một phiên Live, nó sẽ xuất hiện ở đây.';
 
   @override
   String get insightsStart => 'Bắt đầu Live';
+
+  @override
+  String get insightsSavedTitle => 'Phiên Live đã lưu';
 
   @override
   String get learnTitle => 'Học';
@@ -309,11 +316,18 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsPrivacyPolicy => 'Chính sách riêng tư';
 
   @override
+  String get settingsSaveLiveSummaries => 'Lưu tóm tắt phiên Live';
+
+  @override
+  String get settingsSaveLiveSummariesBody =>
+      'Khi bật, tóm tắt các phiên Live đã kết thúc được lưu chỉ trên thiết bị này. Tắt để ngừng lưu phiên mới.';
+
+  @override
   String get settingsData => 'Dữ liệu';
 
   @override
   String get settingsDataBody =>
-      'Nemro lưu cài đặt cục bộ. Tóm tắt phiên Live chưa được lưu.';
+      'Nemro lưu cài đặt cục bộ. Tóm tắt phiên Live chỉ được lưu khi bạn bật tính năng đó.';
 
   @override
   String get settingsDeleteData => 'Xóa toàn bộ dữ liệu cục bộ';
@@ -479,6 +493,18 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get livePermissionHint =>
       'Nếu bạn đã từ chối vĩnh viễn, hãy bật Camera cho Nemro trong Cài đặt Android.';
+
+  @override
+  String get liveOpenSettings => 'Mở Cài đặt';
+
+  @override
+  String get liveCameraLabel => 'Camera';
+
+  @override
+  String get liveCameraFront => 'Trước';
+
+  @override
+  String get liveCameraBack => 'Sau';
 
   @override
   String get livePreviewSemantics =>
