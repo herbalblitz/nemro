@@ -173,8 +173,18 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String labDecoderTrainingLoro(String train) {
+    return 'Huấn luyện trên run $train; đánh giá leave-one-run-out.';
+  }
+
+  @override
   String labDecoderAccuracy(int percent) {
     return 'Độ chính xác trên run giữ lại: $percent% (ngẫu nhiên 50%)';
+  }
+
+  @override
+  String labDecoderAccuracyLoro(int percent) {
+    return 'Độ chính xác leave-one-run-out: $percent% (ngẫu nhiên 50%)';
   }
 
   @override
@@ -201,6 +211,12 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get labDecoderLimitations =>
       'Một người tham gia (S001). Chỉ là demo; không phải thiết bị y tế và không đọc suy nghĩ.';
+
+  @override
+  String get labDecoderPreprocessingLabel => 'Tiền xử lý';
+
+  @override
+  String get labDecoderLimitationsLabel => 'Giới hạn';
 
   @override
   String get labDatasetTitle => 'Dữ liệu & giấy phép';
@@ -260,14 +276,14 @@ class AppLocalizationsVi extends AppLocalizations {
   String get insightsSavedTitle => 'Phiên Live đã lưu';
 
   @override
+  String get insightsDelete => 'Xóa phiên';
+
+  @override
   String get learnTitle => 'Học';
 
   @override
   String get learnSubtitle =>
       'Hiểu đúng về BCI, EEG và giới hạn của công nghệ.';
-
-  @override
-  String get learnComingSoon => 'Nội dung song ngữ sẽ có ở S3.';
 
   @override
   String get lesson1Title => 'Neuron và EEG';
@@ -286,6 +302,30 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get lesson6Title => 'Đạo đức và quyền riêng tư';
+
+  @override
+  String get lesson1Body =>
+      'Neuron giao tiếp bằng xung điện rất nhỏ. EEG lắng nghe từ da đầu, thu tín hiệu tổng hợp của hàng triệu neuron cùng lúc — một cửa sổ mờ và nhiễu, không bao giờ là một suy nghĩ đơn lẻ.';
+
+  @override
+  String get lesson2Body =>
+      'Giao diện não–máy tính biến tín hiệu não thành lệnh hoặc phản hồi: tín hiệu, giải mã, đáp lại. Vòng lặp của Nemro đúng là như vậy — và nó chỉ tốt bằng tín hiệu mà nó đọc được.';
+
+  @override
+  String get lesson3Body =>
+      'Điện cực cấy ghép nghe rõ từng neuron, nhưng cần phẫu thuật. EEG da đầu an toàn và dễ dùng, nhưng thô và nhiễu. Nemro chỉ dùng phía không xâm lấn — và Live thậm chí không dùng EEG, chỉ dùng proxy camera.';
+
+  @override
+  String get lesson4Body =>
+      'Siêu âm, MEG và ánh sáng hồng ngoại gần mỗi loại cảm nhận não theo cách khác nhau, đánh đổi độ chính xác lấy chi phí và tính di động. Không loại nào đọc được suy nghĩ — tất cả đều đo tín hiệu gián tiếp và nhiễu.';
+
+  @override
+  String get lesson5Body =>
+      'Không. Cảm biến Wi-Fi chỉ nhận ra chuyển động và tư thế qua sóng radio bị nhiễu — nó không chạm tới hoạt động não. Mọi sản phẩm quảng cáo đọc suy nghĩ qua Wi-Fi đều là thổi phồng, hoặc lừa đảo.';
+
+  @override
+  String get lesson6Body =>
+      'Dữ liệu não rất riêng tư, dù nó có nhiễu. Nemro giữ mọi thứ trên thiết bị này: không tài khoản, không theo dõi, không tải lên. Lịch sử phiên là tùy chọn, và bạn có thể xóa bất cứ lúc nào.';
 
   @override
   String get settingsTitle => 'Cài đặt';

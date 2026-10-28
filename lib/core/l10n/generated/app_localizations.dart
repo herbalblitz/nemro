@@ -392,11 +392,23 @@ abstract class AppLocalizations {
   /// **'Trained on runs {train}; evaluated on run {test}.'**
   String labDecoderTraining(String train, String test);
 
+  /// No description provided for @labDecoderTrainingLoro.
+  ///
+  /// In en, this message translates to:
+  /// **'Trained on runs {train}; leave-one-run-out evaluation.'**
+  String labDecoderTrainingLoro(String train);
+
   /// No description provided for @labDecoderAccuracy.
   ///
   /// In en, this message translates to:
   /// **'Held-out accuracy: {percent}% (chance 50%)'**
   String labDecoderAccuracy(int percent);
+
+  /// No description provided for @labDecoderAccuracyLoro.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave-one-run-out accuracy: {percent}% (chance 50%)'**
+  String labDecoderAccuracyLoro(int percent);
 
   /// No description provided for @labDecoderLoading.
   ///
@@ -445,6 +457,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Single subject (S001). Demo only; not a medical device and not mind reading.'**
   String get labDecoderLimitations;
+
+  /// No description provided for @labDecoderPreprocessingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Preprocessing'**
+  String get labDecoderPreprocessingLabel;
+
+  /// No description provided for @labDecoderLimitationsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Limitations'**
+  String get labDecoderLimitationsLabel;
 
   /// No description provided for @labDatasetTitle.
   ///
@@ -554,6 +578,12 @@ abstract class AppLocalizations {
   /// **'Saved Live sessions'**
   String get insightsSavedTitle;
 
+  /// No description provided for @insightsDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete session'**
+  String get insightsDelete;
+
   /// No description provided for @learnTitle.
   ///
   /// In en, this message translates to:
@@ -565,12 +595,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A clear look at BCI, EEG, and the limits of the technology.'**
   String get learnSubtitle;
-
-  /// No description provided for @learnComingSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Bilingual lessons arrive in S3.'**
-  String get learnComingSoon;
 
   /// No description provided for @lesson1Title.
   ///
@@ -607,6 +631,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ethics and privacy'**
   String get lesson6Title;
+
+  /// No description provided for @lesson1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Neurons talk in tiny electrical pulses. EEG listens from the scalp, picking up the summed activity of millions of neurons at once — a blurry, noisy window, never a single thought.'**
+  String get lesson1Body;
+
+  /// No description provided for @lesson2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'A brain–computer interface turns brain signals into commands or feedback: signal, decode, respond. Nemro’s loop is exactly that — and it is only as good as the signal it reads.'**
+  String get lesson2Body;
+
+  /// No description provided for @lesson3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Implanted electrodes hear single neurons clearly, but need surgery. Scalp EEG is safe and easy, but coarse and noisy. Nemro stays on the non-invasive side — and Live uses no EEG at all, only a camera proxy.'**
+  String get lesson3Body;
+
+  /// No description provided for @lesson4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Ultrasound, MEG, and near-infrared light each sense the brain differently, trading precision for cost and portability. None of them reads thoughts either — they all measure indirect, noisy signals.'**
+  String get lesson4Body;
+
+  /// No description provided for @lesson5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'No. Wi-Fi sensing notices movement and posture from disturbed radio waves — it never touches brain activity. Any product claiming to read your mind over Wi-Fi is hype, or a scam.'**
+  String get lesson5Body;
+
+  /// No description provided for @lesson6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Brain data is intimate, even when it is noisy. Nemro keeps everything on this device: no accounts, no tracking, no uploads. Session history is opt-in, and you can delete it any time.'**
+  String get lesson6Body;
 
   /// No description provided for @settingsTitle.
   ///

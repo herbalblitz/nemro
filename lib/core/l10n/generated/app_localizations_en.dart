@@ -171,8 +171,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String labDecoderTrainingLoro(String train) {
+    return 'Trained on runs $train; leave-one-run-out evaluation.';
+  }
+
+  @override
   String labDecoderAccuracy(int percent) {
     return 'Held-out accuracy: $percent% (chance 50%)';
+  }
+
+  @override
+  String labDecoderAccuracyLoro(int percent) {
+    return 'Leave-one-run-out accuracy: $percent% (chance 50%)';
   }
 
   @override
@@ -199,6 +209,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get labDecoderLimitations =>
       'Single subject (S001). Demo only; not a medical device and not mind reading.';
+
+  @override
+  String get labDecoderPreprocessingLabel => 'Preprocessing';
+
+  @override
+  String get labDecoderLimitationsLabel => 'Limitations';
 
   @override
   String get labDatasetTitle => 'Dataset & license';
@@ -257,14 +273,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get insightsSavedTitle => 'Saved Live sessions';
 
   @override
+  String get insightsDelete => 'Delete session';
+
+  @override
   String get learnTitle => 'Learn';
 
   @override
   String get learnSubtitle =>
       'A clear look at BCI, EEG, and the limits of the technology.';
-
-  @override
-  String get learnComingSoon => 'Bilingual lessons arrive in S3.';
 
   @override
   String get lesson1Title => 'Neurons and EEG';
@@ -283,6 +299,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lesson6Title => 'Ethics and privacy';
+
+  @override
+  String get lesson1Body =>
+      'Neurons talk in tiny electrical pulses. EEG listens from the scalp, picking up the summed activity of millions of neurons at once — a blurry, noisy window, never a single thought.';
+
+  @override
+  String get lesson2Body =>
+      'A brain–computer interface turns brain signals into commands or feedback: signal, decode, respond. Nemro’s loop is exactly that — and it is only as good as the signal it reads.';
+
+  @override
+  String get lesson3Body =>
+      'Implanted electrodes hear single neurons clearly, but need surgery. Scalp EEG is safe and easy, but coarse and noisy. Nemro stays on the non-invasive side — and Live uses no EEG at all, only a camera proxy.';
+
+  @override
+  String get lesson4Body =>
+      'Ultrasound, MEG, and near-infrared light each sense the brain differently, trading precision for cost and portability. None of them reads thoughts either — they all measure indirect, noisy signals.';
+
+  @override
+  String get lesson5Body =>
+      'No. Wi-Fi sensing notices movement and posture from disturbed radio waves — it never touches brain activity. Any product claiming to read your mind over Wi-Fi is hype, or a scam.';
+
+  @override
+  String get lesson6Body =>
+      'Brain data is intimate, even when it is noisy. Nemro keeps everything on this device: no accounts, no tracking, no uploads. Session history is opt-in, and you can delete it any time.';
 
   @override
   String get settingsTitle => 'Settings';
