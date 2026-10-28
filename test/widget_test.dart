@@ -16,6 +16,7 @@ Future<void> _pumpApp(
   EegRecording? labRecording,
   EegDecoder? labDecoder,
   Map<double, EegPrediction>? labPredictions,
+  ValueNotifier<bool>? failLabLoad,
 }) async {
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 3.0;
@@ -30,7 +31,14 @@ Future<void> _pumpApp(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
         if (labRecording != null)
-          eegRecordingProvider.overrideWith((ref) => labRecording),
+          eegRecordingProvider.overrideWith((ref) => labRecording)
+        else if (failLabLoad != null)
+          eegRecordingProvider.overrideWith((ref) async {
+            if (failLabLoad.value) {
+              throw Exception('Test load failure');
+            }
+            return _testRecording();
+          }),
         if (labDecoder != null)
           eegDecoderProvider.overrideWith((ref) => labDecoder),
         if (labPredictions != null)
@@ -236,6 +244,89 @@ void main() {
     await tester.tap(find.text('Trang chủ'));
     await tester.pumpAndSettle();
     expect(find.text('Vòng lặp AI–não, trong tầm tay.'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Lab shows a load error and recovers on retry', (tester) async {
+    final failLoad = ValueNotifier<bool>(true);
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      labDecoder: _testDecoder(),
+      labPredictions: _testPredictions(),
+      failLabLoad: failLoad,
+    );
+
+    final openLab = find.text('Open Lab');
+    await tester.ensureVisible(openLab);
+    await tester.tap(openLab);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Could not load the EEG sample.'), findsOneWidget);
+    expect(find.text('Retry'), findsOneWidget);
+
+    failLoad.value = false;
+    await tester.tap(find.text('Retry'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('EEG replay'), findsOneWidget);
+    expect(find.text('Play'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Lab seek and speed controls move playback', (tester) async {
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      labRecording: _testRecording(),
+      labDecoder: _testDecoder(),
+      labPredictions: _testPredictions(),
+    );
+
+    final openLab = find.text('Open Lab');
+    await tester.ensureVisible(openLab);
+    await tester.tap(openLab);
+    await tester.pumpAndSettle();
+
+    final speed2x = find.text('2×');
+    await tester.ensureVisible(speed2x);
+    await tester.tap(speed2x);
+    await tester.pump();
+
+    await tester.tap(find.text('Play'));
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.text('Pause'), findsOneWidget);
+    expect(find.text('00:00.4 / 00:12.0'), findsOneWidget);
+
+    tester.widget<Slider>(find.byType(Slider)).onChanged!(6.0);
+    await tester.pump();
+    expect(find.text('00:06.0 / 00:12.0'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Settings delete clears data and returns to onboarding',
+      (tester) async {
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+    );
+
+    await tester.tap(find.text('Settings'));
+    await tester.pumpAndSettle();
+
+    final deleteTile = find.text('Delete all local data');
+    await tester.ensureVisible(deleteTile);
+    await tester.tap(deleteTile);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Delete all local data?'), findsOneWidget);
+    await tester.tap(find.text('Delete'));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text('Local data cleared.'), findsOneWidget);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Checkbox), findsOneWidget);
+    expect(find.text('Agree and continue'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }
