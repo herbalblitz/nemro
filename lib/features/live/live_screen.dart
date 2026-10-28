@@ -13,6 +13,7 @@ import 'package:nemro/features/live/data/frame_throttler.dart';
 import 'package:nemro/features/live/data/live_camera_gateway.dart';
 import 'package:nemro/features/live/data/live_session_store.dart';
 import 'package:nemro/features/live/data/live_session_summary.dart';
+import 'package:nemro/features/live/data/proxy_baseline.dart';
 import 'package:nemro/features/live/data/system_settings_opener.dart';
 
 class LiveScreen extends ConsumerStatefulWidget {
@@ -21,6 +22,8 @@ class LiveScreen extends ConsumerStatefulWidget {
   @override
   ConsumerState<LiveScreen> createState() => _LiveScreenState();
 }
+
+enum _BaselineOutcome { saved, tooShort, failed }
 
 class _LiveScreenState extends ConsumerState<LiveScreen>
     with WidgetsBindingObserver {
@@ -46,6 +49,9 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
   bool _isRunning = false;
   bool _pausedByLifecycle = false;
   bool _disposed = false;
+  bool _isCalibrating = false;
+  List<double> _calibrationScores = [];
+  _BaselineOutcome? _baselineOutcome;
 
   @override
   void initState() {
@@ -94,6 +100,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
           .read(liveCameraGatewayProvider)
           .start(lensDirection: lensDirection);
       if (!mounted || operation != _operation) {
+        _isCalibrating = false;
         try {
           await session.dispose();
         } catch (_) {
@@ -136,6 +143,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
       setState(() {
         _isStarting = false;
         _isRunning = false;
+        _isCalibrating = false;
         _failure = error.failure;
       });
     } catch (_) {
@@ -143,6 +151,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
       setState(() {
         _isStarting = false;
         _isRunning = false;
+        _isCalibrating = false;
         _failure = LiveCameraFailure.unavailable;
       });
     }
@@ -158,6 +167,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
     _frameCount++;
     _scoreSum += sample.score;
     _scoreCount++;
+    if (_isCalibrating) _calibrationScores.add(sample.score);
     _framesSinceUiUpdate++;
     if (_framesSinceUiUpdate < _uiFrameInterval) return;
     _framesSinceUiUpdate = 0;
@@ -166,13 +176,38 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
       _sample = sample;
       // The spoken score only moves when the band changes, so a screen
       // reader is not spammed by every frame while the visual score
-      // keeps updating live.
-      final band = _bandForScore(sample.roundedScore);
+      // keeps updating live. The band follows the displayed score:
+      // relative to the baseline when one exists, absolute otherwise.
+      final displayScore = _displayScoreFor(sample);
+      final band = _bandForScore(displayScore);
       if (band != _semanticBand) {
         _semanticBand = band;
-        _semanticScore = sample.roundedScore;
+        _semanticScore = displayScore;
       }
     });
+  }
+
+  /// The score shown for [sample]: relative to the personal baseline
+  /// when one exists, absolute during calibration (the baseline is
+  /// being measured, so relating to it would be meaningless) and when
+  /// no baseline was ever captured.
+  int _displayScoreFor(AttentionSample sample) {
+    if (_isCalibrating) return sample.roundedScore;
+    final baseline = ref.read(proxyBaselineProvider);
+    if (baseline == null) return sample.roundedScore;
+    return baseline.relativeScore(sample.score);
+  }
+
+  Future<void> _startCalibration() async {
+    if (_isStarting || _isRunning) return;
+    _isCalibrating = true;
+    _calibrationScores = [];
+    _baselineOutcome = null;
+    await _startSession();
+  }
+
+  Future<void> _cancelCalibration() async {
+    await _stopSession(saveCalibration: false);
   }
 
   static String _bandForScore(int score) {
@@ -190,7 +225,10 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
     await _startSession();
   }
 
-  Future<void> _stopSession({bool pausedByLifecycle = false}) async {
+  Future<void> _stopSession({
+    bool pausedByLifecycle = false,
+    bool saveCalibration = true,
+  }) async {
     if (!_isRunning) return;
     _operation++;
     // Mark stopped synchronously, before the save below awaits: a second
@@ -202,6 +240,40 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
     final subscription = _frameSubscription;
     _session = null;
     _frameSubscription = null;
+
+    if (_isCalibrating) {
+      // Ending a calibration never writes a session summary to history:
+      // the run's only product is the baseline itself.
+      _isCalibrating = false;
+      final captured = ProxyBaseline.capture(_calibrationScores);
+      _calibrationScores = [];
+      if (!saveCalibration) {
+        _baselineOutcome = null;
+      } else if (captured != null) {
+        try {
+          await ref.read(proxyBaselineProvider.notifier).setBaseline(captured);
+          _baselineOutcome = _BaselineOutcome.saved;
+        } catch (_) {
+          // A baseline that cannot be stored must not claim success.
+          _baselineOutcome = _BaselineOutcome.failed;
+        }
+      } else {
+        _baselineOutcome = _BaselineOutcome.tooShort;
+      }
+      if (mounted) {
+        setState(() {
+          _isRunning = false;
+          _isStarting = false;
+          _sample = null;
+          _summary = null;
+          _failure = null;
+          _pausedByLifecycle = pausedByLifecycle;
+        });
+      }
+      _teardownDetached(session, subscription);
+      return;
+    }
+
     final endedAt = DateTime.now();
     final duration = _startedAt == null
         ? Duration.zero
@@ -240,12 +312,19 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
       });
     }
 
-    // Teardown runs detached, not awaited: awaiting a broadcast
-    // stream's cancel/close here can stall anything chained after the
-    // stop (e.g. a camera switch), because each waits on the other.
-    // The session object is already dropped above, and frames are only
-    // processed for the current session (see _startSession), so detached
-    // teardown cannot leak frames into a later session.
+    _teardownDetached(session, subscription);
+  }
+
+  /// Teardown runs detached, not awaited: awaiting a broadcast stream's
+  /// cancel/close here can stall anything chained after the stop (e.g. a
+  /// camera switch), because each waits on the other. The session object
+  /// is already dropped above, and frames are only processed for the
+  /// current session (see _startSession), so detached teardown cannot
+  /// leak frames into a later session.
+  void _teardownDetached(
+    LiveCameraSession? session,
+    StreamSubscription<LumaFrame>? subscription,
+  ) {
     unawaited(
       subscription?.cancel().then((_) {}).catchError((_) {}),
     );
@@ -294,7 +373,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
             else if (_isStarting)
               ..._buildStarting(l10n, theme)
             else
-              ..._buildIdle(l10n, theme, lensDirection),
+              ..._buildIdle(l10n, theme, lensDirection, _baselineOutcome),
           ],
         ),
       ),
@@ -305,6 +384,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
     AppLocalizations l10n,
     ThemeData theme,
     CameraLensDirection lensDirection,
+    _BaselineOutcome? baselineOutcome,
   ) {
     final failure = _failure;
     final summary = _summary;
@@ -364,6 +444,11 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
           label: Text(
             summary != null ? l10n.liveStartAgain : l10n.liveStartButton,
           ),
+        ),
+        const SizedBox(height: 16),
+        _BaselineCard(
+          onCalibrate: () => unawaited(_startCalibration()),
+          outcome: baselineOutcome,
         ),
         if (showPrivacyBullets) ...[
           const SizedBox(height: 10),
@@ -445,32 +530,53 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
     CameraLensDirection lensDirection,
   ) {
     final session = _session;
+    final sample = _sample;
+    final baseline = ref.watch(proxyBaselineProvider);
+    final isRelative = sample != null && baseline != null;
+    final displayScore = sample == null
+        ? null
+        : isRelative
+            ? baseline.relativeScore(sample.score)
+            : sample.roundedScore;
+    final absoluteScore = isRelative ? sample.roundedScore : null;
     return [
       if (session != null) _PreviewCard(session: session, l10n: l10n),
       const SizedBox(height: 16),
-      _ScoreCard(
-        sample: _sample,
-        semanticScore: _semanticScore,
-        frameCount: _frameCount,
-        l10n: l10n,
-        theme: theme,
-      ),
-      const SizedBox(height: 16),
-      _CameraLensSelector(
-        selected: lensDirection,
-        onChanged: (direction) {
-          unawaited(_onLensChanged(direction));
-        },
-        l10n: l10n,
-        theme: theme,
-      ),
-      const SizedBox(height: 16),
-      FilledButton.tonalIcon(
-        key: const ValueKey('live-stop-button'),
-        onPressed: () => unawaited(_stopSession()),
-        icon: const Icon(Icons.stop_circle_outlined),
-        label: Text(l10n.liveStopButton),
-      ),
+      if (_isCalibrating)
+        _CalibrationCard(
+          captured: _calibrationScores.length,
+          onStopSave: () => unawaited(_stopSession()),
+          onCancel: () => unawaited(_cancelCalibration()),
+          l10n: l10n,
+          theme: theme,
+        )
+      else ...[
+        _ScoreCard(
+          sample: sample,
+          semanticScore: _semanticScore,
+          displayScore: displayScore,
+          absoluteScore: absoluteScore,
+          frameCount: _frameCount,
+          l10n: l10n,
+          theme: theme,
+        ),
+        const SizedBox(height: 16),
+        _CameraLensSelector(
+          selected: lensDirection,
+          onChanged: (direction) {
+            unawaited(_onLensChanged(direction));
+          },
+          l10n: l10n,
+          theme: theme,
+        ),
+        const SizedBox(height: 16),
+        FilledButton.tonalIcon(
+          key: const ValueKey('live-stop-button'),
+          onPressed: () => unawaited(_stopSession()),
+          icon: const Icon(Icons.stop_circle_outlined),
+          label: Text(l10n.liveStopButton),
+        ),
+      ],
       const SizedBox(height: 12),
       Text(
         l10n.livePrivacyNote,
@@ -678,6 +784,187 @@ class _OnDeviceChip extends StatelessWidget {
   }
 }
 
+class _BaselineCard extends ConsumerWidget {
+  const _BaselineCard({required this.onCalibrate, required this.outcome});
+
+  final VoidCallback onCalibrate;
+  final _BaselineOutcome? outcome;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final baseline = ref.watch(proxyBaselineProvider);
+    final result = outcome;
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      color: theme.colorScheme.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.tune_rounded, color: theme.colorScheme.primary),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    l10n.liveBaselineTitle,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              baseline == null
+                  ? l10n.liveBaselineBody
+                  : l10n.liveBaselineRange(
+                      baseline.low.round(),
+                      baseline.high.round(),
+                    ),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+            ),
+            if (result == _BaselineOutcome.saved) ...[
+              const SizedBox(height: 8),
+              Text(
+                l10n.liveBaselineSaved,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+            if (result == _BaselineOutcome.tooShort) ...[
+              const SizedBox(height: 8),
+              Text(
+                l10n.liveBaselineTooShort,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.error,
+                  height: 1.4,
+                ),
+              ),
+            ],
+            if (result == _BaselineOutcome.failed) ...[
+              const SizedBox(height: 8),
+              Text(
+                l10n.liveBaselineSaveFailed,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.error,
+                  height: 1.4,
+                ),
+              ),
+            ],
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              key: const ValueKey('live-baseline-calibrate-button'),
+              onPressed: onCalibrate,
+              icon: const Icon(Icons.tune_rounded),
+              label: Text(
+                baseline == null
+                    ? l10n.liveBaselineCalibrate
+                    : l10n.liveBaselineRecalibrate,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CalibrationCard extends StatelessWidget {
+  const _CalibrationCard({
+    required this.captured,
+    required this.onStopSave,
+    required this.onCancel,
+    required this.l10n,
+    required this.theme,
+  });
+
+  final int captured;
+  final VoidCallback onStopSave;
+  final VoidCallback onCancel;
+  final AppLocalizations l10n;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = (captured / ProxyBaseline.minFrames).clamp(0.0, 1.0);
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      color: theme.colorScheme.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.liveBaselineCapturing,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 10,
+                backgroundColor: theme.colorScheme.surfaceContainerHighest,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.liveBaselineProgress(captured),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              l10n.liveBaselineNeeds(ProxyBaseline.minFrames),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 16),
+            FilledButton.tonalIcon(
+              key: const ValueKey('live-baseline-stop-button'),
+              onPressed: onStopSave,
+              icon: const Icon(Icons.stop_circle_outlined),
+              label: Text(l10n.liveBaselineStopSave),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              key: const ValueKey('live-baseline-cancel-button'),
+              onPressed: onCancel,
+              icon: const Icon(Icons.close_rounded),
+              label: Text(l10n.liveBaselineCancel),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _CameraLensSelector extends StatelessWidget {
   const _CameraLensSelector({
     required this.selected,
@@ -731,6 +1018,8 @@ class _ScoreCard extends StatelessWidget {
   const _ScoreCard({
     required this.sample,
     required this.semanticScore,
+    required this.displayScore,
+    required this.absoluteScore,
     required this.frameCount,
     required this.l10n,
     required this.theme,
@@ -741,6 +1030,14 @@ class _ScoreCard extends StatelessWidget {
   /// The score announced to screen readers. It only moves when the score
   /// band changes, while the visual score updates every frame.
   final int? semanticScore;
+
+  /// The score shown as the main number: relative to the personal
+  /// baseline when one exists, otherwise the absolute proxy score.
+  final int? displayScore;
+
+  /// The absolute proxy score, shown only when the main number is
+  /// relative, so the relative figure never hides the raw one.
+  final int? absoluteScore;
   final int frameCount;
   final AppLocalizations l10n;
   final ThemeData theme;
@@ -797,7 +1094,7 @@ class _ScoreCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '${current.roundedScore}',
+                      '${displayScore ?? current.roundedScore}',
                       key: const ValueKey('live-score'),
                       style: theme.textTheme.displaySmall?.copyWith(
                         fontWeight: FontWeight.w800,
@@ -815,7 +1112,7 @@ class _ScoreCard extends StatelessWidget {
                     ),
                     const Spacer(),
                     _ScoreLevel(
-                      score: current.roundedScore,
+                      score: displayScore ?? current.roundedScore,
                       l10n: l10n,
                       theme: theme,
                     ),
@@ -826,7 +1123,7 @@ class _ScoreCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(999),
                 child: LinearProgressIndicator(
-                  value: current.roundedScore / 100,
+                  value: (displayScore ?? current.roundedScore) / 100,
                   minHeight: 10,
                   backgroundColor: theme.colorScheme.surfaceContainerHighest,
                 ),
@@ -842,8 +1139,20 @@ class _ScoreCard extends StatelessWidget {
                 ),
               ],
               const SizedBox(height: 8),
+              if (absoluteScore != null) ...[
+                Text(
+                  l10n.liveBaselineAbsolute(absoluteScore!),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 4),
+              ],
               Text(
-                l10n.liveScoreCaption,
+                absoluteScore != null
+                    ? l10n.liveBaselineRelativeNote
+                    : l10n.liveScoreCaption,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   height: 1.4,
