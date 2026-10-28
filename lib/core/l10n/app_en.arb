@@ -163,7 +163,7 @@
   "privacyTitle": "Privacy",
   "privacyIntro": "Nemro is local-first. Version 0.3.0 has no Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.",
   "privacyDataTitle": "What data is stored?",
-  "privacyDataBody": "Language, theme, and onboarding state. Live session summaries are shown on screen but are not saved in 0.3.0. The Lab decoder processes the bundled sample locally; no EEG is collected from you.",
+  "privacyDataBody": "Language, theme, and onboarding state. Live session summaries are saved on this device only if you turn saving on in Settings, and deleting all data in Settings wipes them. The Lab decoder processes the bundled sample locally; no EEG is collected from you.",
   "privacyDecoderTitle": "On-device AI",
   "privacyDecoderBody": "The Lab decoder is a small model bundled with the app. It runs locally on the EEG sample, and predictions never leave the device.",
   "privacyCameraTitle": "Camera",
