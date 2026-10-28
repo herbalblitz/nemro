@@ -187,7 +187,7 @@
   "livePermissionHint": "If you permanently denied access, enable Camera for Nemro in Android Settings.",
   "livePreviewSemantics": "Live camera preview. Frames are processed on-device.",
   "liveLiveBadge": "LIVE",
-  "liveScoreTitle": "Attention proxy",
+  "liveScoreTitle": "Proxy score",
   "liveScoreCaption": "Heuristic score from light, contrast, and stability. Not a measurement of thoughts.",
   "liveScoreWarmingUp": "Calibrating…",
   "liveScoreWaiting": "Waiting for frames…",

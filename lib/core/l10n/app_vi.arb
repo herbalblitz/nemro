@@ -187,7 +187,7 @@
   "livePermissionHint": "Nếu bạn đã từ chối vĩnh viễn, hãy bật Camera cho Nemro trong Cài đặt Android.",
   "livePreviewSemantics": "Xem trước camera trực tiếp. Khung hình được xử lý trên thiết bị.",
   "liveLiveBadge": "TRỰC TIẾP",
-  "liveScoreTitle": "Proxy chú ý",
+  "liveScoreTitle": "Điểm proxy",
   "liveScoreCaption": "Điểm heuristic từ ánh sáng, độ tương phản và độ ổn định. Không đo suy nghĩ.",
   "liveScoreWarmingUp": "Đang hiệu chỉnh…",
   "liveScoreWaiting": "Đang chờ khung hình…",
