@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
@@ -13,6 +15,7 @@ import 'package:nemro/core/preferences/preferences_providers.dart';
 import 'package:nemro/core/router/app_router.dart';
 import 'package:nemro/features/home/home_screen.dart';
 import 'package:nemro/features/insights/insights_screen.dart';
+import 'package:nemro/features/insights/session_exporter.dart';
 import 'package:nemro/features/lab/data/eeg_decoder.dart';
 import 'package:nemro/features/lab/data/eeg_decoder_repository.dart';
 import 'package:nemro/features/lab/data/eeg_recording.dart';
@@ -20,8 +23,29 @@ import 'package:nemro/features/lab/data/eeg_repository.dart';
 import 'package:nemro/features/live/data/attention_analyzer.dart';
 import 'package:nemro/features/live/data/frame_throttler.dart';
 import 'package:nemro/features/live/data/live_camera_gateway.dart';
+import 'package:nemro/features/live/data/live_session_summary.dart';
 import 'package:nemro/features/live/data/system_settings_opener.dart';
 import 'package:nemro/features/live/live_screen.dart';
+
+/// Test double for the export share sheet: records the summaries handed
+/// to it instead of writing a file, because real file I/O cannot
+/// complete inside a widget test's fake async zone. The real file write
+/// is covered by test/session_exporter_test.dart.
+class _CapturingExporter extends SessionExporter {
+  _CapturingExporter(this.captured)
+      : super(
+          tempDirectory: () async => Directory.systemTemp,
+          shareFile: (_) async {},
+        );
+
+  final List<LiveSessionSummary> captured;
+
+  @override
+  Future<String> export(List<LiveSessionSummary> summaries) async {
+    captured.addAll(summaries);
+    return 'nemro-sessions.csv';
+  }
+}
 
 Future<void> _pumpApp(
   WidgetTester tester, {
@@ -33,6 +57,7 @@ Future<void> _pumpApp(
   LiveCameraGateway? liveCameraGateway,
   SystemSettingsOpener? systemSettingsOpener,
   FrameThrottler? frameThrottler,
+  SessionExporter? sessionExporter,
   GoRouter? routerOverride,
 }) async {
   tester.view.physicalSize = const Size(1080, 2400);
@@ -66,6 +91,8 @@ Future<void> _pumpApp(
           systemSettingsOpenerProvider.overrideWithValue(systemSettingsOpener),
         if (frameThrottler != null)
           frameThrottlerProvider.overrideWithValue(frameThrottler),
+        if (sessionExporter != null)
+          sessionExporterProvider.overrideWithValue(sessionExporter),
         if (routerOverride != null)
           routerProvider.overrideWithValue(routerOverride),
       ],
@@ -321,6 +348,11 @@ void main() {
     expect(find.text('EEG replay'), findsOneWidget);
     expect(find.text('Play'), findsOneWidget);
 
+    // The recording selector above the list pushes Play below the fold;
+    // scrollUntilVisible stops early because the list's cache extent
+    // already built it, so bring it on screen explicitly.
+    await tester.ensureVisible(find.text('Play'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Play'));
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.text('Pause'), findsOneWidget);
@@ -513,6 +545,11 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('Camera attention proxy'), findsOneWidget);
     expect(find.byKey(const ValueKey('live-start-button')), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.textContaining('No video is recorded'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.textContaining('No video is recorded'), findsOneWidget);
     expect(gateway.starts, 0);
     expect(tester.takeException(), isNull);
@@ -1514,6 +1551,213 @@ void main() {
       find.textContaining('never touches brain activity'),
       findsOneWidget,
     );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live baseline calibration saves a range and shows relative scores',
+      (tester) async {
+    final gateway = _FakeLiveCameraGateway();
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+      frameThrottler: FrameThrottler(minInterval: Duration.zero),
+    );
+
+    await tester.scrollUntilVisible(
+      find.text('Open Live'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Open Live'));
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('live-baseline-calibrate-button')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-baseline-calibrate-button')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.byKey(const ValueKey('fake-live-preview')), findsOneWidget);
+    final session = gateway.session!;
+    // Mixed frames give the calibration a real spread: blank frames score
+    // near zero, checkerboard frames ramp toward 100.
+    for (var i = 0; i < 15; i++) {
+      session.addFrame(_liveBlank());
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    for (var i = 0; i < 15; i++) {
+      session.addFrame(_liveCheckerboard());
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await tester.pump();
+
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('live-baseline-stop-button')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-baseline-stop-button')));
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    final prefs = await SharedPreferences.getInstance();
+    final low = prefs.getDouble('live_proxy_baseline_low');
+    final high = prefs.getDouble('live_proxy_baseline_high');
+    expect(low, isNotNull);
+    expect(high, isNotNull);
+    expect(low!, lessThan(high!));
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('live-baseline-calibrate-button')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Baseline saved.'), findsOneWidget);
+    expect(find.textContaining('Usual range:'), findsOneWidget);
+
+    // A fresh session now shows the score relative to the baseline, with
+    // the absolute proxy score still visible underneath.
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('live-start-button')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-start-button')));
+    await tester.pump();
+    await tester.pump();
+    final session2 = gateway.session!;
+    for (var i = 0; i < 6; i++) {
+      session2.addFrame(_liveSoftCheckerboard());
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await tester.pump();
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('live-score')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(
+      find.textContaining('Relative to your usual range.'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Absolute proxy score:'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Live baseline calibration with too few frames saves nothing',
+      (tester) async {
+    final gateway = _FakeLiveCameraGateway();
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      liveCameraGateway: gateway,
+      frameThrottler: FrameThrottler(minInterval: Duration.zero),
+    );
+
+    await tester.scrollUntilVisible(
+      find.text('Open Live'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Open Live'));
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('live-baseline-calibrate-button')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-baseline-calibrate-button')));
+    await tester.pump();
+    await tester.pump();
+
+    final session = gateway.session!;
+    for (var i = 0; i < 3; i++) {
+      session.addFrame(_liveCheckerboard());
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await tester.pump();
+
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('live-baseline-stop-button')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('live-baseline-stop-button')));
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getDouble('live_proxy_baseline_low'), isNull);
+    expect(prefs.getDouble('live_proxy_baseline_high'), isNull);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('live-baseline-calibrate-button')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('Not enough frames to set a baseline.'),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Insights export writes a CSV and hands it to the share sheet',
+      (tester) async {
+    // The real exporter writes a file, which is real async work that
+    // cannot complete inside a widget test's fake async zone, so the
+    // widget test uses a capturing fake for the UI wiring and the real
+    // file write is covered by test/session_exporter_test.dart instead.
+    final captured = <LiveSessionSummary>[];
+    final exporter = _CapturingExporter(captured);
+    final seeded = jsonEncode([
+      LiveSessionSummary(
+        averageScore: 64,
+        duration: const Duration(minutes: 2, seconds: 30),
+        frames: 1234,
+        endedAt: DateTime.utc(2026, 10, 28, 9, 30),
+      ).toJson(),
+      LiveSessionSummary(
+        averageScore: 87,
+        duration: const Duration(seconds: 90),
+        frames: 42,
+        endedAt: DateTime.utc(2026, 10, 27, 18, 5),
+      ).toJson(),
+    ]);
+    await _pumpApp(
+      tester,
+      values: {
+        'locale': 'en',
+        'onboarding_complete': true,
+        'live_session_summaries': seeded,
+      },
+      sessionExporter: exporter,
+    );
+
+    await tester.tap(find.text('Insights'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('insights-export-button')));
+    await tester.pumpAndSettle();
+
+    expect(captured, hasLength(2));
+    expect(captured[0].averageScore, 64);
+    expect(captured[0].frames, 1234);
+    expect(captured[1].averageScore, 87);
+    expect(captured[1].frames, 42);
+    expect(find.text('Session history exported.'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }
