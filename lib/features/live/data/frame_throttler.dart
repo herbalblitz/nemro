@@ -20,7 +20,11 @@ class FrameThrottler {
   bool shouldAnalyze() {
     final now = _clock();
     final last = _lastAccepted;
-    if (last == null || now.difference(last) >= minInterval) {
+    // A backwards clock jump (e.g. an NTP correction) must not block
+    // analysis until the clock catches up with the old baseline.
+    if (last == null ||
+        now.isBefore(last) ||
+        now.difference(last) >= minInterval) {
       _lastAccepted = now;
       return true;
     }

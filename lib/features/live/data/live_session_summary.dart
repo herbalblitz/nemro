@@ -24,8 +24,12 @@ class LiveSessionSummary {
     final frames = json['frames'];
     final endedAt = json['endedAt'];
     if (averageScore is! int ||
+        averageScore < 0 ||
+        averageScore > 100 ||
         durationMs is! int ||
+        durationMs < 0 ||
         frames is! int ||
+        frames < 0 ||
         endedAt is! String) {
       return null;
     }
