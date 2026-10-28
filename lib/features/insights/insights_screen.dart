@@ -5,6 +5,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:nemro/core/l10n/generated/app_localizations.dart';
 import 'package:nemro/core/preferences/preferences_providers.dart';
 import 'package:nemro/core/widgets/empty_state_card.dart';
+import 'package:nemro/features/insights/session_exporter.dart';
+import 'package:nemro/features/insights/session_trends.dart';
 import 'package:nemro/features/live/data/live_session_store.dart';
 import 'package:nemro/features/live/data/live_session_summary.dart';
 
@@ -24,12 +26,28 @@ class InsightsScreen extends ConsumerStatefulWidget {
 }
 
 class _InsightsScreenState extends ConsumerState<InsightsScreen> {
+  Future<void> _export(List<LiveSessionSummary> summaries) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(sessionExporterProvider).export(summaries);
+      if (!mounted) return;
+      messenger.showSnackBar(SnackBar(content: Text(l10n.insightsExportDone)));
+    } catch (_) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.insightsExportFailed)),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final summaries = ref.watch(liveSessionStoreProvider).loadSync();
     final savingOn = ref.watch(saveLiveSummariesProvider);
+    final trends = computeSessionTrends(summaries);
 
     return CustomScrollView(
       slivers: [
@@ -39,6 +57,15 @@ class _InsightsScreenState extends ConsumerState<InsightsScreen> {
             l10n.insightsTitle,
             style: const TextStyle(fontWeight: FontWeight.w700),
           ),
+          actions: [
+            if (summaries.isNotEmpty)
+              IconButton(
+                key: const ValueKey('insights-export-button'),
+                onPressed: () => _export(summaries),
+                tooltip: l10n.insightsExport,
+                icon: const Icon(Icons.share_outlined),
+              ),
+          ],
         ),
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
@@ -62,6 +89,12 @@ class _InsightsScreenState extends ConsumerState<InsightsScreen> {
                       if (index == 0) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
+                          child: _TrendsCard(trends: trends, l10n: l10n),
+                        );
+                      }
+                      if (index == 1) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
                           child: Text(
                             l10n.insightsSavedTitle,
                             style: theme.textTheme.titleMedium?.copyWith(
@@ -71,7 +104,7 @@ class _InsightsScreenState extends ConsumerState<InsightsScreen> {
                         );
                       }
                       // Displayed newest first; storage is oldest first.
-                      final storedIndex = summaries.length - index;
+                      final storedIndex = summaries.length - index + 1;
                       final summary = summaries[storedIndex];
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
@@ -90,7 +123,7 @@ class _InsightsScreenState extends ConsumerState<InsightsScreen> {
                         ),
                       );
                     },
-                    childCount: summaries.length + 1,
+                    childCount: summaries.length + 2,
                   ),
                 ),
         ),
@@ -144,6 +177,184 @@ class _SavedSessionCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _TrendsCard extends StatelessWidget {
+  const _TrendsCard({required this.trends, required this.l10n});
+
+  final SessionTrends trends;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final best = trends.best;
+    final worst = trends.worst;
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      color: theme.colorScheme.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.insightsTrendsTitle,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(
+                  child: _TrendStat(
+                    display: l10n.insightsTrendStreakDays(
+                      trends.currentStreakDays,
+                    ),
+                    label: l10n.insightsTrendCurrentStreak,
+                    theme: theme,
+                  ),
+                ),
+                Expanded(
+                  child: _TrendStat(
+                    display: l10n.insightsTrendStreakDays(
+                      trends.longestStreakDays,
+                    ),
+                    label: l10n.insightsTrendLongestStreak,
+                    theme: theme,
+                  ),
+                ),
+              ],
+            ),
+            if (best != null) ...[
+              const Divider(height: 24),
+              _TrendSessionRow(
+                label: l10n.insightsTrendBest,
+                summary: best,
+                theme: theme,
+              ),
+            ],
+            if (worst != null) ...[
+              const SizedBox(height: 8),
+              _TrendSessionRow(
+                label: l10n.insightsTrendWorst,
+                summary: worst,
+                theme: theme,
+              ),
+            ],
+            if (trends.weeklyAverages.isNotEmpty) ...[
+              const Divider(height: 24),
+              Text(
+                l10n.insightsTrendWeeklyTitle,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 8),
+              for (final week in trends.weeklyAverages)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          _formatDate(week.weekStart),
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      Text(
+                        '${week.averageScore.round()}'
+                        ' · ${l10n.insightsTrendSessions(week.sessions)}',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TrendStat extends StatelessWidget {
+  const _TrendStat({
+    required this.display,
+    required this.label,
+    required this.theme,
+  });
+
+  final String display;
+  final String label;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          display,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TrendSessionRow extends StatelessWidget {
+  const _TrendSessionRow({
+    required this.label,
+    required this.summary,
+    required this.theme,
+  });
+
+  final String label;
+  final LiveSessionSummary summary;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(label, style: theme.textTheme.bodyMedium),
+        ),
+        Flexible(
+          child: Text(
+            '${summary.averageScore} · ${_formatDateTime(summary.endedAt)}',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+String _formatDate(DateTime value) {
+  return '${value.day}/${value.month}/${value.year}';
 }
 
 String _formatDateTime(DateTime value) {
