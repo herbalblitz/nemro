@@ -957,7 +957,6 @@ class _ErrorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final showSettingsHint =
-        failure == LiveCameraFailure.permissionDenied ||
         failure == LiveCameraFailure.permissionPermanentlyDenied;
     return Card(
       elevation: 0,
