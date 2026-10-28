@@ -234,8 +234,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get labLicenseLabel => 'Giấy phép';
 
   @override
-  String get labRunDescription =>
-      'S001 · lượt 4 · tưởng tượng nắm tay trái/phải';
+  String labRunDescription(String subject) {
+    return '$subject · lượt 4 · tưởng tượng nắm tay trái/phải';
+  }
 
   @override
   String get labOpenDataset => 'Mở trang dữ liệu';
@@ -277,6 +278,55 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get insightsDelete => 'Xóa phiên';
+
+  @override
+  String get insightsTrendsTitle => 'Xu hướng';
+
+  @override
+  String get insightsTrendCurrentStreak => 'Chuỗi hiện tại';
+
+  @override
+  String get insightsTrendLongestStreak => 'Chuỗi dài nhất';
+
+  @override
+  String insightsTrendStreakDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days ngày',
+      one: '1 ngày',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightsTrendBest => 'Phiên tốt nhất';
+
+  @override
+  String get insightsTrendWorst => 'Phiên thấp nhất';
+
+  @override
+  String get insightsTrendWeeklyTitle => 'Trung bình theo tuần';
+
+  @override
+  String insightsTrendSessions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count phiên',
+      one: '1 phiên',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightsExport => 'Xuất CSV';
+
+  @override
+  String get insightsExportDone => 'Đã xuất lịch sử phiên.';
+
+  @override
+  String get insightsExportFailed => 'Không xuất được lịch sử phiên.';
 
   @override
   String get learnTitle => 'Học';
@@ -584,6 +634,69 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get liveFramesLabel => 'Số khung đã phân tích';
+
+  @override
+  String get liveBaselineTitle => 'Ngưỡng riêng của bạn';
+
+  @override
+  String get liveBaselineBody =>
+      'Chuẩn hóa một lần trong phòng và ánh sáng thường dùng của bạn. Điểm sau đó hiển thị tương đối theo ngưỡng riêng — vẫn là proxy camera, không phải đo não.';
+
+  @override
+  String liveBaselineRange(int low, int high) {
+    return 'Ngưỡng thường gặp: $low–$high';
+  }
+
+  @override
+  String get liveBaselineCalibrate => 'Chuẩn hóa ngưỡng';
+
+  @override
+  String get liveBaselineRecalibrate => 'Chuẩn hóa lại';
+
+  @override
+  String get liveBaselineCapturing =>
+      'Đang chuẩn hóa… ngồi bình thường và ở trong khung hình.';
+
+  @override
+  String liveBaselineProgress(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Đã ghi $count khung hình',
+      one: 'Đã ghi 1 khung hình',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String liveBaselineNeeds(int min) {
+    return 'Cần ít nhất $min khung hình để lưu.';
+  }
+
+  @override
+  String get liveBaselineStopSave => 'Dừng và lưu ngưỡng';
+
+  @override
+  String get liveBaselineCancel => 'Hủy chuẩn hóa';
+
+  @override
+  String get liveBaselineSaved => 'Đã lưu ngưỡng.';
+
+  @override
+  String get liveBaselineSaveFailed => 'Không lưu được ngưỡng. Thử lại.';
+
+  @override
+  String get liveBaselineTooShort =>
+      'Chưa đủ khung hình để đặt ngưỡng. Ở trong khung hình lâu hơn một chút rồi thử lại.';
+
+  @override
+  String get liveBaselineRelativeNote =>
+      'Tương đối theo ngưỡng riêng của bạn. Vẫn là proxy camera, không phải đo não.';
+
+  @override
+  String liveBaselineAbsolute(int score) {
+    return 'Điểm proxy tuyệt đối: $score';
+  }
 
   @override
   String get liveStopButton => 'Dừng phiên';

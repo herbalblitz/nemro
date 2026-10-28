@@ -503,8 +503,8 @@ abstract class AppLocalizations {
   /// No description provided for @labRunDescription.
   ///
   /// In en, this message translates to:
-  /// **'S001 · run 4 · imagined left/right fist'**
-  String get labRunDescription;
+  /// **'{subject} · run 4 · imagined left/right fist'**
+  String labRunDescription(String subject);
 
   /// No description provided for @labOpenDataset.
   ///
@@ -583,6 +583,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete session'**
   String get insightsDelete;
+
+  /// No description provided for @insightsTrendsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trends'**
+  String get insightsTrendsTitle;
+
+  /// No description provided for @insightsTrendCurrentStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Current streak'**
+  String get insightsTrendCurrentStreak;
+
+  /// No description provided for @insightsTrendLongestStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest streak'**
+  String get insightsTrendLongestStreak;
+
+  /// No description provided for @insightsTrendStreakDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day} other{{days} days}}'**
+  String insightsTrendStreakDays(int days);
+
+  /// No description provided for @insightsTrendBest.
+  ///
+  /// In en, this message translates to:
+  /// **'Best session'**
+  String get insightsTrendBest;
+
+  /// No description provided for @insightsTrendWorst.
+  ///
+  /// In en, this message translates to:
+  /// **'Weakest session'**
+  String get insightsTrendWorst;
+
+  /// No description provided for @insightsTrendWeeklyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly averages'**
+  String get insightsTrendWeeklyTitle;
+
+  /// No description provided for @insightsTrendSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 session} other{{count} sessions}}'**
+  String insightsTrendSessions(int count);
+
+  /// No description provided for @insightsExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export CSV'**
+  String get insightsExport;
+
+  /// No description provided for @insightsExportDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Session history exported.'**
+  String get insightsExportDone;
+
+  /// No description provided for @insightsExportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not export session history.'**
+  String get insightsExportFailed;
 
   /// No description provided for @learnTitle.
   ///
@@ -1141,6 +1207,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Frames analyzed'**
   String get liveFramesLabel;
+
+  /// No description provided for @liveBaselineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your baseline'**
+  String get liveBaselineTitle;
+
+  /// No description provided for @liveBaselineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Calibrate once in your usual room and lighting. Later scores show relative to your usual range — still a camera proxy, never a brain measurement.'**
+  String get liveBaselineBody;
+
+  /// No description provided for @liveBaselineRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Usual range: {low}–{high}'**
+  String liveBaselineRange(int low, int high);
+
+  /// No description provided for @liveBaselineCalibrate.
+  ///
+  /// In en, this message translates to:
+  /// **'Calibrate baseline'**
+  String get liveBaselineCalibrate;
+
+  /// No description provided for @liveBaselineRecalibrate.
+  ///
+  /// In en, this message translates to:
+  /// **'Recalibrate'**
+  String get liveBaselineRecalibrate;
+
+  /// No description provided for @liveBaselineCapturing.
+  ///
+  /// In en, this message translates to:
+  /// **'Calibrating… sit normally and stay in frame.'**
+  String get liveBaselineCapturing;
+
+  /// No description provided for @liveBaselineProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 frame captured} other{{count} frames captured}}'**
+  String liveBaselineProgress(int count);
+
+  /// No description provided for @liveBaselineNeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs at least {min} frames to save.'**
+  String liveBaselineNeeds(int min);
+
+  /// No description provided for @liveBaselineStopSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop and save baseline'**
+  String get liveBaselineStopSave;
+
+  /// No description provided for @liveBaselineCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel calibration'**
+  String get liveBaselineCancel;
+
+  /// No description provided for @liveBaselineSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Baseline saved.'**
+  String get liveBaselineSaved;
+
+  /// No description provided for @liveBaselineSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the baseline. Try again.'**
+  String get liveBaselineSaveFailed;
+
+  /// No description provided for @liveBaselineTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough frames to set a baseline. Stay in frame a little longer and try again.'**
+  String get liveBaselineTooShort;
+
+  /// No description provided for @liveBaselineRelativeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Relative to your usual range. Still a camera proxy, not a brain measurement.'**
+  String get liveBaselineRelativeNote;
+
+  /// No description provided for @liveBaselineAbsolute.
+  ///
+  /// In en, this message translates to:
+  /// **'Absolute proxy score: {score}'**
+  String liveBaselineAbsolute(int score);
 
   /// No description provided for @liveStopButton.
   ///

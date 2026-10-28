@@ -232,7 +232,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labLicenseLabel => 'License';
 
   @override
-  String get labRunDescription => 'S001 · run 4 · imagined left/right fist';
+  String labRunDescription(String subject) {
+    return '$subject · run 4 · imagined left/right fist';
+  }
 
   @override
   String get labOpenDataset => 'Open dataset page';
@@ -274,6 +276,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get insightsDelete => 'Delete session';
+
+  @override
+  String get insightsTrendsTitle => 'Trends';
+
+  @override
+  String get insightsTrendCurrentStreak => 'Current streak';
+
+  @override
+  String get insightsTrendLongestStreak => 'Longest streak';
+
+  @override
+  String insightsTrendStreakDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightsTrendBest => 'Best session';
+
+  @override
+  String get insightsTrendWorst => 'Weakest session';
+
+  @override
+  String get insightsTrendWeeklyTitle => 'Weekly averages';
+
+  @override
+  String insightsTrendSessions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sessions',
+      one: '1 session',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insightsExport => 'Export CSV';
+
+  @override
+  String get insightsExportDone => 'Session history exported.';
+
+  @override
+  String get insightsExportFailed => 'Could not export session history.';
 
   @override
   String get learnTitle => 'Learn';
@@ -581,6 +632,70 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get liveFramesLabel => 'Frames analyzed';
+
+  @override
+  String get liveBaselineTitle => 'Your baseline';
+
+  @override
+  String get liveBaselineBody =>
+      'Calibrate once in your usual room and lighting. Later scores show relative to your usual range — still a camera proxy, never a brain measurement.';
+
+  @override
+  String liveBaselineRange(int low, int high) {
+    return 'Usual range: $low–$high';
+  }
+
+  @override
+  String get liveBaselineCalibrate => 'Calibrate baseline';
+
+  @override
+  String get liveBaselineRecalibrate => 'Recalibrate';
+
+  @override
+  String get liveBaselineCapturing =>
+      'Calibrating… sit normally and stay in frame.';
+
+  @override
+  String liveBaselineProgress(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count frames captured',
+      one: '1 frame captured',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String liveBaselineNeeds(int min) {
+    return 'Needs at least $min frames to save.';
+  }
+
+  @override
+  String get liveBaselineStopSave => 'Stop and save baseline';
+
+  @override
+  String get liveBaselineCancel => 'Cancel calibration';
+
+  @override
+  String get liveBaselineSaved => 'Baseline saved.';
+
+  @override
+  String get liveBaselineSaveFailed =>
+      'Could not save the baseline. Try again.';
+
+  @override
+  String get liveBaselineTooShort =>
+      'Not enough frames to set a baseline. Stay in frame a little longer and try again.';
+
+  @override
+  String get liveBaselineRelativeNote =>
+      'Relative to your usual range. Still a camera proxy, not a brain measurement.';
+
+  @override
+  String liveBaselineAbsolute(int score) {
+    return 'Absolute proxy score: $score';
+  }
 
   @override
   String get liveStopButton => 'Stop session';
