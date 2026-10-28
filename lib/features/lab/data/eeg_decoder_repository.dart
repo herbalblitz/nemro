@@ -35,17 +35,32 @@ final eegPredictionsProvider =
     FutureProvider.autoDispose<Map<double, EegPrediction>>((ref) async {
       final decoder = await ref.watch(eegDecoderProvider.future);
       final recording = await ref.watch(eegRecordingProvider.future);
-      final predictions = <double, EegPrediction>{};
-
-      for (final event in recording.events) {
-        if (event.kind != EegEventKind.leftFist &&
-            event.kind != EegEventKind.rightFist) {
-          continue;
-        }
-        if (event.end > recording.duration + 1e-6) {
-          continue;
-        }
-        predictions[event.onset] = decoder.decode(recording, event);
-      }
-      return predictions;
+      return decodeAllEvents(decoder, recording);
     });
+
+/// Decodes every complete task window, skipping windows that fail to decode
+/// instead of failing the whole batch: one bad window (for example a model
+/// window that runs past the end of the recording, or a recording missing a
+/// model channel) must not hide every other prediction. The Lab panel
+/// already shows an "incomplete" state for events without a prediction.
+Map<double, EegPrediction> decodeAllEvents(
+  EegDecoder decoder,
+  EegRecording recording,
+) {
+  final predictions = <double, EegPrediction>{};
+  for (final event in recording.events) {
+    if (event.kind != EegEventKind.leftFist &&
+        event.kind != EegEventKind.rightFist) {
+      continue;
+    }
+    if (event.end > recording.duration + 1e-6) {
+      continue;
+    }
+    try {
+      predictions[event.onset] = decoder.decode(recording, event);
+    } catch (_) {
+      // Skip this window; the other predictions still stand.
+    }
+  }
+  return predictions;
+}
