@@ -43,7 +43,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get onboardingConsentPoint4 =>
-      'Camera xử lý trên thiết bị, không lưu video.';
+      'Khi Live ra mắt, camera sẽ xử lý khung hình trên thiết bị và không lưu video.';
 
   @override
   String get onboardingConsentCheckbox => 'Tôi đã hiểu và đồng ý';
@@ -77,7 +77,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get homeLiveSubtitle => 'Theo dõi chú ý';
 
   @override
-  String get homeLiveAction => 'Bật camera';
+  String get homeLiveAction => 'Xem trước';
 
   @override
   String get homeLiveBadge => 'SẮP CÓ';
