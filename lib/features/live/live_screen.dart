@@ -202,12 +202,15 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
     final duration = _startedAt == null
         ? Duration.zero
         : endedAt.difference(_startedAt!);
+    // A backwards system-clock jump mid-session must not store a negative
+    // duration (and render it as "-1:-30").
+    final safeDuration = duration.isNegative ? Duration.zero : duration;
     final average = _scoreCount == 0
         ? 0
         : (_scoreSum / _scoreCount).round().clamp(0, 100).toInt();
     final summary = LiveSessionSummary(
       averageScore: average,
-      duration: duration,
+      duration: safeDuration,
       frames: _frameCount,
       endedAt: endedAt,
     );
