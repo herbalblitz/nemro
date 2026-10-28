@@ -21,18 +21,47 @@ class LabScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final selectedId = ref.watch(selectedLabRecordingProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.labTitle)),
-      body: ref
-          .watch(eegRecordingProvider)
-          .when(
-            loading: () => const _LoadingState(),
-            error: (error, stackTrace) => _ErrorState(
-              onRetry: () => ref.invalidate(eegRecordingProvider),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: SegmentedButton<String>(
+                segments: [
+                  for (final recording in labRecordings)
+                    ButtonSegment(
+                      value: recording.id,
+                      label: Text(recording.label),
+                    ),
+                ],
+                selected: {selectedId},
+                showSelectedIcon: false,
+                onSelectionChanged: (selection) {
+                  ref
+                      .read(selectedLabRecordingProvider.notifier)
+                      .select(selection.first);
+                },
+              ),
             ),
-            data: (recording) => _LabContent(recording: recording),
           ),
+          Expanded(
+            child: ref
+                .watch(eegRecordingProvider)
+                .when(
+                  loading: () => const _LoadingState(),
+                  error: (error, stackTrace) => _ErrorState(
+                    onRetry: () => ref.invalidate(eegRecordingProvider),
+                  ),
+                  data: (recording) => _LabContent(recording: recording),
+                ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1227,7 +1256,7 @@ class _DatasetCard extends StatelessWidget {
             const SizedBox(height: 8),
             _InfoRow(
               label: l10n.labRecordingLabel,
-              value: '${recording.subject} · R04',
+              value: '${recording.subject} · ${recording.run}',
             ),
             const SizedBox(height: 8),
             _InfoRow(
@@ -1245,7 +1274,7 @@ class _DatasetCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              l10n.labRunDescription,
+              l10n.labRunDescription(recording.subject),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
                 height: 1.4,
