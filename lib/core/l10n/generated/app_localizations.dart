@@ -833,7 +833,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyDataBody.
   ///
   /// In en, this message translates to:
-  /// **'Language, theme, and onboarding state. Live session summaries are shown on screen but are not saved in 0.3.0. The Lab decoder processes the bundled sample locally; no EEG is collected from you.'**
+  /// **'Language, theme, and onboarding state. Live session summaries are saved on this device only if you turn saving on in Settings, and deleting all data in Settings wipes them. The Lab decoder processes the bundled sample locally; no EEG is collected from you.'**
   String get privacyDataBody;
 
   /// No description provided for @privacyDecoderTitle.

@@ -408,7 +408,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get privacyDataBody =>
-      'Cài đặt ngôn ngữ, giao diện và trạng thái onboarding. Tóm tắt phiên Live chỉ hiển thị trên màn hình, chưa được lưu trong 0.3.0. Bộ giải mã Lab xử lý mẫu đi kèm ngay trên thiết bị; không EEG nào được thu thập từ bạn.';
+      'Cài đặt ngôn ngữ, giao diện và trạng thái onboarding. Tóm tắt phiên Live chỉ được lưu trên thiết bị khi bạn bật lưu trong Cài đặt, và xóa toàn bộ dữ liệu trong Cài đặt sẽ xóa chúng. Bộ giải mã Lab xử lý mẫu đi kèm ngay trên thiết bị; không EEG nào được thu thập từ bạn.';
 
   @override
   String get privacyDecoderTitle => 'AI trên thiết bị';
