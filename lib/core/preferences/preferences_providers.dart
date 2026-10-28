@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:nemro/core/constants/app_constants.dart';
+import 'package:nemro/features/live/data/proxy_baseline.dart';
 
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError(
@@ -91,6 +92,47 @@ final liveCameraLensProvider =
     NotifierProvider<LiveCameraLensController, CameraLensDirection>(
       LiveCameraLensController.new,
     );
+
+/// The user's personal proxy baseline, or null when never calibrated.
+///
+/// Stored as two doubles in preferences. Invalid stored values (missing,
+/// out of range, non-finite, inverted) read back as no baseline rather
+/// than crashing or silently warping every live score.
+final proxyBaselineProvider =
+    NotifierProvider<ProxyBaselineController, ProxyBaseline?>(
+      ProxyBaselineController.new,
+    );
+
+class ProxyBaselineController extends Notifier<ProxyBaseline?> {
+  @override
+  ProxyBaseline? build() {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    return ProxyBaseline.tryFromValues(
+      prefs.getDouble(AppConstants.prefLiveProxyBaselineLow),
+      prefs.getDouble(AppConstants.prefLiveProxyBaselineHigh),
+    );
+  }
+
+  Future<void> setBaseline(ProxyBaseline baseline) async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    await prefs.setDouble(
+      AppConstants.prefLiveProxyBaselineLow,
+      baseline.low,
+    );
+    await prefs.setDouble(
+      AppConstants.prefLiveProxyBaselineHigh,
+      baseline.high,
+    );
+    state = baseline;
+  }
+
+  Future<void> clear() async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    await prefs.remove(AppConstants.prefLiveProxyBaselineLow);
+    await prefs.remove(AppConstants.prefLiveProxyBaselineHigh);
+    state = null;
+  }
+}
 
 /// Which camera Live prefers. Defaults to front; the choice persists
 /// across sessions. The gateway still falls back to the first available
