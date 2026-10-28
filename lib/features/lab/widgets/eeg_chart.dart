@@ -120,40 +120,47 @@ class _EegChartPainter extends CustomPainter {
       }
     }
 
-    // Waveforms.
+    // Waveforms: one min–max envelope per pixel column, so spikes between
+    // sampled points still render instead of being skipped.
     for (var channel = 0; channel < recording.channels.length; channel++) {
       final baseline = plotTop + rowHeight * (channel + 0.5);
       final amplitude = rowHeight * 0.38;
-      final path = Path();
-      var first = true;
+      final paint = Paint()
+        ..color = _lineColors[channel % _lineColors.length]
+        ..strokeWidth = 1.1
+        ..style = PaintingStyle.stroke
+        ..strokeJoin = StrokeJoin.round
+        ..strokeCap = StrokeCap.round;
 
       for (var x = plotLeft; x <= plotRight; x += 1) {
-        final seconds =
+        final startSeconds =
             windowStart + (x - plotLeft) / plotWidth * windowSeconds;
-        final index = (seconds * recording.samplingRate)
-            .round()
+        final endSeconds =
+            windowStart + (x + 1 - plotLeft) / plotWidth * windowSeconds;
+        var startIndex = (startSeconds * recording.samplingRate)
+            .floor()
             .clamp(0, recording.sampleCount - 1)
             .toInt();
-        final value = recording.samples[channel][index];
-        // 250 uV fills most of a row without clipping typical EEG.
-        final normalized = (value / 250.0).clamp(-1.0, 1.0).toDouble();
-        final y = baseline - normalized * amplitude;
-        if (first) {
-          path.moveTo(x, y);
-          first = false;
-        } else {
-          path.lineTo(x, y);
-        }
-      }
+        var endIndex = (endSeconds * recording.samplingRate)
+            .ceil()
+            .clamp(0, recording.sampleCount - 1)
+            .toInt();
+        if (endIndex < startIndex) endIndex = startIndex;
 
-      canvas.drawPath(
-        path,
-        Paint()
-          ..color = _lineColors[channel % _lineColors.length]
-          ..strokeWidth = 1.1
-          ..style = PaintingStyle.stroke
-          ..strokeJoin = StrokeJoin.round,
-      );
+        var minValue = double.infinity;
+        var maxValue = double.negativeInfinity;
+        for (var i = startIndex; i <= endIndex; i++) {
+          final value = recording.samples[channel][i];
+          if (value < minValue) minValue = value;
+          if (value > maxValue) maxValue = value;
+        }
+        // 250 uV fills most of a row without clipping typical EEG.
+        final yMin =
+            baseline - (minValue / 250.0).clamp(-1.0, 1.0) * amplitude;
+        final yMax =
+            baseline - (maxValue / 250.0).clamp(-1.0, 1.0) * amplitude;
+        canvas.drawLine(Offset(x, yMin), Offset(x, yMax), paint);
+      }
 
       _drawText(
         canvas,
