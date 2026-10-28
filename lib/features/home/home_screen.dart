@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -6,14 +7,17 @@ import 'package:nemro/core/theme/app_theme.dart';
 import 'package:nemro/core/widgets/empty_state_card.dart';
 import 'package:nemro/core/widgets/feature_card.dart';
 import 'package:nemro/core/widgets/section_header.dart';
+import 'package:nemro/features/live/data/live_session_store.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final summaries = ref.watch(liveSessionStoreProvider).loadSync();
+    final latest = summaries.isEmpty ? null : summaries.last;
 
     return CustomScrollView(
       slivers: [
@@ -74,13 +78,26 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 28),
               SectionHeader(title: l10n.homeRecentTitle),
               const SizedBox(height: 12),
-              EmptyStateCard(
-                icon: Icons.history_rounded,
-                title: l10n.insightsEmptyTitle,
-                body: l10n.homeRecentEmpty,
-                actionLabel: l10n.homeRecentAction,
-                onAction: () => context.push('/lab'),
-              ),
+              if (latest == null)
+                EmptyStateCard(
+                  icon: Icons.history_rounded,
+                  title: l10n.insightsEmptyTitle,
+                  body: l10n.homeRecentEmpty,
+                  actionLabel: l10n.homeRecentAction,
+                  onAction: () => context.push('/lab'),
+                )
+              else
+                // The latest saved Live session, so this card never claims
+                // "no saved sessions" while Insights lists some.
+                EmptyStateCard(
+                  icon: Icons.history_rounded,
+                  title: l10n.insightsSavedTitle,
+                  body:
+                      '${l10n.liveSummaryAverage}: ${latest.averageScore} · '
+                      '${l10n.liveSummaryFrames}: ${latest.frames}',
+                  actionLabel: l10n.navInsights,
+                  onAction: () => context.go('/insights'),
+                ),
               const SizedBox(height: 24),
               Text(
                 l10n.homeFooter,
