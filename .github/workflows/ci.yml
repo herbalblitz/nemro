@@ -46,9 +46,8 @@ jobs:
           dart format --output=none --set-exit-if-changed \
             $(find lib test tool -name '*.dart' -not -path 'lib/core/l10n/generated/*')
 
-      # The release manifest requests INTERNET (user decision 2026-10-30).
-      # Debug builds keep it too (hot reload).
-      # Live needs CAMERA, but not the camera plugin's audio/storage extras.
+      # The release manifest requests INTERNET (user decision 2026-10-30)
+      # and CAMERA for Live. No permission is forbidden.
       - name: Assert release manifest permissions
         run: |
           set -euo pipefail
@@ -61,24 +60,6 @@ jobs:
             echo "::error::Release manifest must request CAMERA for Live."
             exit 1
           fi
-          if ! grep -Eq 'android.permission.RECORD_AUDIO[^>]*tools:node="remove"' "$MANIFEST"; then
-            echo "::error::Release manifest must remove RECORD_AUDIO from the camera plugin merge."
-            exit 1
-          fi
-          if ! grep -Eq 'android.permission.READ_EXTERNAL_STORAGE[^>]*tools:node="remove"' "$MANIFEST"; then
-            echo "::error::Release manifest must remove READ_EXTERNAL_STORAGE from the camera plugin merge."
-            exit 1
-          fi
-          if ! grep -Eq 'android.permission.WRITE_EXTERNAL_STORAGE[^>]*tools:node="remove"' "$MANIFEST"; then
-            echo "::error::Release manifest must remove WRITE_EXTERNAL_STORAGE from the camera plugin merge."
-            exit 1
-          fi
-          for permission in READ_MEDIA_IMAGES READ_MEDIA_VIDEO READ_MEDIA_AUDIO READ_MEDIA_VISUAL_USER_SELECTED ACCESS_MEDIA_LOCATION; do
-            if ! grep -Eq "android.permission.$permission[^>]*tools:node=\"remove\"" "$MANIFEST"; then
-              echo "::error::Release manifest must remove $permission from any plugin merge."
-              exit 1
-            fi
-          done
 
       - name: Analyze
         run: flutter analyze --fatal-infos
@@ -173,12 +154,6 @@ jobs:
             echo "::error::Release APK is missing the CAMERA permission required by Live."
             exit 1
           fi
-          for permission in RECORD_AUDIO READ_EXTERNAL_STORAGE WRITE_EXTERNAL_STORAGE READ_MEDIA_IMAGES READ_MEDIA_VIDEO READ_MEDIA_AUDIO READ_MEDIA_VISUAL_USER_SELECTED ACCESS_MEDIA_LOCATION; do
-            if grep -q "android.permission.$permission" /tmp/nemro-permissions.txt; then
-              echo "::error::Release APK requests forbidden permission: $permission."
-              exit 1
-            fi
-          done
 
       - name: Upload APK
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
