@@ -46,15 +46,15 @@ jobs:
           dart format --output=none --set-exit-if-changed \
             $(find lib test tool -name '*.dart' -not -path 'lib/core/l10n/generated/*')
 
-      # Locks in the local-first promise: the release manifest must never
-      # request INTERNET permission. Debug builds keep it (hot reload).
+      # The release manifest requests INTERNET (user decision 2026-10-30).
+      # Debug builds keep it too (hot reload).
       # Live needs CAMERA, but not the camera plugin's audio/storage extras.
       - name: Assert release manifest permissions
         run: |
           set -euo pipefail
           MANIFEST=android/app/src/main/AndroidManifest.xml
-          if grep -q "android.permission.INTERNET" "$MANIFEST"; then
-            echo "::error::Release manifest must not request INTERNET permission."
+          if ! grep -q "android.permission.INTERNET" "$MANIFEST"; then
+            echo "::error::Release manifest must request INTERNET permission."
             exit 1
           fi
           if ! grep -q "android.permission.CAMERA" "$MANIFEST"; then
@@ -173,7 +173,7 @@ jobs:
             echo "::error::Release APK is missing the CAMERA permission required by Live."
             exit 1
           fi
-          for permission in INTERNET RECORD_AUDIO READ_EXTERNAL_STORAGE WRITE_EXTERNAL_STORAGE READ_MEDIA_IMAGES READ_MEDIA_VIDEO READ_MEDIA_AUDIO READ_MEDIA_VISUAL_USER_SELECTED ACCESS_MEDIA_LOCATION; do
+          for permission in RECORD_AUDIO READ_EXTERNAL_STORAGE WRITE_EXTERNAL_STORAGE READ_MEDIA_IMAGES READ_MEDIA_VIDEO READ_MEDIA_AUDIO READ_MEDIA_VISUAL_USER_SELECTED ACCESS_MEDIA_LOCATION; do
             if grep -q "android.permission.$permission" /tmp/nemro-permissions.txt; then
               echo "::error::Release APK requests forbidden permission: $permission."
               exit 1
