@@ -993,7 +993,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyIntro.
   ///
   /// In en, this message translates to:
-  /// **'Nemro is local-first. Version {version} has no Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.'**
+  /// **'Nemro is local-first. Version {version} has Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.'**
   String privacyIntro(String version);
 
   /// No description provided for @privacyDataTitle.
@@ -1029,7 +1029,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyCameraBody.
   ///
   /// In en, this message translates to:
-  /// **'Live opens the camera only after you tap Start. Frames are downsampled and processed on-device to estimate a rough light/contrast/motion proxy. No video or images are recorded, stored, or uploaded. An optional calibration baseline (two numbers) can be stored locally. The camera is released when you stop or leave the app; Nemro does not request microphone or storage access.'**
+  /// **'Live opens the camera only after you tap Start. Frames are downsampled and processed on-device to estimate a rough light/contrast/motion proxy. No video or images are recorded, stored, or uploaded. An optional calibration baseline (two numbers) can be stored locally. The camera is released when you stop or leave the app.'**
   String get privacyCameraBody;
 
   /// No description provided for @privacyStorageTitle.
