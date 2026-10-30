@@ -525,7 +525,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String privacyIntro(String version) {
-    return 'Nemro được thiết kế local-first. Phiên bản $version không có quyền truy cập Internet. Mẫu EEG, bộ giải mã và proxy camera Live chạy hoàn toàn trên thiết bị.';
+    return 'Nemro được thiết kế local-first. Phiên bản $version có quyền truy cập Internet. Mẫu EEG, bộ giải mã và proxy camera Live chạy hoàn toàn trên thiết bị.';
   }
 
   @override
@@ -547,7 +547,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get privacyCameraBody =>
-      'Live chỉ mở camera sau khi bạn nhấn Bắt đầu. Khung hình được thu nhỏ và xử lý trên thiết bị để ước lượng proxy thô từ ánh sáng, độ tương phản và chuyển động. Không video hay hình ảnh nào bị ghi, lưu hoặc tải lên. Một ngưỡng hiệu chuẩn tùy chọn (hai con số) có thể được lưu cục bộ. Camera được giải phóng khi bạn dừng hoặc rời ứng dụng; Nemro không yêu cầu quyền micro hay bộ nhớ.';
+      'Live chỉ mở camera sau khi bạn nhấn Bắt đầu. Khung hình được thu nhỏ và xử lý trên thiết bị để ước lượng proxy thô từ ánh sáng, độ tương phản và chuyển động. Không video hay hình ảnh nào bị ghi, lưu hoặc tải lên. Một ngưỡng hiệu chuẩn tùy chọn (hai con số) có thể được lưu cục bộ. Camera được giải phóng khi bạn dừng hoặc rời ứng dụng.';
 
   @override
   String get privacyStorageTitle => 'Lưu trữ';
