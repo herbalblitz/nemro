@@ -15,7 +15,7 @@ Nemro là ứng dụng giáo dục ưu tiên cục bộ. Chính sách này giả
 - Settings and optional session history are stored on your device.
 - The Lab includes read-only EEG samples and a bundled decoder that run on-device; neither is collected from you.
 - Live opens the camera only after you tap Start. Frames are processed on-device and are not recorded, stored, or uploaded.
-- Live does not request microphone, storage, or media-library permission.
+- Live asks only for `CAMERA` at runtime; the camera plugin's microphone, storage, and media-library declarations are no longer stripped from the manifest.
 - Saved Live summaries are opt-in; you can delete one session, clear the camera baseline, or delete all local data in **Settings → Data**.
 
 - Không tài khoản, không quảng cáo, không analytics, không tracking.
@@ -23,7 +23,7 @@ Nemro là ứng dụng giáo dục ưu tiên cục bộ. Chính sách này giả
 - Cài đặt và lịch sử phiên tùy chọn được lưu trên thiết bị.
 - Lab có sẵn các mẫu EEG chỉ đọc và bộ giải mã đi kèm, chạy trên thiết bị; cả hai đều không được thu thập từ bạn.
 - Live chỉ mở camera sau khi bạn nhấn Bắt đầu. Khung hình được xử lý trên thiết bị, không bị ghi, lưu hay tải lên.
-- Live không yêu cầu quyền micro, bộ nhớ hay thư viện media.
+- Live chỉ xin quyền `CAMERA` lúc chạy; các khai báo micro, bộ nhớ và thư viện media của plugin camera không còn bị loại bỏ khỏi manifest.
 - Tóm tắt phiên Live là tùy chọn; bạn có thể xóa từng phiên, xóa ngưỡng camera hoặc xóa toàn bộ dữ liệu cục bộ trong **Cài đặt → Dữ liệu**.
 
 ## What is stored / Dữ liệu được lưu
@@ -64,7 +64,7 @@ Live is a rough, transparent heuristic, not face or eye tracking and not a measu
 - Frames are downsampled to a small luminance grid and processed on-device. The score combines central contrast, lighting, and frame-to-frame stability.
 - No video or images are recorded, stored, or uploaded.
 - The camera is released when you tap **Stop** or when the app leaves the foreground.
-- The app does not request microphone, storage, or media-library access. The Android manifest removes the camera plugin's `RECORD_AUDIO`, storage, and media-library declarations; the only runtime permission for this feature is `CAMERA`.
+- The app asks only for `CAMERA` at runtime for Live. The Android manifest no longer removes the camera plugin's `RECORD_AUDIO`, storage, and media-library declarations.
 - A calibration baseline (two numbers) can be saved locally and cleared from the Live screen. It changes only how the score is presented; it is not a brain measurement.
 - Saved Live session summaries are off by default. Turn them on in Settings if you want Insights history.
 - Practice reuses the same camera pipeline: the camera opens only after you tap **Start**, frames are analyzed in memory, and the breathing pace follows the proxy score. A Practice summary is shown on screen only and is never saved or uploaded.
@@ -76,7 +76,7 @@ Live là một heuristic thô, minh bạch, không theo dõi khuôn mặt hay m�
 - Khung hình được thu nhỏ thành lưới độ sáng nhỏ và xử lý trên thiết bị. Điểm số kết hợp độ tương phản vùng trung tâm, ánh sáng và độ ổn định giữa các khung.
 - Không video hay hình ảnh nào bị ghi, lưu hoặc tải lên.
 - Camera được giải phóng khi bạn nhấn **Dừng** hoặc khi ứng dụng rời khỏi màn hình.
-- Ứng dụng không yêu cầu quyền micro, bộ nhớ hay thư viện media. Android manifest loại bỏ các khai báo `RECORD_AUDIO`, bộ nhớ và thư viện media của plugin camera; quyền runtime duy nhất cho tính năng này là `CAMERA`.
+- Ứng dụng chỉ xin quyền `CAMERA` lúc chạy cho Live. Android manifest không còn loại bỏ các khai báo `RECORD_AUDIO`, bộ nhớ và thư viện media của plugin camera.
 - Ngưỡng hiệu chuẩn (hai con số) có thể được lưu cục bộ và xóa từ màn hình Live. Nó chỉ thay đổi cách hiển thị điểm số, không phải phép đo não.
 - Tóm tắt phiên Live mặc định tắt. Bật trong Cài đặt nếu bạn muốn có lịch sử trong Insights.
 - Luyện tập dùng chung pipeline camera: camera chỉ mở sau khi bạn nhấn **Bắt đầu**, khung hình được phân tích trong bộ nhớ, và nhịp thở theo điểm proxy. Tổng kết buổi tập chỉ hiển thị trên màn hình, không bao giờ được lưu hay tải lên.
