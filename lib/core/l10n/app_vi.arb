@@ -381,5 +381,26 @@
       }
     }
   },
-  "labDecoderConfusionTitle": "Ma trận nhầm lẫn (hàng = thực tế, cột = dự đoán)"
+  "labDecoderConfusionTitle": "Ma trận nhầm lẫn (hàng = thực tế, cột = dự đoán)",
+  "homePracticeTitle": "Luyện tập",
+  "homePracticeSubtitle": "Thở theo nhịp gợi ý từ tín hiệu camera",
+  "homePracticeAction": "Mở",
+  "homePracticeBadge": "Mới",
+  "practiceTitle": "Luyện tập",
+  "practiceIntro": "Buổi tập thở có nhịp thay đổi theo tín hiệu camera. Ngồi trước camera, thở theo vòng tròn, và nhịp thở ra sẽ dài ra khi tín hiệu ổn định.",
+  "practiceHonestNote": "Nhịp thở chỉ theo một heuristic tín hiệu camera, không đo mức độ bình tĩnh, tập trung hay trạng thái y tế nào. Không có gì bị ghi hay tải lên.",
+  "practiceDurationLabel": "Thời lượng buổi tập",
+  "practiceMinutes": "{minutes} phút",
+  "@practiceMinutes": {"placeholders": {"minutes": {"type": "int"}}},
+  "practiceStartButton": "Bắt đầu tập",
+  "practiceStopButton": "Dừng",
+  "practiceInhale": "Hít vào",
+  "practiceHold": "Giữ",
+  "practiceExhale": "Thở ra",
+  "practiceRemaining": "Còn lại",
+  "practiceSummaryTitle": "Tổng kết buổi tập",
+  "practiceSummaryAverage": "Điểm proxy trung bình",
+  "practiceSummaryDuration": "Thời lượng",
+  "practiceSummaryCycles": "Chu kỳ thở",
+  "practiceStartAgain": "Tập lại"
 }
