@@ -1877,6 +1877,294 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'In-sample accuracy flatters the model: it was tested on the very windows it learned from, so it cannot be compared with held-out accuracy.'**
   String get labDecoderInSampleNote;
+
+  /// No description provided for @algorithmsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Algorithms that build AI'**
+  String get algorithmsTitle;
+
+  /// No description provided for @algorithmsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Four algorithms, from 1847 to 2017, that turn data into a learning machine — plus three hands-on experiments that run real training on this device.'**
+  String get algorithmsSubtitle;
+
+  /// No description provided for @algorithmsHonestNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything here runs on-device with tiny toy data. These demos teach how the algorithms work; they are not powerful models and they prove nothing about the brain.'**
+  String get algorithmsHonestNote;
+
+  /// No description provided for @algorithmsCardsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The algorithms'**
+  String get algorithmsCardsTitle;
+
+  /// No description provided for @algorithmsExperimentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try the algorithms'**
+  String get algorithmsExperimentsTitle;
+
+  /// No description provided for @algorithmsCard1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'1847 — Gradient descent'**
+  String get algorithmsCard1Title;
+
+  /// No description provided for @algorithmsCard1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'To teach a model, first define how wrong it is (a loss), then walk downhill: nudge every parameter a little against the slope of the loss, and repeat. Cauchy described the idea in 1847; it still trains nearly every model today.'**
+  String get algorithmsCard1Body;
+
+  /// No description provided for @algorithmsCard1Limit.
+  ///
+  /// In en, this message translates to:
+  /// **'It finds a downhill step, not the best answer: it can stall in a shallow valley or bounce forever if the step is too big.'**
+  String get algorithmsCard1Limit;
+
+  /// No description provided for @algorithmsCard1Source.
+  ///
+  /// In en, this message translates to:
+  /// **'Cauchy, A. (1847). Méthode générale pour la résolution des systèmes d\'équations simultanées.'**
+  String get algorithmsCard1Source;
+
+  /// No description provided for @algorithmsCard2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'1958 — The perceptron'**
+  String get algorithmsCard2Title;
+
+  /// No description provided for @algorithmsCard2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Rosenblatt\'s perceptron is the first machine that learns from examples: it draws a line between two classes and moves the line a little every time it misclassifies a point, until the line separates them — or it proves they cannot be separated.'**
+  String get algorithmsCard2Body;
+
+  /// No description provided for @algorithmsCard2Limit.
+  ///
+  /// In en, this message translates to:
+  /// **'A single line can only separate linearly separable classes. It cannot learn XOR, which is why networks needed hidden layers.'**
+  String get algorithmsCard2Limit;
+
+  /// No description provided for @algorithmsCard2Source.
+  ///
+  /// In en, this message translates to:
+  /// **'Rosenblatt, F. (1958). The perceptron: A probabilistic model for information storage and organization in the brain.'**
+  String get algorithmsCard2Source;
+
+  /// No description provided for @algorithmsCard3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'1986 — Backpropagation'**
+  String get algorithmsCard3Title;
+
+  /// No description provided for @algorithmsCard3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Backpropagation answers \'who is to blame?\' for a wrong answer: it sends the error backwards through the network, layer by layer, so every weight learns how much it contributed — and gradient descent then corrects each one.'**
+  String get algorithmsCard3Body;
+
+  /// No description provided for @algorithmsCard3Limit.
+  ///
+  /// In en, this message translates to:
+  /// **'It needs labelled examples and differentiable math; it explains how weights move, not what the network \'understands\'.'**
+  String get algorithmsCard3Limit;
+
+  /// No description provided for @algorithmsCard3Source.
+  ///
+  /// In en, this message translates to:
+  /// **'Rumelhart, D. E., Hinton, G. E., & Williams, R. J. (1986). Learning representations by back-propagating errors. Nature.'**
+  String get algorithmsCard3Source;
+
+  /// No description provided for @algorithmsCard4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'2017 — Attention and the transformer'**
+  String get algorithmsCard4Title;
+
+  /// No description provided for @algorithmsCard4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Instead of reading words one by one, attention lets every word weigh every other word at once, so context shapes meaning. The transformer stacked attention into the architecture behind today\'s language models.'**
+  String get algorithmsCard4Body;
+
+  /// No description provided for @algorithmsCard4Limit.
+  ///
+  /// In en, this message translates to:
+  /// **'Attention is weighted averaging, not comprehension: fluent text is not evidence of understanding, and its cost grows with sequence length.'**
+  String get algorithmsCard4Limit;
+
+  /// No description provided for @algorithmsCard4Source.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaswani, A., et al. (2017). Attention is all you need. Advances in Neural Information Processing Systems.'**
+  String get algorithmsCard4Source;
+
+  /// No description provided for @algorithmsExperimentPerceptronTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Teach a line to separate two classes'**
+  String get algorithmsExperimentPerceptronTitle;
+
+  /// No description provided for @algorithmsExperimentPerceptronBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the board to place points: red for class A, blue for class B. Then press Train and watch the line move until it separates them — or fails, if you placed them so no line can.'**
+  String get algorithmsExperimentPerceptronBody;
+
+  /// No description provided for @algorithmsExperimentPerceptronReading.
+  ///
+  /// In en, this message translates to:
+  /// **'The line only moves when it makes a mistake. If your points overlap, no line can separate them: that is the perceptron\'s limit, not a bug.'**
+  String get algorithmsExperimentPerceptronReading;
+
+  /// No description provided for @algorithmsExperimentGradientTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk downhill without falling off'**
+  String get algorithmsExperimentGradientTitle;
+
+  /// No description provided for @algorithmsExperimentGradientBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Move the learning-rate slider, then press Run. A small step crawls downhill; a huge step bounces out of the valley. The algorithm is the same — only the step size changes.'**
+  String get algorithmsExperimentGradientBody;
+
+  /// No description provided for @algorithmsExperimentGradientReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Step size is the whole game: too small wastes time, too big diverges. Tuning it is most of practical training.'**
+  String get algorithmsExperimentGradientReading;
+
+  /// No description provided for @algorithmsExperimentOverfitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fit the noise, miss the pattern'**
+  String get algorithmsExperimentOverfitTitle;
+
+  /// No description provided for @algorithmsExperimentOverfitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Slide the degree from 1 to 9 and watch the curve. A straight line underfits; a wiggly degree-9 curve memorises every noisy point and will fail on new data.'**
+  String get algorithmsExperimentOverfitBody;
+
+  /// No description provided for @algorithmsExperimentOverfitReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Training error always falls as the curve gets wigglier — that is why it cannot be trusted alone. Generalisation, not memorisation, is the goal.'**
+  String get algorithmsExperimentOverfitReading;
+
+  /// No description provided for @algorithmsPerceptronClassA.
+  ///
+  /// In en, this message translates to:
+  /// **'Class A'**
+  String get algorithmsPerceptronClassA;
+
+  /// No description provided for @algorithmsPerceptronClassB.
+  ///
+  /// In en, this message translates to:
+  /// **'Class B'**
+  String get algorithmsPerceptronClassB;
+
+  /// No description provided for @algorithmsPerceptronDemo.
+  ///
+  /// In en, this message translates to:
+  /// **'Load demo points'**
+  String get algorithmsPerceptronDemo;
+
+  /// No description provided for @algorithmsPerceptronTrain.
+  ///
+  /// In en, this message translates to:
+  /// **'Train'**
+  String get algorithmsPerceptronTrain;
+
+  /// No description provided for @algorithmsPerceptronClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get algorithmsPerceptronClear;
+
+  /// No description provided for @algorithmsPerceptronAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Accuracy: {percent}%'**
+  String algorithmsPerceptronAccuracy(int percent);
+
+  /// No description provided for @algorithmsPerceptronEpochs.
+  ///
+  /// In en, this message translates to:
+  /// **'Line after {epochs} epochs'**
+  String algorithmsPerceptronEpochs(int epochs);
+
+  /// No description provided for @algorithmsGradientLearningRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning rate: {value}'**
+  String algorithmsGradientLearningRate(String value);
+
+  /// No description provided for @algorithmsGradientRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Run'**
+  String get algorithmsGradientRun;
+
+  /// No description provided for @algorithmsGradientConverged.
+  ///
+  /// In en, this message translates to:
+  /// **'Converged: final loss {loss}'**
+  String algorithmsGradientConverged(String loss);
+
+  /// No description provided for @algorithmsGradientDiverged.
+  ///
+  /// In en, this message translates to:
+  /// **'Diverged: the steps left the valley'**
+  String get algorithmsGradientDiverged;
+
+  /// No description provided for @algorithmsGradientNotYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not yet converged after {steps} steps'**
+  String algorithmsGradientNotYet(int steps);
+
+  /// No description provided for @algorithmsOverfitDegree.
+  ///
+  /// In en, this message translates to:
+  /// **'Degree: {degree}'**
+  String algorithmsOverfitDegree(int degree);
+
+  /// No description provided for @algorithmsOverfitTrainError.
+  ///
+  /// In en, this message translates to:
+  /// **'Training error: {error}'**
+  String algorithmsOverfitTrainError(String error);
+
+  /// No description provided for @homeAlgorithmsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Algorithms'**
+  String get homeAlgorithmsTitle;
+
+  /// No description provided for @homeAlgorithmsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The algorithms that build AI, with experiments that really train.'**
+  String get homeAlgorithmsSubtitle;
+
+  /// No description provided for @homeAlgorithmsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get homeAlgorithmsAction;
+
+  /// No description provided for @homeAlgorithmsBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get homeAlgorithmsBadge;
 }
 
 class _AppLocalizationsDelegate
