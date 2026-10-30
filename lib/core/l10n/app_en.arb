@@ -381,5 +381,26 @@
       }
     }
   },
-  "labDecoderConfusionTitle": "Confusion matrix (rows = actual, columns = predicted)"
+  "labDecoderConfusionTitle": "Confusion matrix (rows = actual, columns = predicted)",
+  "homePracticeTitle": "Practice",
+  "homePracticeSubtitle": "Adaptive breathing paced by the camera signal",
+  "homePracticeAction": "Open",
+  "homePracticeBadge": "New",
+  "practiceTitle": "Practice",
+  "practiceIntro": "A breathing session whose pace follows the camera signal. Sit in front of the camera, breathe with the circle, and let the exhale stretch when the signal is steady.",
+  "practiceHonestNote": "The pace follows a camera-signal heuristic, not a measure of calm, focus, or any medical state. Nothing is recorded or uploaded.",
+  "practiceDurationLabel": "Session length",
+  "practiceMinutes": "{minutes} min",
+  "@practiceMinutes": {"placeholders": {"minutes": {"type": "int"}}},
+  "practiceStartButton": "Start practice",
+  "practiceStopButton": "Stop",
+  "practiceInhale": "Breathe in",
+  "practiceHold": "Hold",
+  "practiceExhale": "Breathe out",
+  "practiceRemaining": "Remaining",
+  "practiceSummaryTitle": "Practice summary",
+  "practiceSummaryAverage": "Average proxy score",
+  "practiceSummaryDuration": "Duration",
+  "practiceSummaryCycles": "Breathing cycles",
+  "practiceStartAgain": "Practice again"
 }
