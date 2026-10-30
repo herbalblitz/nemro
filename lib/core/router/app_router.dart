@@ -10,6 +10,7 @@ import 'package:nemro/features/lab/lab_screen.dart';
 import 'package:nemro/features/learn/learn_screen.dart';
 import 'package:nemro/features/live/live_screen.dart';
 import 'package:nemro/features/onboarding/onboarding_screen.dart';
+import 'package:nemro/features/practice/practice_screen.dart';
 import 'package:nemro/features/privacy/privacy_screen.dart';
 import 'package:nemro/features/settings/settings_screen.dart';
 import 'package:nemro/features/shell/home_shell.dart';
@@ -56,6 +57,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/lab', builder: (context, state) => const LabScreen()),
       GoRoute(path: '/live', builder: (context, state) => const LiveScreen()),
+      GoRoute(
+        path: '/practice',
+        builder: (context, state) => const PracticeScreen(),
+      ),
       GoRoute(path: '/about', builder: (context, state) => const AboutScreen()),
       GoRoute(
         path: '/privacy',
