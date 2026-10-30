@@ -6,7 +6,8 @@ All notable changes to Nemro are documented here.
 
 ### Changed
 
-- Release builds now request the `INTERNET` permission (user decision 2026-10-30). No code currently sends data over the network; the privacy policy, README, architecture doc, and CI permission checks were updated to match. The release manifest still refuses audio, storage, and media-library permissions.
+- Release builds now request the `INTERNET` permission (user decision 2026-10-30). No code currently sends data over the network; the privacy policy, README, architecture doc, and CI permission checks were updated to match.
+- No permission is forbidden anymore: the manifest no longer strips the camera plugin's audio, storage, and media declarations, CI no longer forbids any permission, and the privacy texts (policy and in-app privacy screen) were updated to match.
 
 ## [0.5.0] - 2026-10-30
 
