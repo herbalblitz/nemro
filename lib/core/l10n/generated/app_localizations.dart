@@ -2165,6 +2165,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New'**
   String get homeAlgorithmsBadge;
+
+  /// No description provided for @algorithmsAdvancedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'In-depth experiments'**
+  String get algorithmsAdvancedTitle;
+
+  /// No description provided for @algorithmsExperimentMlpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Teach a real network XOR with backpropagation'**
+  String get algorithmsExperimentMlpTitle;
+
+  /// No description provided for @algorithmsExperimentMlpBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The perceptron card said a single line cannot learn XOR. This network has a hidden layer of 4 units and learns with real backpropagation: forward pass, error, backward pass, weight update — repeated 5,000 times. Press Train and watch the loss fall and the boundary bend around XOR.'**
+  String get algorithmsExperimentMlpBody;
+
+  /// No description provided for @algorithmsExperimentMlpReading.
+  ///
+  /// In en, this message translates to:
+  /// **'The hidden layer bends the boundary: the network solves XOR by combining lines. That is the whole trick of deep learning — stacked simple units.'**
+  String get algorithmsExperimentMlpReading;
+
+  /// No description provided for @algorithmsMlpLoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Loss: {loss}'**
+  String algorithmsMlpLoss(String loss);
+
+  /// No description provided for @algorithmsExperimentAttentionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch attention weigh words'**
+  String get algorithmsExperimentAttentionTitle;
+
+  /// No description provided for @algorithmsExperimentAttentionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Four words, each with a small query and key vector. Tap a word to make it the query: its attention weights over all four words are dot products passed through a softmax. The output for that word would be just the weighted average of the values.'**
+  String get algorithmsExperimentAttentionBody;
+
+  /// No description provided for @algorithmsExperimentAttentionReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Attention is arithmetic, not understanding: a word pulls numbers from other words according to fixed vectors. Nothing here knows what \'cat\' means.'**
+  String get algorithmsExperimentAttentionReading;
+
+  /// No description provided for @algorithmsAttentionTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'The,cat,chases,mouse'**
+  String get algorithmsAttentionTokens;
+
+  /// No description provided for @algorithmsExperimentInitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Zero weights learn nothing'**
+  String get algorithmsExperimentInitTitle;
+
+  /// No description provided for @algorithmsExperimentInitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Same network, same data, two starts. Random weights break symmetry and the network learns XOR; all-zero weights keep every hidden unit identical forever, so the network stays stuck.'**
+  String get algorithmsExperimentInitBody;
+
+  /// No description provided for @algorithmsExperimentInitReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Symmetry is the enemy: if all units start equal, they receive equal updates and stay equal. Initialization is part of the algorithm, not a detail.'**
+  String get algorithmsExperimentInitReading;
+
+  /// No description provided for @algorithmsInitRandom.
+  ///
+  /// In en, this message translates to:
+  /// **'Random start'**
+  String get algorithmsInitRandom;
+
+  /// No description provided for @algorithmsInitZeros.
+  ///
+  /// In en, this message translates to:
+  /// **'Zero start'**
+  String get algorithmsInitZeros;
 }
 
 class _AppLocalizationsDelegate
