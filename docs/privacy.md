@@ -2,7 +2,7 @@
 
 **Effective date / Ngày hiệu lực:** 2026-10-30
 
-**App version / Phiên bản:** 0.4.0
+**App version / Phiên bản:** 0.5.0
 
 Nemro is a local-first educational app. This policy explains what the app stores, what it does not collect, and how the Lab, Live, and Insights features handle data.
 
@@ -28,7 +28,7 @@ Nemro là ứng dụng giáo dục ưu tiên cục bộ. Chính sách này giả
 
 ## What is stored / Dữ liệu được lưu
 
-Version 0.4.0 stores only on this device:
+Version 0.5.0 stores only on this device:
 
 - your selected language (`vi` or `en`);
 - your theme choice (system, light, or dark);
@@ -37,7 +37,7 @@ Version 0.4.0 stores only on this device:
 - an optional personal camera baseline: two numbers (10th and 90th percentile of a short calibration);
 - if you turn on **Save Live session summaries**: the average proxy score, duration, frame count, and end time of each completed Live session. History is capped at 50 sessions.
 
-Phiên bản 0.4.0 chỉ lưu trên thiết bị:
+Phiên bản 0.5.0 chỉ lưu trên thiết bị:
 
 - ngôn ngữ đã chọn (`vi` hoặc `en`);
 - lựa chọn giao diện (theo hệ thống, sáng hoặc tối);
@@ -46,15 +46,15 @@ Phiên bản 0.4.0 chỉ lưu trên thiết bị:
 - ngưỡng camera cá nhân tùy chọn: hai con số (phân vị 10 và 90 của một lần hiệu chuẩn ngắn);
 - nếu bạn bật **Lưu tóm tắt phiên Live**: điểm proxy trung bình, thời lượng, số khung và thời điểm kết thúc của mỗi phiên Live đã hoàn tất. Lịch sử được giới hạn tối đa 50 phiên.
 
-No EEG is recorded from you. The Lab replays read-only excerpts bundled with the app, and the decoder processes those excerpts locally. The app does not store your Lab predictions. The S002 excerpt is a cross-subject demo; the Lab does not attach S001's accuracy to it.
+No EEG is recorded from you. The Lab replays read-only excerpts bundled with the app, and the decoder processes those excerpts locally. The app does not store your Lab predictions. The S002 and S003 excerpts are cross-subject demos; the Lab does not attach S001's accuracy to them.
 
-Không EEG nào của bạn bị ghi lại. Lab phát lại các đoạn dữ liệu chỉ đọc đi kèm ứng dụng và bộ giải mã xử lý các đoạn đó ngay trên thiết bị. Ứng dụng không lưu dự đoán Lab của bạn. Mẫu S002 là demo cross-subject; Lab không gán độ chính xác của S001 cho mẫu này.
+Không EEG nào của bạn bị ghi lại. Lab phát lại các đoạn dữ liệu chỉ đọc đi kèm ứng dụng và bộ giải mã xử lý các đoạn đó ngay trên thiết bị. Ứng dụng không lưu dự đoán Lab của bạn. Các mẫu S002 và S003 là demo cross-subject; Lab không gán độ chính xác của S001 cho các mẫu này.
 
 ## On-device AI decoder / Bộ giải mã AI trên thiết bị
 
-Version 0.4.0 includes a small logistic-regression model in the Lab. The model file and the EEG excerpts are bundled with the app. Feature extraction and inference run entirely on the device; no EEG, prediction, or confidence score is uploaded. The decoder is a research demo, not a medical device and not mind reading. See [`model-card.md`](model-card.md) for its held-out accuracy, confidence interval, and limitations.
+Version 0.5.0 includes small on-device models in the Lab (a logistic-regression model plus a nearest-centroid comparator). The model files and the EEG excerpts are bundled with the app. Feature extraction and inference run entirely on the device; no EEG, prediction, or confidence score is uploaded. The decoder is a research demo, not a medical device and not mind reading. See [`model-card.md`](model-card.md) for its held-out accuracy, confidence interval, and limitations.
 
-Phiên bản 0.4.0 có một mô hình hồi quy logistic nhỏ trong Lab. Tệp mô hình và các mẫu EEG đi kèm ứng dụng. Việc trích xuất đặc trưng và suy luận chạy hoàn toàn trên thiết bị; không EEG, dự đoán hay điểm tin cậy nào được tải lên. Bộ giải mã là demo nghiên cứu, không phải thiết bị y tế và không đọc suy nghĩ. Xem [`model-card.md`](model-card.md) để biết độ chính xác trên tập giữ lại, khoảng tin cậy và các giới hạn.
+Phiên bản 0.5.0 có các mô hình nhỏ chạy trên thiết bị trong Lab (mô hình hồi quy logistic và bộ so sánh nearest-centroid). Các tệp mô hình và các mẫu EEG đi kèm ứng dụng. Việc trích xuất đặc trưng và suy luận chạy hoàn toàn trên thiết bị; không EEG, dự đoán hay điểm tin cậy nào được tải lên. Bộ giải mã là demo nghiên cứu, không phải thiết bị y tế và không đọc suy nghĩ. Xem [`model-card.md`](model-card.md) để biết độ chính xác trên tập giữ lại, khoảng tin cậy và các giới hạn.
 
 ## Live camera proxy / Proxy camera Live
 
