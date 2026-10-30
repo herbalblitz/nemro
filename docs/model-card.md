@@ -125,6 +125,31 @@ Schalk, G., McFarland, D. J., Hinterberger, T., Birbaumer, N., & Wolpaw, J. R.
 (2004). BCI2000: A General-Purpose Brain-Computer Interface (BCI) System.
 *IEEE Transactions on Biomedical Engineering, 51*(6), 1034–1043.
 
+## Second decoder: nearest centroid (for comparison)
+
+The Lab also ships a second model, `assets/models/eeg_decoder_centroid.json`,
+so the same replay can be run through two different models. It uses the
+exact same 8 mu/beta features and the same 4 channels, but a different
+decision rule: each class is represented by the mean standardized feature
+vector of its training windows, and a new window is assigned to the nearer
+centroid.
+
+- **Training:** the 7 task windows of the S001/R04 60-second excerpt itself
+  (3 left, 4 right). It has no held-out run and no leave-one-run-out
+  evaluation.
+- **In-sample accuracy:** 5/7 = 71.4%, confusion [[2, 1], [1, 3]] (rows =
+  actual, columns = predicted). This number is inflated by construction —
+  the model is tested on the windows it learned from — and the Lab labels
+  it "in-sample" wherever it appears. It must never be compared with the
+  logistic model's held-out 66.7%.
+- **Agreement with the logistic model:** the two models agree on only 3 of
+  the 7 replay windows and disagree on 4, even though both score 5/7 on the
+  excerpt. Accuracy alone hides disagreement; the comparison is the lesson.
+- **Regeneration:** `python3 tool/train_centroid_decoder.py` (standard
+  library only). It first replays the shipped logistic model on the first
+  task window and refuses to write anything if the feature pipeline has
+  drifted from the Dart regression value (right probability 0.785649).
+
 ## Version history
 
 - **v1 (2026-10-27):** initial model; 4 channels, 8 features, held-out R04
@@ -132,3 +157,6 @@ Schalk, G., McFarland, D. J., Hinterberger, T., Birbaumer, N., & Wolpaw, J. R.
 - **v1.1 (2026-10-30):** documentation and UI context only; weights unchanged.
   Added the Wilson interval (41.7%–84.8%), the one-sided p-value (≈0.15), the
   LORO line in the Lab, and explicit S002 cross-subject labelling.
+- **v2 (2026-10-30):** second decoder added (nearest centroid, same features).
+  The Lab lets the user switch models; the centroid's accuracy is labelled
+  in-sample and never shown next to a held-out number without that label.
