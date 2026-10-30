@@ -36,6 +36,19 @@ S001 only, so predictions on S002 demonstrate the decoder running on a
 different subject; they do not carry the 66.7% held-out accuracy measured
 on S001/R04.
 
+`s003_r04_60s.csv` is a third 60-second excerpt from the same dataset, same
+task, same 8 channels at 160 Hz:
+
+- **Subject / run:** S003, run R04 (imagined left/right fist)
+- **Window:** 0–60 seconds
+- **Markers:** `T0` rest, `T1` left-fist imagery, `T2` right-fist imagery
+  (four left, three right tasks, plus eight rest markers)
+
+The original EDF file is `S003/S003R04.edf` from the dataset. It is **not**
+included in this repository. The excerpt is redistributed under the same
+ODC-BY 1.0 license. Like S002, it is a cross-subject demo: the Lab decoder
+was trained and held-out evaluated on S001 only.
+
 ## Citation
 
 Schalk, G. (2009). *EEG Motor Movement/Imagery Dataset* (version 1.0.0).
@@ -59,6 +72,9 @@ python3 tool/extract_eeg_excerpt.py \
 
 For the second sample, download `S002/S002R04.edf` and run the same command
 with `--subject S002` and the `s002_r04_60s` output names.
+
+For the third sample, download `S003/S003R04.edf` and run the same command
+with `--subject S003` and the `s003_r04_60s` output names.
 
 The exporter reads the EDF annotation channel; a separate `.event` file is not
 needed. The JSON sidecar records the source metadata and task markers used by
