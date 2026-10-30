@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -402,6 +403,15 @@ class _ResearchScreenState extends ConsumerState<ResearchScreen>
         style: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.onSurfaceVariant,
           height: 1.4,
+        ),
+      ),
+      const SizedBox(height: 24),
+      Card(
+        child: ListTile(
+          leading: const Icon(Icons.calculate_outlined),
+          title: Text(l10n.algorithmsTitle),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.push('/algorithms'),
         ),
       ),
     ];
