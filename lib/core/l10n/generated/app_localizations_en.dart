@@ -510,7 +510,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutSourceNote =>
-      'The Lab bundles 60-second EEGMMIDB excerpts from S001 and S002 (ODC-BY 1.0). The decoder is a small logistic regression trained on S001 runs 8 and 12 and evaluated on run 4: 67% held-out accuracy, 50% chance. The S002 replay is a cross-subject demo with no accuracy claim. Research demo only.';
+      'The Lab bundles 60-second EEGMMIDB excerpts from S001, S002, and S003 (ODC-BY 1.0). The decoder is a small logistic regression trained on S001 runs 8 and 12 and evaluated on run 4: 67% held-out accuracy, 50% chance. The S002 and S003 replays are cross-subject demos with no accuracy claim. Research demo only.';
 
   @override
   String get aboutRepo => 'Source on GitHub';
@@ -859,4 +859,185 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get practiceStartAgain => 'Practice again';
+
+  @override
+  String get homeResearchTitle => 'Research';
+
+  @override
+  String get homeResearchSubtitle =>
+      'Landmark findings and self-run camera experiments';
+
+  @override
+  String get homeResearchAction => 'Open';
+
+  @override
+  String get homeResearchBadge => 'New';
+
+  @override
+  String get researchTitle => 'Research';
+
+  @override
+  String get researchSubtitle =>
+      'Four landmark findings, each with its limits and sources — plus two short experiments you can run on this device to see how the camera proxy behaves.';
+
+  @override
+  String get researchHonestNote =>
+      'Nothing here measures attention, calm, or any medical state. The experiments describe a camera signal only.';
+
+  @override
+  String get researchMilestonesTitle => 'Landmark findings';
+
+  @override
+  String get researchExperimentsTitle => 'Self-run experiments';
+
+  @override
+  String get researchLimitLabel => 'Limit';
+
+  @override
+  String get researchSourceLabel => 'Source';
+
+  @override
+  String get researchOpenSource => 'Open source';
+
+  @override
+  String get researchStartButton => 'Start experiment';
+
+  @override
+  String get researchStopButton => 'Stop';
+
+  @override
+  String get researchResultTitle => 'Experiment result';
+
+  @override
+  String get researchResultAverage => 'Average proxy score';
+
+  @override
+  String get researchResultStability => 'Average stability';
+
+  @override
+  String get researchResultLighting => 'Average lighting';
+
+  @override
+  String get researchResultPresence => 'Average presence';
+
+  @override
+  String get researchResultNote =>
+      'This describes the camera signal during those 30 seconds only. It is not evidence about attention, calm, or any mental state.';
+
+  @override
+  String get researchRunAgain => 'Run again';
+
+  @override
+  String get researchBackToList => 'Back to list';
+
+  @override
+  String get researchMilestone1Title => '1929 — The first human EEG';
+
+  @override
+  String get researchMilestone1Body =>
+      'Hans Berger in Jena, Germany, recorded electrical activity from the human scalp and described the alpha rhythm (roughly 8–13 Hz, strongest at rest with eyes closed). It was the start of electroencephalography — and of every non-invasive brain recording that followed.';
+
+  @override
+  String get researchMilestone1Limit =>
+      'Crude early equipment and a handful of first subjects; the finding was a beginning, not a validated clinical tool.';
+
+  @override
+  String get researchMilestone1Source =>
+      'Berger, H. (1929). Über das Elektrenkephalogramm des Menschen. Archiv für Psychiatrie und Nervenkrankheiten.';
+
+  @override
+  String get researchMilestone2Title => '1988 — Spelling with the P300 wave';
+
+  @override
+  String get researchMilestone2Body =>
+      'Farwell and Donchin showed that a person can pick letters on a screen by attention alone: the brain produces a P300 response about 300 ms after a rare, attended stimulus, and a computer can decode which letter was chosen. It was one of the first non-invasive BCIs with a practical use — assisted communication.';
+
+  @override
+  String get researchMilestone2Limit =>
+      'Slow (a few characters per minute at the time), needs per-person calibration and training; it decodes a choice among shown options, not free-form thought.';
+
+  @override
+  String get researchMilestone2Source =>
+      'Farwell, L. A., & Donchin, E. (1988). Talking off the top of your head. Electroencephalography and Clinical Neurophysiology.';
+
+  @override
+  String get researchMilestone3Title =>
+      '2004 — An open motor-imagery EEG dataset';
+
+  @override
+  String get researchMilestone3Body =>
+      'The EEG Motor Movement/Imagery Dataset on PhysioNet recorded 109 people performing and imagining hand and foot movements (64 channels). It became an open standard for building and comparing decoders — Nemro\'s Lab replays three excerpts from it (S001, S002, and S003).';
+
+  @override
+  String get researchMilestone3Limit =>
+      'Lab data from healthy volunteers following cues — far from everyday use; accuracy on this set says nothing about clinical effectiveness.';
+
+  @override
+  String get researchMilestone3Source =>
+      'PhysioNet EEG Motor Movement/Imagery Dataset (EEGMMIDB); Schalk et al., BCI2000 (2004).';
+
+  @override
+  String get researchMilestone4Title => '2010 — Not everyone can drive a BCI';
+
+  @override
+  String get researchMilestone4Body =>
+      'Work from the Berlin BCI group found that a substantial minority of users — often cited around 15–30% — never gain reliable control of a motor-imagery BCI despite training, a phenomenon called \'BCI illiteracy\'. BCI performance depends on the person, not just the technology.';
+
+  @override
+  String get researchMilestone4Limit =>
+      'The share depends on how \'control\' is defined, the task, and training length; it does not mean those people\'s brains are in any way deficient.';
+
+  @override
+  String get researchMilestone4Source =>
+      'Blankertz, B., et al. (2010). Neurophysiological predictor of SMR-based BCI performance. NeuroImage.';
+
+  @override
+  String get researchExperimentStillTitle => 'Sit still for 30 seconds';
+
+  @override
+  String get researchExperimentStillBody =>
+      'Sit in front of the camera and stay as still as you can for 30 seconds. Watch what happens to the stability component and the score.';
+
+  @override
+  String get researchExperimentStillReading =>
+      'If you sat still, stability usually rises and the score rises with it. That shows the score reacts to movement — not to focus, calm, or effort.';
+
+  @override
+  String get researchExperimentCoverTitle => 'Cover the lens, then uncover it';
+
+  @override
+  String get researchExperimentCoverBody =>
+      'Start the run, cover the camera with your hand for a few seconds, then uncover it. Watch what happens to the presence component and the score.';
+
+  @override
+  String get researchExperimentCoverReading =>
+      'Covering the lens collapses central contrast, so presence and the score fall with it — no change in mental state needed. The score follows the image it is given.';
+
+  @override
+  String get labDecoderModelLabel => 'Decoder';
+
+  @override
+  String get labDecoderModelLogistic => 'Logistic';
+
+  @override
+  String get labDecoderModelCentroid => 'Centroid';
+
+  @override
+  String labDecoderModelCentroidLine(Object count) {
+    return 'Nearest centroid · mu/beta power · $count channels';
+  }
+
+  @override
+  String labDecoderTrainingInSample(Object train) {
+    return 'Trained on the replay itself ($train); no held-out run.';
+  }
+
+  @override
+  String labDecoderAccuracyInSample(Object percent) {
+    return 'In-sample accuracy: $percent% (chance 50%)';
+  }
+
+  @override
+  String get labDecoderInSampleNote =>
+      'In-sample accuracy flatters the model: it was tested on the very windows it learned from, so it cannot be compared with held-out accuracy.';
 }
