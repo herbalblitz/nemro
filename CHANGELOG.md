@@ -2,6 +2,12 @@
 
 All notable changes to Nemro are documented here.
 
+## [Unreleased]
+
+### Added
+
+- Practice: an adaptive breathing session whose pace follows the Live camera signal proxy in real time (inhale 4s, hold 1s, exhale 4–8s by score, hold 1s), with 1/3/5-minute lengths and an on-screen-only summary. The camera opens only after **Start**; frames are analyzed in memory and never recorded, stored, or uploaded, and the screen states plainly that the pace is not a measure of calm, focus, or any medical state.
+
 ## [0.4.0] - 2026-10-30
 
 ### Added
