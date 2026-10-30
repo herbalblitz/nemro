@@ -33,13 +33,14 @@ Live is covered by analyzer and widget tests with a fake camera gateway. A physi
 - Live frames are processed on-device and are never recorded, stored, or uploaded. The camera is released on **Stop** or when the app leaves the foreground.
 - Practice: an adaptive breathing session (1/3/5 minutes) whose exhale length follows the camera signal proxy in real time. The camera opens only after **Start**, the summary stays on screen only, and the screen states that the pace is not a measure of calm, focus, or any medical state.
 - Research: four landmark BCI findings with limits and sources, plus two self-run 30-second camera experiments whose results stay on screen only.
+- Algorithms: four landmark AI algorithms (gradient descent, perceptron, backpropagation, attention/transformer) with limits and sources, plus three interactive experiments that run real training on-device — a perceptron trainer, a gradient-descent playground, and an overfitting demo.
 - Insights: opt-in saved Live session summaries, weekly averages, current/longest streak, per-session delete with confirmation, and CSV export through the system share sheet.
 - Settings can clear the personal camera baseline or delete all local data, including the baseline and saved summaries.
 - Reproducible training tool (`tool/train_eeg_decoder.py`) and a full model card (`docs/model-card.md`) with confidence intervals, LORO folds, and limitations.
 - Dataset and ODC-BY 1.0 attribution in the Lab and About screens.
 - Privacy policy and open-source license screens inside the app.
 - Local settings stored with `shared_preferences`; no account, ads, or analytics.
-- Release manifest requests `CAMERA` for Live and `INTERNET`, but no `RECORD_AUDIO`, storage, or media-library permission. Android cloud backup and device-to-device transfer are both disabled.
+- Release manifest requests `CAMERA` for Live and `INTERNET`; the camera plugin's audio, storage, and media-library declarations are no longer removed from the merged manifest. Android cloud backup and device-to-device transfer are both disabled.
 - CI that checks formatting, analyzes with `--fatal-infos`, tests, builds a release APK on GitHub Actions, and asserts the release permission set.
 
 ## What Nemro is not
