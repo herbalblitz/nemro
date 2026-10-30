@@ -1,0 +1,97 @@
+{
+  "source": "PhysioNet EEG Motor Movement/Imagery Dataset (EEGMMIDB) v1.0.0",
+  "doi": "10.13026/C28G6P",
+  "subject": "S003",
+  "run": "R04 (imagined left/right fist)",
+  "sampling_rate_hz": 160.0,
+  "channels": [
+    "C3",
+    "Cz",
+    "C4",
+    "FC3",
+    "FC4",
+    "CP3",
+    "CP4",
+    "Pz"
+  ],
+  "units": "uV (digital units are 1:1 with physical uV in this file)",
+  "duration_s": 60.0,
+  "events": [
+    {
+      "onset": 0.0,
+      "duration": 4.2,
+      "label": "T0"
+    },
+    {
+      "onset": 4.2,
+      "duration": 4.1,
+      "label": "T2"
+    },
+    {
+      "onset": 8.3,
+      "duration": 4.2,
+      "label": "T0"
+    },
+    {
+      "onset": 12.5,
+      "duration": 4.1,
+      "label": "T1"
+    },
+    {
+      "onset": 16.6,
+      "duration": 4.2,
+      "label": "T0"
+    },
+    {
+      "onset": 20.8,
+      "duration": 4.1,
+      "label": "T2"
+    },
+    {
+      "onset": 24.9,
+      "duration": 4.2,
+      "label": "T0"
+    },
+    {
+      "onset": 29.1,
+      "duration": 4.1,
+      "label": "T1"
+    },
+    {
+      "onset": 33.2,
+      "duration": 4.2,
+      "label": "T0"
+    },
+    {
+      "onset": 37.4,
+      "duration": 4.1,
+      "label": "T2"
+    },
+    {
+      "onset": 41.5,
+      "duration": 4.2,
+      "label": "T0"
+    },
+    {
+      "onset": 45.7,
+      "duration": 4.1,
+      "label": "T1"
+    },
+    {
+      "onset": 49.8,
+      "duration": 4.2,
+      "label": "T0"
+    },
+    {
+      "onset": 54.0,
+      "duration": 4.1,
+      "label": "T1"
+    },
+    {
+      "onset": 58.1,
+      "duration": 4.2,
+      "label": "T0"
+    }
+  ],
+  "license": "Open Data Commons Attribution License v1.0"
+}
