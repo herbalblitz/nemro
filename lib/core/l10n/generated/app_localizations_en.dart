@@ -794,4 +794,69 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get labDecoderConfusionTitle =>
       'Confusion matrix (rows = actual, columns = predicted)';
+
+  @override
+  String get homePracticeTitle => 'Practice';
+
+  @override
+  String get homePracticeSubtitle =>
+      'Adaptive breathing paced by the camera signal';
+
+  @override
+  String get homePracticeAction => 'Open';
+
+  @override
+  String get homePracticeBadge => 'New';
+
+  @override
+  String get practiceTitle => 'Practice';
+
+  @override
+  String get practiceIntro =>
+      'A breathing session whose pace follows the camera signal. Sit in front of the camera, breathe with the circle, and let the exhale stretch when the signal is steady.';
+
+  @override
+  String get practiceHonestNote =>
+      'The pace follows a camera-signal heuristic, not a measure of calm, focus, or any medical state. Nothing is recorded or uploaded.';
+
+  @override
+  String get practiceDurationLabel => 'Session length';
+
+  @override
+  String practiceMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get practiceStartButton => 'Start practice';
+
+  @override
+  String get practiceStopButton => 'Stop';
+
+  @override
+  String get practiceInhale => 'Breathe in';
+
+  @override
+  String get practiceHold => 'Hold';
+
+  @override
+  String get practiceExhale => 'Breathe out';
+
+  @override
+  String get practiceRemaining => 'Remaining';
+
+  @override
+  String get practiceSummaryTitle => 'Practice summary';
+
+  @override
+  String get practiceSummaryAverage => 'Average proxy score';
+
+  @override
+  String get practiceSummaryDuration => 'Duration';
+
+  @override
+  String get practiceSummaryCycles => 'Breathing cycles';
+
+  @override
+  String get practiceStartAgain => 'Practice again';
 }
