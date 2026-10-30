@@ -2,17 +2,22 @@ import 'package:material_ui/material_ui.dart';
 
 import 'package:nemro/core/l10n/generated/app_localizations.dart';
 import 'package:nemro/features/algorithms/data/algorithm_content.dart';
+import 'package:nemro/features/algorithms/data/attention_demo.dart';
 import 'package:nemro/features/algorithms/data/gradient_descent.dart';
+import 'package:nemro/features/algorithms/data/mlp_trainer.dart';
 import 'package:nemro/features/algorithms/data/overfit_demo.dart';
 import 'package:nemro/features/algorithms/data/perceptron_trainer.dart';
 
 /// Algorithms that build AI: four landmark algorithms, each with its
 /// limit and source, plus three experiments that run real training
-/// on-device with toy data.
+/// on-device with toy data, and three in-depth experiments: a real
+/// backpropagation network on XOR, an interactive attention computation,
+/// and a weight-initialization comparison.
 ///
 /// Nothing here trains a powerful model and nothing here measures a
 /// mental state. The demos teach how the algorithms move: a line that
-/// learns from mistakes, a walk downhill, and a curve that memorises.
+/// learns from mistakes, a walk downhill, a curve that memorises, a
+/// hidden layer that bends a boundary, and weights that average words.
 class AlgorithmsScreen extends StatelessWidget {
   const AlgorithmsScreen({super.key});
 
@@ -65,6 +70,19 @@ class AlgorithmsScreen extends StatelessWidget {
             const _GradientExperiment(),
             const SizedBox(height: 10),
             const _OverfitExperiment(),
+            const SizedBox(height: 24),
+            Text(
+              l10n.algorithmsAdvancedTitle,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 12),
+            const _MlpExperiment(),
+            const SizedBox(height: 10),
+            const _AttentionExperiment(),
+            const SizedBox(height: 10),
+            const _InitExperiment(),
           ],
         ),
       ),
@@ -574,4 +592,351 @@ class _CurvePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_CurvePainter old) => old.coeffs != coeffs;
+}
+
+class _MlpExperiment extends StatefulWidget {
+  const _MlpExperiment();
+
+  @override
+  State<_MlpExperiment> createState() => _MlpExperimentState();
+}
+
+class _MlpExperimentState extends State<_MlpExperiment> {
+  MlpModel? _model;
+  List<double>? _losses;
+
+  void _train() {
+    final model = MlpModel.random();
+    final losses = model.train();
+    setState(() {
+      _model = model;
+      _losses = losses;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final model = _model;
+    final losses = _losses;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.algorithmsExperimentMlpTitle,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.algorithmsExperimentMlpBody,
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.45),
+            ),
+            const SizedBox(height: 12),
+            CustomPaint(
+              size: const Size(double.infinity, 220),
+              painter: _MlpBoundaryPainter(model: model),
+            ),
+            if (losses != null) ...[
+              const SizedBox(height: 12),
+              CustomPaint(
+                size: const Size(double.infinity, 120),
+                painter: _LossPainter(losses: losses),
+              ),
+            ],
+            const SizedBox(height: 12),
+            FilledButton(
+              key: const ValueKey('algorithms-train-mlp'),
+              onPressed: _train,
+              child: Text(l10n.algorithmsPerceptronTrain),
+            ),
+            if (model != null && losses != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                l10n.algorithmsPerceptronAccuracy(
+                  (model.accuracy() * 100).round(),
+                ),
+              ),
+              Text(l10n.algorithmsMlpLoss(losses.last.toStringAsFixed(4))),
+            ],
+            const SizedBox(height: 8),
+            Text(
+              l10n.algorithmsExperimentMlpReading,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Paints the MLP's decision regions on a 21x21 grid plus the XOR points.
+class _MlpBoundaryPainter extends CustomPainter {
+  const _MlpBoundaryPainter({required this.model});
+
+  final MlpModel? model;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final border = Paint()
+      ..color = const Color(0xFF9AA0A6)
+      ..style = PaintingStyle.stroke;
+    canvas.drawRect(Offset.zero & size, border);
+    const cells = 21;
+    final model = this.model;
+    if (model != null) {
+      for (var gy = 0; gy < cells; gy++) {
+        for (var gx = 0; gx < cells; gx++) {
+          final predicted = model.predictClass([
+            gx / (cells - 1),
+            gy / (cells - 1),
+          ]);
+          canvas.drawRect(
+            Rect.fromLTWH(
+              gx * size.width / cells,
+              gy * size.height / cells,
+              size.width / cells,
+              size.height / cells,
+            ),
+            Paint()
+              ..color = predicted == 0
+                  ? const Color(0xFFD93025).withValues(alpha: 0.12)
+                  : const Color(0xFF1A73E8).withValues(alpha: 0.12),
+          );
+        }
+      }
+    }
+    for (final sample in xorData) {
+      final target = sample.target.round();
+      canvas.drawCircle(
+        Offset(sample.inputs[0] * size.width, sample.inputs[1] * size.height),
+        8,
+        Paint()
+          ..color = target == 0
+              ? const Color(0xFFD93025)
+              : const Color(0xFF1A73E8),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_MlpBoundaryPainter old) => old.model != model;
+}
+
+/// Paints the sampled training loss, 0..0.3 top to bottom.
+class _LossPainter extends CustomPainter {
+  const _LossPainter({required this.losses});
+
+  final List<double> losses;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final border = Paint()
+      ..color = const Color(0xFF9AA0A6)
+      ..style = PaintingStyle.stroke;
+    canvas.drawRect(Offset.zero & size, border);
+    if (losses.length < 2) return;
+    final path = Path();
+    for (var i = 0; i < losses.length; i++) {
+      final x = i / (losses.length - 1) * size.width;
+      final y = size.height - (losses[i].clamp(0.0, 0.3) / 0.3) * size.height;
+      if (i == 0) {
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+    }
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = const Color(0xFF1A73E8)
+        ..strokeWidth = 2
+        ..style = PaintingStyle.stroke,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_LossPainter old) => old.losses != losses;
+}
+
+class _AttentionExperiment extends StatefulWidget {
+  const _AttentionExperiment();
+
+  @override
+  State<_AttentionExperiment> createState() => _AttentionExperimentState();
+}
+
+class _AttentionExperimentState extends State<_AttentionExperiment> {
+  // The verb shows the cross-word pattern best, so it is the default query.
+  var _queryIndex = 2;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final tokens = attentionTokens(l10n.algorithmsAttentionTokens.split(','));
+    final weights = attentionWeights(tokens[_queryIndex], tokens);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.algorithmsExperimentAttentionTitle,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.algorithmsExperimentAttentionBody,
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.45),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              children: [
+                for (var i = 0; i < tokens.length; i++)
+                  ChoiceChip(
+                    label: Text(tokens[i].word),
+                    selected: _queryIndex == i,
+                    onSelected: (_) => setState(() => _queryIndex = i),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            for (var i = 0; i < tokens.length; i++) ...[
+              Row(
+                children: [
+                  SizedBox(width: 72, child: Text(tokens[i].word)),
+                  Expanded(child: LinearProgressIndicator(value: weights[i])),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: 44,
+                    child: Text('${(weights[i] * 100).round()}%'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+            ],
+            const SizedBox(height: 8),
+            Text(
+              l10n.algorithmsExperimentAttentionReading,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _InitExperiment extends StatefulWidget {
+  const _InitExperiment();
+
+  @override
+  State<_InitExperiment> createState() => _InitExperimentState();
+}
+
+class _InitExperimentState extends State<_InitExperiment> {
+  var _init = MlpInit.random;
+  MlpModel? _model;
+
+  void _train() {
+    final model = _init == MlpInit.random
+        ? MlpModel.random()
+        : MlpModel.zeros();
+    model.train();
+    setState(() => _model = model);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final model = _model;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.algorithmsExperimentInitTitle,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.algorithmsExperimentInitBody,
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.45),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              children: [
+                ChoiceChip(
+                  label: Text(l10n.algorithmsInitRandom),
+                  selected: _init == MlpInit.random,
+                  onSelected: (_) => setState(() {
+                    _init = MlpInit.random;
+                    _model = null;
+                  }),
+                ),
+                ChoiceChip(
+                  label: Text(l10n.algorithmsInitZeros),
+                  selected: _init == MlpInit.zeros,
+                  onSelected: (_) => setState(() {
+                    _init = MlpInit.zeros;
+                    _model = null;
+                  }),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            FilledButton(
+              key: const ValueKey('algorithms-train-init'),
+              onPressed: _train,
+              child: Text(l10n.algorithmsPerceptronTrain),
+            ),
+            if (model != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                l10n.algorithmsPerceptronAccuracy(
+                  (model.accuracy() * 100).round(),
+                ),
+              ),
+              Text(
+                l10n.algorithmsMlpLoss(
+                  model.meanSquaredError().toStringAsFixed(4),
+                ),
+              ),
+            ],
+            const SizedBox(height: 8),
+            Text(
+              l10n.algorithmsExperimentInitReading,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
