@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- INTERNET is requested by the release build (user decision
+         2026-10-30). No code currently sends data over the network. -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Live processes frames on-device and never records audio or accesses
          external storage. The camera plugin declares these permissions; remove
          them from the merge. -->
