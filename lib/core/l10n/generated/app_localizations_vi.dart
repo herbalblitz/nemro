@@ -1224,4 +1224,57 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeAlgorithmsBadge => 'Mới';
+
+  @override
+  String get algorithmsAdvancedTitle => 'Thí nghiệm chuyên sâu';
+
+  @override
+  String get algorithmsExperimentMlpTitle =>
+      'Dạy mạng thật học XOR bằng lan truyền ngược';
+
+  @override
+  String get algorithmsExperimentMlpBody =>
+      'Thẻ perceptron nói một đường thẳng không học được XOR. Mạng này có lớp ẩn 4 đơn vị và học bằng lan truyền ngược thật: lượt xuôi, sai số, lượt ngược, cập nhật trọng số — lặp lại 5.000 lần. Nhấn Huấn luyện và xem loss rơi xuống và biên phân tách uốn quanh XOR.';
+
+  @override
+  String get algorithmsExperimentMlpReading =>
+      'Lớp ẩn uốn cong biên phân tách: mạng giải XOR bằng cách kết hợp các đường thẳng. Đó là toàn bộ mẹo của học sâu — xếp chồng các đơn vị đơn giản.';
+
+  @override
+  String algorithmsMlpLoss(String loss) {
+    return 'Loss: $loss';
+  }
+
+  @override
+  String get algorithmsExperimentAttentionTitle =>
+      'Xem attention cân nhắc từng từ';
+
+  @override
+  String get algorithmsExperimentAttentionBody =>
+      'Bốn từ, mỗi từ có một vector query và key nhỏ. Chạm một từ để đặt nó làm query: trọng số attention của nó trên cả bốn từ là tích vô hướng đưa qua softmax. Đầu ra cho từ đó chỉ là trung bình có trọng số của các value.';
+
+  @override
+  String get algorithmsExperimentAttentionReading =>
+      'Attention chỉ là số học, không phải sự thấu hiểu: một từ kéo số từ các từ khác theo vector cố định. Không có gì ở đây biết \'cat\' nghĩa là gì.';
+
+  @override
+  String get algorithmsAttentionTokens => 'Con,mèo,đuổi,chuột';
+
+  @override
+  String get algorithmsExperimentInitTitle =>
+      'Trọng số 0 thì không học được gì';
+
+  @override
+  String get algorithmsExperimentInitBody =>
+      'Cùng một mạng, cùng một dữ liệu, hai điểm khởi đầu. Trọng số ngẫu nhiên phá vỡ đối xứng và mạng học được XOR; trọng số toàn 0 giữ mọi đơn vị ẩn giống hệt nhau mãi mãi, nên mạng kẹt cứng.';
+
+  @override
+  String get algorithmsExperimentInitReading =>
+      'Đối xứng là kẻ thù: nếu mọi đơn vị khởi đầu bằng nhau, chúng nhận cập nhật bằng nhau và mãi bằng nhau. Khởi tạo là một phần của thuật toán, không phải chi tiết nhỏ.';
+
+  @override
+  String get algorithmsInitRandom => 'Khởi tạo ngẫu nhiên';
+
+  @override
+  String get algorithmsInitZeros => 'Khởi tạo 0';
 }
