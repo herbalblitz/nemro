@@ -67,6 +67,7 @@ Live is a rough, transparent heuristic, not face or eye tracking and not a measu
 - The app does not request microphone, storage, or media-library access. The Android manifest removes the camera plugin's `RECORD_AUDIO`, storage, and media-library declarations; the only runtime permission for this feature is `CAMERA`.
 - A calibration baseline (two numbers) can be saved locally and cleared from the Live screen. It changes only how the score is presented; it is not a brain measurement.
 - Saved Live session summaries are off by default. Turn them on in Settings if you want Insights history.
+- Practice reuses the same camera pipeline: the camera opens only after you tap **Start**, frames are analyzed in memory, and the breathing pace follows the proxy score. A Practice summary is shown on screen only and is never saved or uploaded.
 
 Live là một heuristic thô, minh bạch, không theo dõi khuôn mặt hay mắt và không đo chú ý hay tình trạng y tế.
 
@@ -77,6 +78,7 @@ Live là một heuristic thô, minh bạch, không theo dõi khuôn mặt hay m�
 - Ứng dụng không yêu cầu quyền micro, bộ nhớ hay thư viện media. Android manifest loại bỏ các khai báo `RECORD_AUDIO`, bộ nhớ và thư viện media của plugin camera; quyền runtime duy nhất cho tính năng này là `CAMERA`.
 - Ngưỡng hiệu chuẩn (hai con số) có thể được lưu cục bộ và xóa từ màn hình Live. Nó chỉ thay đổi cách hiển thị điểm số, không phải phép đo não.
 - Tóm tắt phiên Live mặc định tắt. Bật trong Cài đặt nếu bạn muốn có lịch sử trong Insights.
+- Luyện tập dùng chung pipeline camera: camera chỉ mở sau khi bạn nhấn **Bắt đầu**, khung hình được phân tích trong bộ nhớ, và nhịp thở theo điểm proxy. Tổng kết buổi tập chỉ hiển thị trên màn hình, không bao giờ được lưu hay tải lên.
 
 ## Insights and export / Insights và xuất dữ liệu
 
