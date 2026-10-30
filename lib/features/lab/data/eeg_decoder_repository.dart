@@ -7,15 +7,36 @@ import 'package:nemro/features/lab/data/eeg_recording.dart';
 import 'package:nemro/features/lab/data/eeg_repository.dart';
 
 const eegDecoderModelAsset = 'assets/models/eeg_decoder.json';
+const eegDecoderCentroidModelAsset = 'assets/models/eeg_decoder_centroid.json';
 
+/// The logistic model trained on S001 runs R08/R12 and evaluated on the
+/// held-out run R04.
+const labDecoderLogisticId = 'logistic';
+
+/// The nearest-centroid model trained on the S001/R04 excerpt itself.
+/// Its accuracy is in-sample by construction and must never be shown
+/// next to the logistic model's held-out number without its label.
+const labDecoderCentroidId = 'centroid';
+
+const _decoderModelAssets = {
+  labDecoderLogisticId: eegDecoderModelAsset,
+  labDecoderCentroidId: eegDecoderCentroidModelAsset,
+};
+
+/// Loads a bundled decoder model by id. An unknown id falls back to the
+/// logistic model, mirroring how an unknown recording id falls back to
+/// the first recording.
 class EegDecoderRepository {
   const EegDecoderRepository({this.bundle});
 
   final AssetBundle? bundle;
 
-  Future<EegDecoder> load() async {
+  Future<EegDecoder> load() => loadModel(labDecoderLogisticId);
+
+  Future<EegDecoder> loadModel(String id) async {
     final assets = bundle ?? rootBundle;
-    final source = await assets.loadString(eegDecoderModelAsset);
+    final asset = _decoderModelAssets[id] ?? eegDecoderModelAsset;
+    final source = await assets.loadString(asset);
     return EegDecoder(EegDecoderModel.fromJson(source));
   }
 }
@@ -24,8 +45,26 @@ final eegDecoderRepositoryProvider = Provider<EegDecoderRepository>(
   (ref) => const EegDecoderRepository(),
 );
 
+/// The decoder Lab currently shows. Defaults to the logistic model; an
+/// unknown id falls back to it via the repository.
+final selectedLabDecoderProvider =
+    NotifierProvider<SelectedLabDecoderController, String>(
+      SelectedLabDecoderController.new,
+    );
+
+class SelectedLabDecoderController extends Notifier<String> {
+  @override
+  String build() => labDecoderLogisticId;
+
+  void select(String id) {
+    state = _decoderModelAssets.containsKey(id) ? id : labDecoderLogisticId;
+  }
+}
+
 final eegDecoderProvider = FutureProvider.autoDispose<EegDecoder>(
-  (ref) => ref.watch(eegDecoderRepositoryProvider).load(),
+  (ref) => ref
+      .watch(eegDecoderRepositoryProvider)
+      .loadModel(ref.watch(selectedLabDecoderProvider)),
 );
 
 /// Predictions for every complete left/right task window in the recording.
