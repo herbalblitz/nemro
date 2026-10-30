@@ -1223,4 +1223,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeAlgorithmsBadge => 'New';
+
+  @override
+  String get algorithmsAdvancedTitle => 'In-depth experiments';
+
+  @override
+  String get algorithmsExperimentMlpTitle =>
+      'Teach a real network XOR with backpropagation';
+
+  @override
+  String get algorithmsExperimentMlpBody =>
+      'The perceptron card said a single line cannot learn XOR. This network has a hidden layer of 4 units and learns with real backpropagation: forward pass, error, backward pass, weight update — repeated 5,000 times. Press Train and watch the loss fall and the boundary bend around XOR.';
+
+  @override
+  String get algorithmsExperimentMlpReading =>
+      'The hidden layer bends the boundary: the network solves XOR by combining lines. That is the whole trick of deep learning — stacked simple units.';
+
+  @override
+  String algorithmsMlpLoss(String loss) {
+    return 'Loss: $loss';
+  }
+
+  @override
+  String get algorithmsExperimentAttentionTitle =>
+      'Watch attention weigh words';
+
+  @override
+  String get algorithmsExperimentAttentionBody =>
+      'Four words, each with a small query and key vector. Tap a word to make it the query: its attention weights over all four words are dot products passed through a softmax. The output for that word would be just the weighted average of the values.';
+
+  @override
+  String get algorithmsExperimentAttentionReading =>
+      'Attention is arithmetic, not understanding: a word pulls numbers from other words according to fixed vectors. Nothing here knows what \'cat\' means.';
+
+  @override
+  String get algorithmsAttentionTokens => 'The,cat,chases,mouse';
+
+  @override
+  String get algorithmsExperimentInitTitle => 'Zero weights learn nothing';
+
+  @override
+  String get algorithmsExperimentInitBody =>
+      'Same network, same data, two starts. Random weights break symmetry and the network learns XOR; all-zero weights keep every hidden unit identical forever, so the network stays stuck.';
+
+  @override
+  String get algorithmsExperimentInitReading =>
+      'Symmetry is the enemy: if all units start equal, they receive equal updates and stay equal. Initialization is part of the algorithm, not a detail.';
+
+  @override
+  String get algorithmsInitRandom => 'Random start';
+
+  @override
+  String get algorithmsInitZeros => 'Zero start';
 }
