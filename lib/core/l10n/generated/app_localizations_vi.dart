@@ -1042,4 +1042,186 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get labDecoderInSampleNote =>
       'Độ chính xác nội mẫu tâng bốc mô hình: nó được kiểm tra trên chính các cửa sổ đã học, nên không thể so sánh với độ chính xác held-out.';
+
+  @override
+  String get algorithmsTitle => 'Thuật toán tạo ra AI';
+
+  @override
+  String get algorithmsSubtitle =>
+      'Bốn thuật toán, từ 1847 đến 2017, biến dữ liệu thành cỗ máy biết học — kèm ba thí nghiệm tự tay chạy quá trình huấn luyện thật ngay trên máy này.';
+
+  @override
+  String get algorithmsHonestNote =>
+      'Mọi thứ ở đây chạy trên máy với dữ liệu đồ chơi rất nhỏ. Các demo dạy cách thuật toán hoạt động; chúng không phải mô hình mạnh và không chứng minh gì về não bộ.';
+
+  @override
+  String get algorithmsCardsTitle => 'Các thuật toán';
+
+  @override
+  String get algorithmsExperimentsTitle => 'Thử chạy thuật toán';
+
+  @override
+  String get algorithmsCard1Title => '1847 — Gradient descent';
+
+  @override
+  String get algorithmsCard1Body =>
+      'Để dạy một mô hình, trước hết định nghĩa nó sai bao nhiêu (hàm loss), rồi đi xuống dốc: chỉnh từng tham số một chút ngược với độ dốc của loss, và lặp lại. Cauchy mô tả ý tưởng này năm 1847; đến nay nó vẫn huấn luyện gần như mọi mô hình.';
+
+  @override
+  String get algorithmsCard1Limit =>
+      'Nó chỉ tìm được một bước đi xuống, không phải đáp án tốt nhất: nó có thể kẹt ở thung lũng nông hoặc nảy mãi nếu bước quá lớn.';
+
+  @override
+  String get algorithmsCard1Source =>
+      'Cauchy, A. (1847). Méthode générale pour la résolution des systèmes d\'équations simultanées.';
+
+  @override
+  String get algorithmsCard2Title => '1958 — Perceptron';
+
+  @override
+  String get algorithmsCard2Body =>
+      'Perceptron của Rosenblatt là cỗ máy đầu tiên học từ ví dụ: nó vẽ một đường thẳng phân tách hai lớp và dịch đường thẳng một chút mỗi khi phân loại sai một điểm, cho đến khi đường thẳng tách được chúng — hoặc chứng minh rằng không thể tách.';
+
+  @override
+  String get algorithmsCard2Limit =>
+      'Một đường thẳng chỉ tách được các lớp phân tách tuyến tính. Nó không học được XOR, và đó là lý do mạng nơ-ron cần lớp ẩn.';
+
+  @override
+  String get algorithmsCard2Source =>
+      'Rosenblatt, F. (1958). The perceptron: A probabilistic model for information storage and organization in the brain.';
+
+  @override
+  String get algorithmsCard3Title => '1986 — Lan truyền ngược';
+
+  @override
+  String get algorithmsCard3Body =>
+      'Lan truyền ngược trả lời câu hỏi \'ai đáng trách?\' cho một đáp án sai: nó gửi sai số ngược qua mạng, từng lớp một, để mỗi trọng số biết mình đóng góp bao nhiêu — rồi gradient descent sửa từng trọng số.';
+
+  @override
+  String get algorithmsCard3Limit =>
+      'Nó cần ví dụ có nhãn và toán học khả vi; nó giải thích trọng số di chuyển ra sao, chứ không phải mạng \'hiểu\' gì.';
+
+  @override
+  String get algorithmsCard3Source =>
+      'Rumelhart, D. E., Hinton, G. E., & Williams, R. J. (1986). Learning representations by back-propagating errors. Nature.';
+
+  @override
+  String get algorithmsCard4Title => '2017 — Attention và transformer';
+
+  @override
+  String get algorithmsCard4Body =>
+      'Thay vì đọc từng từ một, attention cho mỗi từ cân nhắc mọi từ khác cùng lúc, để ngữ cảnh định hình ý nghĩa. Transformer xếp chồng attention thành kiến trúc đứng sau các mô hình ngôn ngữ ngày nay.';
+
+  @override
+  String get algorithmsCard4Limit =>
+      'Attention chỉ là trung bình có trọng số, không phải sự thấu hiểu: văn bản trôi chảy không phải bằng chứng của hiểu biết, và chi phí của nó tăng theo độ dài chuỗi.';
+
+  @override
+  String get algorithmsCard4Source =>
+      'Vaswani, A., et al. (2017). Attention is all you need. Advances in Neural Information Processing Systems.';
+
+  @override
+  String get algorithmsExperimentPerceptronTitle =>
+      'Dạy một đường thẳng phân tách hai lớp';
+
+  @override
+  String get algorithmsExperimentPerceptronBody =>
+      'Chạm vào bảng để đặt điểm: đỏ là lớp A, xanh là lớp B. Rồi nhấn Huấn luyện và xem đường thẳng dịch chuyển cho đến khi tách được chúng — hoặc thất bại, nếu bạn đặt điểm sao cho không đường thẳng nào tách nổi.';
+
+  @override
+  String get algorithmsExperimentPerceptronReading =>
+      'Đường thẳng chỉ dịch chuyển khi nó mắc lỗi. Nếu điểm của bạn chồng lấn nhau, không đường thẳng nào tách được chúng: đó là giới hạn của perceptron, không phải lỗi.';
+
+  @override
+  String get algorithmsExperimentGradientTitle => 'Đi xuống dốc mà không ngã';
+
+  @override
+  String get algorithmsExperimentGradientBody =>
+      'Kéo thanh tốc độ học rồi nhấn Chạy. Bước nhỏ bò chậm xuống dốc; bước quá lớn nảy văng khỏi thung lũng. Thuật toán vẫn vậy — chỉ tốc độ bước thay đổi.';
+
+  @override
+  String get algorithmsExperimentGradientReading =>
+      'Tốc độ bước là tất cả: quá nhỏ thì tốn thời gian, quá lớn thì phân kỳ. Chỉnh nó là phần lớn công việc huấn luyện thực tế.';
+
+  @override
+  String get algorithmsExperimentOverfitTitle =>
+      'Khớp cả nhiễu, trượt cả quy luật';
+
+  @override
+  String get algorithmsExperimentOverfitBody =>
+      'Kéo bậc từ 1 đến 9 và xem đường cong. Đường thẳng thì khớp thiếu; đường cong bậc 9 ngoằn ngoèo ghi nhớ từng điểm nhiễu và sẽ thất bại trên dữ liệu mới.';
+
+  @override
+  String get algorithmsExperimentOverfitReading =>
+      'Lỗi huấn luyện luôn giảm khi đường cong ngoằn ngoèo hơn — vì vậy không thể chỉ tin nó. Khái quát hoá, chứ không phải ghi nhớ, mới là mục tiêu.';
+
+  @override
+  String get algorithmsPerceptronClassA => 'Lớp A';
+
+  @override
+  String get algorithmsPerceptronClassB => 'Lớp B';
+
+  @override
+  String get algorithmsPerceptronDemo => 'Nạp điểm mẫu';
+
+  @override
+  String get algorithmsPerceptronTrain => 'Huấn luyện';
+
+  @override
+  String get algorithmsPerceptronClear => 'Xóa';
+
+  @override
+  String algorithmsPerceptronAccuracy(int percent) {
+    return 'Độ chính xác: $percent%';
+  }
+
+  @override
+  String algorithmsPerceptronEpochs(int epochs) {
+    return 'Đường thẳng sau $epochs epoch';
+  }
+
+  @override
+  String algorithmsGradientLearningRate(String value) {
+    return 'Tốc độ học: $value';
+  }
+
+  @override
+  String get algorithmsGradientRun => 'Chạy';
+
+  @override
+  String algorithmsGradientConverged(String loss) {
+    return 'Đã hội tụ: loss cuối $loss';
+  }
+
+  @override
+  String get algorithmsGradientDiverged =>
+      'Đã phân kỳ: các bước văng khỏi thung lũng';
+
+  @override
+  String algorithmsGradientNotYet(int steps) {
+    return 'Chưa hội tụ sau $steps bước';
+  }
+
+  @override
+  String algorithmsOverfitDegree(int degree) {
+    return 'Bậc: $degree';
+  }
+
+  @override
+  String algorithmsOverfitTrainError(String error) {
+    return 'Lỗi huấn luyện: $error';
+  }
+
+  @override
+  String get homeAlgorithmsTitle => 'Thuật toán';
+
+  @override
+  String get homeAlgorithmsSubtitle =>
+      'Các thuật toán tạo ra AI, kèm thí nghiệm huấn luyện thật.';
+
+  @override
+  String get homeAlgorithmsAction => 'Khám phá';
+
+  @override
+  String get homeAlgorithmsBadge => 'Mới';
 }
