@@ -795,4 +795,68 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get labDecoderConfusionTitle =>
       'Ma trận nhầm lẫn (hàng = thực tế, cột = dự đoán)';
+
+  @override
+  String get homePracticeTitle => 'Luyện tập';
+
+  @override
+  String get homePracticeSubtitle => 'Thở theo nhịp gợi ý từ tín hiệu camera';
+
+  @override
+  String get homePracticeAction => 'Mở';
+
+  @override
+  String get homePracticeBadge => 'Mới';
+
+  @override
+  String get practiceTitle => 'Luyện tập';
+
+  @override
+  String get practiceIntro =>
+      'Buổi tập thở có nhịp thay đổi theo tín hiệu camera. Ngồi trước camera, thở theo vòng tròn, và nhịp thở ra sẽ dài ra khi tín hiệu ổn định.';
+
+  @override
+  String get practiceHonestNote =>
+      'Nhịp thở chỉ theo một heuristic tín hiệu camera, không đo mức độ bình tĩnh, tập trung hay trạng thái y tế nào. Không có gì bị ghi hay tải lên.';
+
+  @override
+  String get practiceDurationLabel => 'Thời lượng buổi tập';
+
+  @override
+  String practiceMinutes(int minutes) {
+    return '$minutes phút';
+  }
+
+  @override
+  String get practiceStartButton => 'Bắt đầu tập';
+
+  @override
+  String get practiceStopButton => 'Dừng';
+
+  @override
+  String get practiceInhale => 'Hít vào';
+
+  @override
+  String get practiceHold => 'Giữ';
+
+  @override
+  String get practiceExhale => 'Thở ra';
+
+  @override
+  String get practiceRemaining => 'Còn lại';
+
+  @override
+  String get practiceSummaryTitle => 'Tổng kết buổi tập';
+
+  @override
+  String get practiceSummaryAverage => 'Điểm proxy trung bình';
+
+  @override
+  String get practiceSummaryDuration => 'Thời lượng';
+
+  @override
+  String get practiceSummaryCycles => 'Chu kỳ thở';
+
+  @override
+  String get practiceStartAgain => 'Tập lại';
 }
