@@ -682,6 +682,38 @@ class _DecoderCard extends ConsumerWidget {
                 height: 1.45,
               ),
             ),
+            const SizedBox(height: 12),
+            Text(
+              l10n.labDecoderModelLabel,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 8,
+              children: [
+                ChoiceChip(
+                  label: Text(l10n.labDecoderModelLogistic),
+                  selected:
+                      ref.watch(selectedLabDecoderProvider) ==
+                      labDecoderLogisticId,
+                  onSelected: (_) => ref
+                      .read(selectedLabDecoderProvider.notifier)
+                      .select(labDecoderLogisticId),
+                ),
+                ChoiceChip(
+                  label: Text(l10n.labDecoderModelCentroid),
+                  selected:
+                      ref.watch(selectedLabDecoderProvider) ==
+                      labDecoderCentroidId,
+                  onSelected: (_) => ref
+                      .read(selectedLabDecoderProvider.notifier)
+                      .select(labDecoderCentroidId),
+                ),
+              ],
+            ),
             const SizedBox(height: 14),
             decoder.when(
               loading: () => _DecoderStatus(
@@ -761,12 +793,20 @@ class _ModelSummary extends StatelessWidget {
     // wrong person. Say plainly that this is a cross-subject demo instead.
     final isCrossSubject = trainingSubject != recording.subject;
     // The accuracy value and its label must travel together: a model
-    // with a held-out run wears the held-out label, while a model
-    // without one falls back to leave-one-run-out — and must say so.
-    final hasHeldOut = training.testRun.isNotEmpty;
+    // with a held-out run wears the held-out label, a model evaluated
+    // only on its own training windows wears the in-sample label, and
+    // a model with neither falls back to leave-one-run-out — and must
+    // say so. A held-out number is only trusted when both the run and
+    // the value are present; a run name without a value is not a claim.
+    final hasHeldOut =
+        training.testRun.isNotEmpty && training.heldOutAccuracy != null;
+    final inSampleAccuracy = training.inSampleAccuracy;
+    final loroAccuracy = training.leaveOneRunOutAccuracy;
+    final hasAccuracy =
+        hasHeldOut || inSampleAccuracy != null || loroAccuracy != null;
     final accuracy = hasHeldOut
-        ? training.heldOutAccuracy
-        : training.leaveOneRunOutAccuracy;
+        ? training.heldOutAccuracy!
+        : inSampleAccuracy ?? loroAccuracy ?? 0;
     final percent = (accuracy * 100).round();
     // The held-out confusion matrix, documented in docs/model-card.md as
     // rows = actual, columns = predicted. Shown only for a model with a
@@ -802,7 +842,11 @@ class _ModelSummary extends StatelessWidget {
         children: [
           _SummaryLine(
             icon: Icons.tune_rounded,
-            text: l10n.labDecoderModel(decoder.model.channels.length),
+            text: decoder.model.isCentroid
+                ? l10n.labDecoderModelCentroidLine(
+                    decoder.model.channels.length,
+                  )
+                : l10n.labDecoderModel(decoder.model.channels.length),
             theme: theme,
           ),
           const SizedBox(height: 6),
@@ -819,6 +863,10 @@ class _ModelSummary extends StatelessWidget {
                     training.trainRuns.join(' & '),
                     training.testRun,
                   )
+                : inSampleAccuracy != null
+                ? l10n.labDecoderTrainingInSample(
+                    training.trainRuns.join(' & '),
+                  )
                 : l10n.labDecoderTrainingLoro(training.trainRuns.join(' & ')),
             theme: theme,
           ),
@@ -833,21 +881,31 @@ class _ModelSummary extends StatelessWidget {
               theme: theme,
             ),
           ] else ...[
-            const SizedBox(height: 6),
-            _SummaryLine(
-              icon: Icons.verified_outlined,
-              text: hasHeldOut
-                  ? l10n.labDecoderAccuracy(percent)
-                  : l10n.labDecoderAccuracyLoro(percent),
-              theme: theme,
-            ),
-            if (hasHeldOut) ...[
+            if (hasAccuracy) ...[
+              const SizedBox(height: 6),
+              _SummaryLine(
+                icon: Icons.verified_outlined,
+                text: hasHeldOut
+                    ? l10n.labDecoderAccuracy(percent)
+                    : inSampleAccuracy != null
+                    ? l10n.labDecoderAccuracyInSample(percent)
+                    : l10n.labDecoderAccuracyLoro(percent),
+                theme: theme,
+              ),
+            ],
+            if (inSampleAccuracy != null) ...[
+              const SizedBox(height: 6),
+              _SummaryLine(
+                icon: Icons.info_outline_rounded,
+                text: l10n.labDecoderInSampleNote,
+                theme: theme,
+              ),
+            ],
+            if (hasHeldOut && loroAccuracy != null) ...[
               const SizedBox(height: 6),
               _SummaryLine(
                 icon: Icons.repeat_rounded,
-                text: l10n.labDecoderAccuracyLoro(
-                  (training.leaveOneRunOutAccuracy * 100).round(),
-                ),
+                text: l10n.labDecoderAccuracyLoro((loroAccuracy * 100).round()),
                 theme: theme,
               ),
             ],
