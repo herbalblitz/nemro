@@ -20,7 +20,7 @@ import 'package:nemro/features/lab/data/eeg_decoder.dart';
 import 'package:nemro/features/lab/data/eeg_decoder_repository.dart';
 import 'package:nemro/features/lab/data/eeg_recording.dart';
 import 'package:nemro/features/lab/data/eeg_repository.dart';
-import 'package:nemro/features/live/data/attention_analyzer.dart';
+import 'package:nemro/features/live/data/camera_proxy_analyzer.dart';
 import 'package:nemro/features/live/data/frame_throttler.dart';
 import 'package:nemro/features/live/data/live_camera_gateway.dart';
 import 'package:nemro/features/live/data/live_session_summary.dart';
@@ -33,10 +33,10 @@ import 'package:nemro/features/live/live_screen.dart';
 /// is covered by test/session_exporter_test.dart.
 class _CapturingExporter extends SessionExporter {
   _CapturingExporter(this.captured)
-      : super(
-          tempDirectory: () async => Directory.systemTemp,
-          shareFile: (_) async {},
-        );
+    : super(
+        tempDirectory: () async => Directory.systemTemp,
+        shareFile: (_) async {},
+      );
 
   final List<LiveSessionSummary> captured;
 
@@ -102,11 +102,11 @@ Future<void> _pumpApp(
   await tester.pumpAndSettle();
 }
 
-EegRecording _testRecording() {
+EegRecording _testRecording({String subject = 'S001'}) {
   return EegRecording(
     source: 'Test dataset',
     doi: '10.0000/test',
-    subject: 'S001',
+    subject: subject,
     run: 'R04',
     license: 'ODC-BY 1.0',
     units: 'uV',
@@ -374,6 +374,55 @@ void main() {
     );
     expect(predictionLabel.data, 'Right fist imagery');
     expect(find.textContaining('Held-out accuracy: 67%'), findsOneWidget);
+    expect(
+      find.textContaining('Leave-one-run-out accuracy: 60%'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('n = 15; 95% Wilson interval 42%–85%'),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Lab marks S002 as a cross-subject demo, not an accuracy claim', (
+    tester,
+  ) async {
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      labRecording: _testRecording(subject: 'S002'),
+      labDecoder: _testDecoder(),
+      labPredictions: _testPredictions(),
+    );
+
+    final openLab = find.text('Open Lab');
+    await tester.ensureVisible(openLab);
+    await tester.tap(openLab);
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('AI decoder'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.textContaining(
+        'Trained on S001 runs R08 & R12; not evaluated on S002.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Cross-subject demo only'), findsOneWidget);
+    // S001's held-out number and confusion matrix must not be attached to
+    // a recording from another person.
+    expect(find.textContaining('Held-out accuracy'), findsNothing);
+    expect(find.textContaining('95% Wilson interval'), findsNothing);
+    expect(
+      find.text('Confusion matrix (rows = actual, columns = predicted)'),
+      findsNothing,
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -493,7 +542,13 @@ void main() {
   ) async {
     await _pumpApp(
       tester,
-      values: {'locale': 'en', 'onboarding_complete': true},
+      values: {
+        'locale': 'en',
+        'onboarding_complete': true,
+        'live_proxy_baseline_low': 20.0,
+        'live_proxy_baseline_high': 80.0,
+        'live_session_summaries': '[{"averageScore":80,"durationMs":60000,"frames":120,"endedAt":"2026-10-28T09:30:00.000"}]',
+      },
     );
 
     await tester.tap(find.text('Settings'));
@@ -516,6 +571,12 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.text('Local data cleared.'), findsOneWidget);
     await tester.pumpAndSettle();
+
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getDouble('live_proxy_baseline_low'), isNull);
+    expect(prefs.getDouble('live_proxy_baseline_high'), isNull);
+    expect(prefs.getString('live_session_summaries'), isNull);
+    expect(prefs.getBool('onboarding_complete'), isNull);
 
     expect(find.byType(Checkbox), findsOneWidget);
     expect(find.text('Agree and continue'), findsOneWidget);
@@ -543,7 +604,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.text('Camera attention proxy'), findsOneWidget);
+    expect(find.text('Camera signal proxy'), findsOneWidget);
     expect(find.byKey(const ValueKey('live-start-button')), findsOneWidget);
     await tester.scrollUntilVisible(
       find.textContaining('No video is recorded'),
@@ -646,8 +707,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Live permanently denied failure shows settings guidance',
-      (tester) async {
+  testWidgets('Live permanently denied failure shows settings guidance', (
+    tester,
+  ) async {
     final gateway = _FakeLiveCameraGateway()
       ..failure = const LiveCameraException(
         LiveCameraFailure.permissionPermanentlyDenied,
@@ -734,8 +796,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Live session stops when the app leaves the foreground',
-      (tester) async {
+  testWidgets('Live session stops when the app leaves the foreground', (
+    tester,
+  ) async {
     final gateway = _FakeLiveCameraGateway();
     await _pumpApp(
       tester,
@@ -784,8 +847,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Live permanently denied shows an Open Settings button',
-      (tester) async {
+  testWidgets('Live permanently denied shows an Open Settings button', (
+    tester,
+  ) async {
     final gateway = _FakeLiveCameraGateway()
       ..failure = const LiveCameraException(
         LiveCameraFailure.permissionPermanentlyDenied,
@@ -821,8 +885,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Live plain denied shows no Open Settings button',
-      (tester) async {
+  testWidgets('Live plain denied shows no Open Settings button', (
+    tester,
+  ) async {
     final gateway = _FakeLiveCameraGateway()
       ..failure = const LiveCameraException(LiveCameraFailure.permissionDenied);
     await _pumpApp(
@@ -851,8 +916,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Settings save toggle defaults to off and flips',
-      (tester) async {
+  testWidgets('Settings save toggle defaults to off and flips', (tester) async {
     await _pumpApp(
       tester,
       values: {'locale': 'en', 'onboarding_complete': true},
@@ -877,8 +941,7 @@ void main() {
       values: {
         'locale': 'en',
         'onboarding_complete': true,
-        'live_session_summaries':
-            '[{"averageScore":80,"durationMs":60000,"frames":120,"endedAt":"2026-10-28T09:30:00.000"}]',
+        'live_session_summaries': '[{"averageScore":80,"durationMs":60000,"frames":120,"endedAt":"2026-10-28T09:30:00.000"}]',
       },
     );
 
@@ -891,8 +954,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Insights empty state prompts to turn saving on',
-      (tester) async {
+  testWidgets('Insights empty state prompts to turn saving on', (tester) async {
     await _pumpApp(
       tester,
       values: {'locale': 'en', 'onboarding_complete': true},
@@ -911,8 +973,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Live session is saved to Insights when saving is on',
-      (tester) async {
+  testWidgets('Live session is saved to Insights when saving is on', (
+    tester,
+  ) async {
     final gateway = _FakeLiveCameraGateway();
     await _pumpApp(
       tester,
@@ -964,8 +1027,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Live camera selector switches cameras cleanly',
-      (tester) async {
+  testWidgets('Live camera selector switches cameras cleanly', (tester) async {
     final gateway = _FakeLiveCameraGateway();
     await _pumpApp(
       tester,
@@ -1006,8 +1068,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Live camera selector picks the back camera before start',
-      (tester) async {
+  testWidgets('Live camera selector picks the back camera before start', (
+    tester,
+  ) async {
     final gateway = _FakeLiveCameraGateway();
     await _pumpApp(
       tester,
@@ -1089,8 +1152,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Live spoken score only moves when the band changes',
-      (tester) async {
+  testWidgets('Live spoken score only moves when the band changes', (
+    tester,
+  ) async {
     final semanticsHandle = tester.ensureSemantics();
     final gateway = _FakeLiveCameraGateway();
     await _pumpApp(
@@ -1135,10 +1199,10 @@ void main() {
       300,
       scrollable: find.byType(Scrollable).first,
     );
-    expect(spokenScore(), 'Attention proxy score: 100 out of 100');
+    expect(spokenScore(), 'Camera proxy score: 100 out of 100');
 
     await pumpFrames(_liveBlank(), 2);
-    expect(spokenScore(), 'Attention proxy score: 56 out of 100');
+    expect(spokenScore(), 'Camera proxy score: 56 out of 100');
 
     // Two soft frames land in the same Medium band: the visual score
     // moves but the spoken score must not.
@@ -1147,25 +1211,25 @@ void main() {
       find.byKey(const ValueKey('live-score')),
     );
     expect(visual.data, '51');
-    expect(spokenScore(), 'Attention proxy score: 56 out of 100');
+    expect(spokenScore(), 'Camera proxy score: 56 out of 100');
 
     await pumpFrames(_liveBlank(), 2);
-    expect(spokenScore(), 'Attention proxy score: 29 out of 100');
+    expect(spokenScore(), 'Camera proxy score: 29 out of 100');
     // Dispose explicitly here, not via addTearDown: the framework
     // verifies handles before tearDown callbacks run.
     semanticsHandle.dispose();
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Home latest session shows the newest saved session',
-      (tester) async {
+  testWidgets('Home latest session shows the newest saved session', (
+    tester,
+  ) async {
     await _pumpApp(
       tester,
       values: {
         'locale': 'en',
         'onboarding_complete': true,
-        'live_session_summaries':
-            '[{"averageScore":80,"durationMs":60000,"frames":120,"endedAt":"2026-10-28T09:30:00.000"}]',
+        'live_session_summaries': '[{"averageScore":80,"durationMs":60000,"frames":120,"endedAt":"2026-10-28T09:30:00.000"}]',
       },
     );
 
@@ -1193,8 +1257,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Back navigation mid-session saves the summary when on',
-      (tester) async {
+  testWidgets('Back navigation mid-session saves the summary when on', (
+    tester,
+  ) async {
     final gateway = _FakeLiveCameraGateway();
     await _pumpApp(
       tester,
@@ -1242,8 +1307,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Back navigation mid-session saves nothing when off',
-      (tester) async {
+  testWidgets('Back navigation mid-session saves nothing when off', (
+    tester,
+  ) async {
     final gateway = _FakeLiveCameraGateway();
     await _pumpApp(
       tester,
@@ -1281,8 +1347,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Live close button ends the session before leaving',
-      (tester) async {
+  testWidgets('Live close button ends the session before leaving', (
+    tester,
+  ) async {
     final gateway = _FakeLiveCameraGateway();
     // Live as the initial route is the only way to reach the close
     // button: with nothing below it, the AppBar shows close instead of
@@ -1291,10 +1358,7 @@ void main() {
       initialLocation: '/live',
       routes: [
         GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
-        GoRoute(
-          path: '/live',
-          builder: (context, state) => const LiveScreen(),
-        ),
+        GoRoute(path: '/live', builder: (context, state) => const LiveScreen()),
         GoRoute(
           path: '/insights',
           builder: (context, state) => const InsightsScreen(),
@@ -1351,8 +1415,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Lab accuracy line wears the LORO label without a held-out run',
-      (tester) async {
+  testWidgets('Lab accuracy line wears the LORO label without a held-out run', (
+    tester,
+  ) async {
     await _pumpApp(
       tester,
       values: {'locale': 'en', 'onboarding_complete': true},
@@ -1377,16 +1442,14 @@ void main() {
       find.textContaining('Leave-one-run-out accuracy: 60%'),
       findsOneWidget,
     );
-    expect(
-      find.textContaining('leave-one-run-out evaluation'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('leave-one-run-out evaluation'), findsOneWidget);
     expect(find.textContaining('Held-out accuracy'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Lab card shows the model preprocessing and limitations text',
-      (tester) async {
+  testWidgets('Lab card shows the model preprocessing and limitations text', (
+    tester,
+  ) async {
     await _pumpApp(
       tester,
       values: {'locale': 'en', 'onboarding_complete': true},
@@ -1407,8 +1470,18 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Test preprocessing'), findsOneWidget);
-    expect(find.textContaining('Test limitations'), findsOneWidget);
+    expect(
+      find.textContaining('4.1 s epochs; per-window mean removal; Hann window'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(
+        'Single subject (S001), 30 training trials, binary imagined-fist task.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Test preprocessing'), findsNothing);
+    expect(find.textContaining('Test limitations'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -1443,8 +1516,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Lab card hides the confusion matrix for a LORO fallback',
-      (tester) async {
+  testWidgets('Lab card hides the confusion matrix for a LORO fallback', (
+    tester,
+  ) async {
     await _pumpApp(
       tester,
       values: {'locale': 'en', 'onboarding_complete': true},
@@ -1474,8 +1548,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Insights deletes exactly one session and Home follows',
-      (tester) async {
+  testWidgets('Insights deletes exactly one session and Home follows', (
+    tester,
+  ) async {
     await _pumpApp(
       tester,
       values: {
@@ -1502,6 +1577,10 @@ void main() {
     );
     await tester.pumpAndSettle();
     await tester.tap(deleteMiddle);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Delete this session?'), findsOneWidget);
+    await tester.tap(find.text('Delete'));
     await tester.pumpAndSettle();
 
     expect(find.text('90'), findsNothing);
@@ -1547,21 +1626,124 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Can Wi-Fi read the brain?'));
     await tester.pumpAndSettle();
-    expect(
-      find.textContaining('never touches brain activity'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('never touches brain activity'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Live baseline calibration saves a range and shows relative scores',
-      (tester) async {
-    final gateway = _FakeLiveCameraGateway();
+  testWidgets(
+    'Live baseline calibration saves a range and shows relative scores',
+    (tester) async {
+      final gateway = _FakeLiveCameraGateway();
+      await _pumpApp(
+        tester,
+        values: {'locale': 'en', 'onboarding_complete': true},
+        liveCameraGateway: gateway,
+        frameThrottler: FrameThrottler(minInterval: Duration.zero),
+      );
+
+      await tester.scrollUntilVisible(
+        find.text('Open Live'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Open Live'));
+      await tester.pumpAndSettle();
+
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('live-baseline-calibrate-button')),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('live-baseline-calibrate-button')),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.byKey(const ValueKey('fake-live-preview')), findsOneWidget);
+      final session = gateway.session!;
+      // Mixed frames give the calibration a real spread: blank frames score
+      // near zero, checkerboard frames ramp toward 100.
+      for (var i = 0; i < 15; i++) {
+        session.addFrame(_liveBlank());
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      for (var i = 0; i < 15; i++) {
+        session.addFrame(_liveCheckerboard());
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      await tester.pump();
+
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('live-baseline-stop-button')),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('live-baseline-stop-button')));
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      final prefs = await SharedPreferences.getInstance();
+      final low = prefs.getDouble('live_proxy_baseline_low');
+      final high = prefs.getDouble('live_proxy_baseline_high');
+      expect(low, isNotNull);
+      expect(high, isNotNull);
+      expect(low!, lessThan(high!));
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('live-baseline-calibrate-button')),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Baseline saved.'), findsOneWidget);
+      expect(find.textContaining('Usual range:'), findsOneWidget);
+
+      // A fresh session now shows the score relative to the baseline, with
+      // the absolute proxy score still visible underneath.
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('live-start-button')),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('live-start-button')));
+      await tester.pump();
+      await tester.pump();
+      final session2 = gateway.session!;
+      for (var i = 0; i < 6; i++) {
+        session2.addFrame(_liveSoftCheckerboard());
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      await tester.pump();
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('live-score')),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(
+        find.textContaining('Relative to your usual range.'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('Absolute proxy score:'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('Live can clear a saved baseline without restarting', (
+    tester,
+  ) async {
     await _pumpApp(
       tester,
-      values: {'locale': 'en', 'onboarding_complete': true},
-      liveCameraGateway: gateway,
-      frameThrottler: FrameThrottler(minInterval: Duration.zero),
+      values: {
+        'locale': 'en',
+        'onboarding_complete': true,
+        'live_proxy_baseline_low': 20.0,
+        'live_proxy_baseline_high': 80.0,
+      },
+      liveCameraGateway: _FakeLiveCameraGateway(),
     );
 
     await tester.scrollUntilVisible(
@@ -1574,86 +1756,29 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('live-baseline-calibrate-button')),
+      find.byKey(const ValueKey('live-baseline-clear-button')),
       300,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('live-baseline-calibrate-button')));
-    await tester.pump();
-    await tester.pump();
-
-    expect(find.byKey(const ValueKey('fake-live-preview')), findsOneWidget);
-    final session = gateway.session!;
-    // Mixed frames give the calibration a real spread: blank frames score
-    // near zero, checkerboard frames ramp toward 100.
-    for (var i = 0; i < 15; i++) {
-      session.addFrame(_liveBlank());
-      await tester.pump(const Duration(milliseconds: 16));
-    }
-    for (var i = 0; i < 15; i++) {
-      session.addFrame(_liveCheckerboard());
-      await tester.pump(const Duration(milliseconds: 16));
-    }
-    await tester.pump();
-
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('live-baseline-stop-button')),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('live-baseline-stop-button')));
-    await tester.pump();
+    expect(find.textContaining('Usual range:'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('live-baseline-clear-button')));
     await tester.pumpAndSettle();
 
     final prefs = await SharedPreferences.getInstance();
-    final low = prefs.getDouble('live_proxy_baseline_low');
-    final high = prefs.getDouble('live_proxy_baseline_high');
-    expect(low, isNotNull);
-    expect(high, isNotNull);
-    expect(low!, lessThan(high!));
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('live-baseline-calibrate-button')),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('Baseline saved.'), findsOneWidget);
-    expect(find.textContaining('Usual range:'), findsOneWidget);
-
-    // A fresh session now shows the score relative to the baseline, with
-    // the absolute proxy score still visible underneath.
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('live-start-button')),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('live-start-button')));
-    await tester.pump();
-    await tester.pump();
-    final session2 = gateway.session!;
-    for (var i = 0; i < 6; i++) {
-      session2.addFrame(_liveSoftCheckerboard());
-      await tester.pump(const Duration(milliseconds: 16));
-    }
-    await tester.pump();
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('live-score')),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
+    expect(prefs.getDouble('live_proxy_baseline_low'), isNull);
+    expect(prefs.getDouble('live_proxy_baseline_high'), isNull);
+    expect(find.textContaining('Usual range:'), findsNothing);
     expect(
-      find.textContaining('Relative to your usual range.'),
-      findsOneWidget,
+      find.byKey(const ValueKey('live-baseline-clear-button')),
+      findsNothing,
     );
-    expect(find.textContaining('Absolute proxy score:'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Live baseline calibration with too few frames saves nothing',
-      (tester) async {
+  testWidgets('Live baseline calibration with too few frames saves nothing', (
+    tester,
+  ) async {
     final gateway = _FakeLiveCameraGateway();
     await _pumpApp(
       tester,
@@ -1677,7 +1802,9 @@ void main() {
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('live-baseline-calibrate-button')));
+    await tester.tap(
+      find.byKey(const ValueKey('live-baseline-calibrate-button')),
+    );
     await tester.pump();
     await tester.pump();
 
@@ -1714,8 +1841,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Insights export writes a CSV and hands it to the share sheet',
-      (tester) async {
+  testWidgets('Insights export writes a CSV and hands it to the share sheet', (
+    tester,
+  ) async {
     // The real exporter writes a file, which is real async work that
     // cannot complete inside a widget test's fake async zone, so the
     // widget test uses a capturing fake for the UI wiring and the real

@@ -22,7 +22,9 @@ flutter run
 Run checks before opening a pull request:
 
 ```bash
-flutter analyze
+dart format --output=none --set-exit-if-changed \
+  $(find lib test tool -name '*.dart' -not -path 'lib/core/l10n/generated/*')
+flutter analyze --fatal-infos
 flutter test
 ```
 
@@ -46,7 +48,7 @@ A good PR:
 
 1. explains the user-visible change and why it is honest;
 2. includes tests for behavior changes;
-3. passes `flutter analyze` and `flutter test`;
+3. passes `dart format`, `flutter analyze --fatal-infos`, and `flutter test`;
 4. updates docs when privacy, data, models, or permissions change;
 5. keeps the UI bilingual.
 

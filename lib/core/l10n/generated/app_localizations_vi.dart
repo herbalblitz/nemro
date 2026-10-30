@@ -56,7 +56,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeSubheadline =>
-      'Phát lại EEG thật, xem bộ giải mã trên thiết bị ước lượng bàn tay đang tưởng tượng và thử proxy chú ý bằng camera.';
+      'Phát lại EEG thật, xem bộ giải mã trên thiết bị ước lượng bàn tay đang tưởng tượng và thử proxy ánh sáng/độ tương phản/độ ổn định bằng camera.';
 
   @override
   String get homeLabTitle => 'Lab';
@@ -74,7 +74,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get homeLiveTitle => 'Live';
 
   @override
-  String get homeLiveSubtitle => 'Proxy chú ý bằng camera';
+  String get homeLiveSubtitle => 'Proxy tín hiệu camera';
 
   @override
   String get homeLiveAction => 'Mở Live';
@@ -188,6 +188,25 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String labDecoderAccuracyDetail(int trials, int low, int high) {
+    return 'n = $trials; khoảng tin cậy Wilson 95%: $low%–$high%.';
+  }
+
+  @override
+  String labDecoderTrainingCrossSubject(
+    String trainingSubject,
+    String train,
+    String subject,
+  ) {
+    return 'Huấn luyện trên các run $train của $trainingSubject; chưa đánh giá trên $subject.';
+  }
+
+  @override
+  String labDecoderCrossSubject(String subject, String trainingSubject) {
+    return 'Chỉ là demo cross-subject: không có tuyên bố độ chính xác cho $subject. Kết quả trên tập giữ lại chỉ áp dụng cho $trainingSubject.';
+  }
+
+  @override
   String get labDecoderLoading => 'Đang tải mô hình trên thiết bị…';
 
   @override
@@ -216,7 +235,15 @@ class AppLocalizationsVi extends AppLocalizations {
   String get labDecoderPreprocessingLabel => 'Tiền xử lý';
 
   @override
+  String get labDecoderPreprocessingText =>
+      'Cửa sổ 4,1 giây; trừ trung bình từng cửa sổ; cửa sổ Hann; công suất Goertzel; log10; chuẩn hóa đặc trưng.';
+
+  @override
   String get labDecoderLimitationsLabel => 'Giới hạn';
+
+  @override
+  String get labDecoderLimitationsText =>
+      'Một người tham gia (S001), 30 lượt thử huấn luyện, bài toán tưởng tượng nắm tay nhị phân. Không phải thiết bị y tế và không đọc suy nghĩ.';
 
   @override
   String get labDatasetTitle => 'Dữ liệu & giấy phép';
@@ -278,6 +305,13 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get insightsDelete => 'Xóa phiên';
+
+  @override
+  String get insightsDeleteConfirmTitle => 'Xóa phiên này?';
+
+  @override
+  String get insightsDeleteConfirmBody =>
+      'Tóm tắt phiên sẽ bị xóa khỏi thiết bị này.';
 
   @override
   String get insightsTrendsTitle => 'Xu hướng';
@@ -417,14 +451,14 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get settingsDataBody =>
-      'Nemro lưu cài đặt cục bộ. Tóm tắt phiên Live chỉ được lưu khi bạn bật tính năng đó.';
+      'Nemro lưu cài đặt và ngưỡng camera tùy chọn cục bộ. Tóm tắt phiên Live chỉ được lưu khi bạn bật tính năng đó.';
 
   @override
   String get settingsDeleteData => 'Xóa toàn bộ dữ liệu cục bộ';
 
   @override
   String get settingsDeleteDataBody =>
-      'Thao tác này xóa cài đặt, lựa chọn ngôn ngữ và trạng thái onboarding.';
+      'Thao tác này xóa cài đặt, ngưỡng camera, phiên Live đã lưu và trạng thái onboarding.';
 
   @override
   String get settingsDeleteDataConfirm => 'Xóa toàn bộ dữ liệu cục bộ?';
@@ -478,7 +512,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get aboutSourceNote =>
-      'Lab đóng gói một đoạn 60 giây từ EEGMMIDB (ODC-BY 1.0). Bộ giải mã là hồi quy logistic nhỏ, huấn luyện trên run 8 và 12 của S001, đánh giá trên run 4: độ chính xác 67%, mức ngẫu nhiên 50%. Chỉ là demo nghiên cứu.';
+      'Lab đóng gói các đoạn 60 giây từ EEGMMIDB của S001 và S002 (ODC-BY 1.0). Bộ giải mã là hồi quy logistic nhỏ, huấn luyện trên run 8 và 12 của S001 và đánh giá trên run 4: độ chính xác 67%, mức ngẫu nhiên 50%. Bản phát lại S002 chỉ là demo khác chủ thể, không có tuyên bố độ chính xác. Chỉ là demo nghiên cứu.';
 
   @override
   String get aboutRepo => 'Mã nguồn trên GitHub';
@@ -499,7 +533,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get privacyDataBody =>
-      'Cài đặt ngôn ngữ, giao diện và trạng thái onboarding. Tóm tắt phiên Live chỉ được lưu trên thiết bị khi bạn bật lưu trong Cài đặt, và xóa toàn bộ dữ liệu trong Cài đặt sẽ xóa chúng. Bộ giải mã Lab xử lý mẫu đi kèm ngay trên thiết bị; không EEG nào được thu thập từ bạn.';
+      'Ngôn ngữ, giao diện, trạng thái onboarding, lựa chọn camera và ngưỡng camera tùy chọn. Tóm tắt phiên Live chỉ được lưu trên thiết bị khi bạn bật lưu trong Cài đặt, và xóa toàn bộ dữ liệu trong Cài đặt sẽ xóa chúng. Bộ giải mã Lab xử lý mẫu đi kèm ngay trên thiết bị; không EEG nào được thu thập từ bạn.';
 
   @override
   String get privacyDecoderTitle => 'AI trên thiết bị';
@@ -513,7 +547,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get privacyCameraBody =>
-      'Live chỉ mở camera sau khi bạn nhấn Bắt đầu. Khung hình được thu nhỏ và xử lý trên thiết bị để ước lượng proxy thô từ ánh sáng, độ tương phản và chuyển động. Không video hay hình ảnh nào bị ghi, lưu hoặc tải lên. Camera được giải phóng khi bạn dừng hoặc rời ứng dụng; Nemro không yêu cầu quyền micro hay bộ nhớ.';
+      'Live chỉ mở camera sau khi bạn nhấn Bắt đầu. Khung hình được thu nhỏ và xử lý trên thiết bị để ước lượng proxy thô từ ánh sáng, độ tương phản và chuyển động. Không video hay hình ảnh nào bị ghi, lưu hoặc tải lên. Một ngưỡng hiệu chuẩn tùy chọn (hai con số) có thể được lưu cục bộ. Camera được giải phóng khi bạn dừng hoặc rời ứng dụng; Nemro không yêu cầu quyền micro hay bộ nhớ.';
 
   @override
   String get privacyStorageTitle => 'Lưu trữ';
@@ -554,7 +588,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get commonRetry => 'Thử lại';
 
   @override
-  String get liveStartTitle => 'Proxy chú ý bằng camera';
+  String get liveStartTitle => 'Proxy tín hiệu camera';
 
   @override
   String get liveStartBody =>
@@ -683,6 +717,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get liveBaselineSaved => 'Đã lưu ngưỡng.';
 
   @override
+  String get liveBaselineClear => 'Xóa ngưỡng';
+
+  @override
   String get liveBaselineSaveFailed => 'Không lưu được ngưỡng. Thử lại.';
 
   @override
@@ -752,7 +789,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String liveScoreSemantics(int score) {
-    return 'Điểm proxy chú ý: $score trên 100';
+    return 'Điểm proxy camera: $score trên 100';
   }
 
   @override

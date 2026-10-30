@@ -1,8 +1,8 @@
 # Model card: S001 mu/beta logistic regression
 
 - **Model version:** 1
-- **App version:** Nemro 0.3.0
-- **Date:** 2026-10-28
+- **App version:** Nemro 0.4.0
+- **Date:** 2026-10-30
 - **Weights:** `assets/models/eeg_decoder.json`
 - **Training tool:** `tool/train_eeg_decoder.py`
 - **License:** MIT for the code and weights; EEG data under ODC-BY 1.0
@@ -20,6 +20,10 @@ on-device EEG decoding pipeline, not a brain-computer interface product.
 - Show a prediction, a class probability, and the known task marker side by side.
 - Teach how band-power features, a linear classifier, and held-out evaluation
   fit together.
+
+The Lab also bundles an S002/R04 replay. It is a **cross-subject demo only**:
+the model was not trained or evaluated on S002, so the app labels that replay
+as a demo and does not show S001's accuracy or confusion matrix next to it.
 
 **Not intended for:** diagnosis, treatment, neurofeedback, lie detection,
 surveillance, or any claim of reading thoughts or intentions. The model was not
@@ -53,6 +57,10 @@ validated on other people, other sessions, other hardware, or other tasks.
 ## Evaluation
 
 - **Held-out R04 accuracy:** 10/15 = **66.7%** (chance 50%).
+- **95% Wilson interval:** **41.7%–84.8%**. This is the honest uncertainty
+  range for 10/15; the point estimate alone is not a precise benchmark.
+- **One-sided binomial test** against chance (≥10 of 15): **p ≈ 0.15**. The
+  result is not statistically significant at the usual 0.05 threshold.
 - **Held-out confusion matrix** (rows = actual, columns = predicted):
 
   | | predicted left | predicted right |
@@ -66,7 +74,8 @@ validated on other people, other sessions, other hardware, or other tasks.
   - test R12: 66.7%
 - **Sample size warning:** 15 held-out trials means one trial changes accuracy
   by 6.7 percentage points. The result is a rough estimate, not a precise
-  benchmark.
+  benchmark. The S002 replay has no accuracy figure at all because the model
+  was not evaluated on that subject.
 - **Calibration:** the sigmoid output is not calibrated. The Lab's displayed
   "confidence" is the larger class probability, not a guarantee of correctness.
   The 60-second replay contains seven of the 15 held-out trials (four right,
@@ -120,3 +129,6 @@ Schalk, G., McFarland, D. J., Hinterberger, T., Birbaumer, N., & Wolpaw, J. R.
 
 - **v1 (2026-10-27):** initial model; 4 channels, 8 features, held-out R04
   66.7%, leave-one-run-out mean 60.0%.
+- **v1.1 (2026-10-30):** documentation and UI context only; weights unchanged.
+  Added the Wilson interval (41.7%–84.8%), the one-sided p-value (≈0.15), the
+  LORO line in the Lab, and explicit S002 cross-subject labelling.

@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:nemro/core/constants/app_constants.dart';
 import 'package:nemro/core/l10n/generated/app_localizations.dart';
 import 'package:nemro/core/preferences/preferences_providers.dart';
+import 'package:nemro/features/live/data/live_session_store.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -226,6 +227,11 @@ class SettingsScreen extends ConsumerWidget {
     ref.invalidate(onboardingCompleteProvider);
     ref.invalidate(saveLiveSummariesProvider);
     ref.invalidate(liveCameraLensProvider);
+    // prefs.clear() removes the stored baseline, but the notifier keeps
+    // its in-memory state until invalidated. Without this, Live would keep
+    // applying the old range after the user deleted all local data.
+    ref.invalidate(proxyBaselineProvider);
+    ref.invalidate(liveSessionStoreProvider);
 
     if (context.mounted) {
       ScaffoldMessenger.of(context)

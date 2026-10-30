@@ -179,7 +179,6 @@ class EegPrediction {
   double get confidence =>
       math.max(rightProbability, leftProbability).clamp(0.0, 1.0);
   bool get isRight => rightProbability >= 0.5;
-  String get predictedClass => isRight ? 'right_fist' : 'left_fist';
 }
 
 /// Runs the bundled model entirely on-device.

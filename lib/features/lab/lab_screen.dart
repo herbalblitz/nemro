@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:nemro/core/constants/app_constants.dart';
 import 'package:nemro/core/l10n/generated/app_localizations.dart';
 import 'package:nemro/core/theme/app_theme.dart';
+import 'package:nemro/features/lab/data/accuracy_stats.dart';
 import 'package:nemro/features/lab/data/eeg_decoder.dart';
 import 'package:nemro/features/lab/data/eeg_decoder_repository.dart';
 import 'package:nemro/features/lab/data/eeg_recording.dart';
@@ -75,8 +76,7 @@ class _LabContent extends StatefulWidget {
   State<_LabContent> createState() => _LabContentState();
 }
 
-class _LabContentState extends State<_LabContent>
-    with WidgetsBindingObserver {
+class _LabContentState extends State<_LabContent> with WidgetsBindingObserver {
   static const _windowSeconds = 10.0;
   static const _tick = Duration(milliseconds: 50);
 
@@ -705,7 +705,12 @@ class _DecoderCard extends ConsumerWidget {
               data: (decoder) => Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _ModelSummary(decoder: decoder, theme: theme, l10n: l10n),
+                  _ModelSummary(
+                    decoder: decoder,
+                    recording: recording,
+                    theme: theme,
+                    l10n: l10n,
+                  ),
                   const SizedBox(height: 12),
                   _PredictionPanel(
                     recording: recording,
@@ -736,17 +741,25 @@ class _DecoderCard extends ConsumerWidget {
 class _ModelSummary extends StatelessWidget {
   const _ModelSummary({
     required this.decoder,
+    required this.recording,
     required this.theme,
     required this.l10n,
   });
 
   final EegDecoder decoder;
+  final EegRecording recording;
   final ThemeData theme;
   final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
     final training = decoder.model.training;
+    final trainingSubject = training.subject.isEmpty ? '?' : training.subject;
+    // The bundled decoder was trained and evaluated on S001 only. When the
+    // selected replay comes from another subject, showing S001's held-out
+    // accuracy or confusion matrix here would attach that number to the
+    // wrong person. Say plainly that this is a cross-subject demo instead.
+    final isCrossSubject = trainingSubject != recording.subject;
     // The accuracy value and its label must travel together: a model
     // with a held-out run wears the held-out label, while a model
     // without one falls back to leave-one-run-out — and must say so.
@@ -761,9 +774,21 @@ class _ModelSummary extends StatelessWidget {
     // fallback has no held-out matrix to show, even if the JSON happens
     // to carry one.
     final confusion = training.heldOutConfusion;
-    final hasConfusion = hasHeldOut &&
+    final hasConfusion =
+        !isCrossSubject &&
+        hasHeldOut &&
         confusion.length == 2 &&
         confusion.every((row) => row.length == 2);
+    final heldOutTrials = hasConfusion
+        ? confusion.fold<int>(
+            0,
+            (total, row) => total + row.fold<int>(0, (sum, cell) => sum + cell),
+          )
+        : 0;
+    final heldOutCorrect = hasConfusion ? confusion[0][0] + confusion[1][1] : 0;
+    final interval = hasConfusion && heldOutTrials > 0
+        ? wilson95Interval(heldOutCorrect, heldOutTrials)
+        : null;
 
     return Container(
       width: double.infinity,
@@ -783,24 +808,62 @@ class _ModelSummary extends StatelessWidget {
           const SizedBox(height: 6),
           _SummaryLine(
             icon: Icons.science_outlined,
-            text: hasHeldOut
+            text: isCrossSubject
+                ? l10n.labDecoderTrainingCrossSubject(
+                    trainingSubject,
+                    training.trainRuns.join(' & '),
+                    recording.subject,
+                  )
+                : hasHeldOut
                 ? l10n.labDecoderTraining(
                     training.trainRuns.join(' & '),
                     training.testRun,
                   )
-                : l10n.labDecoderTrainingLoro(
-                    training.trainRuns.join(' & '),
-                  ),
+                : l10n.labDecoderTrainingLoro(training.trainRuns.join(' & ')),
             theme: theme,
           ),
-          const SizedBox(height: 6),
-          _SummaryLine(
-            icon: Icons.verified_outlined,
-            text: hasHeldOut
-                ? l10n.labDecoderAccuracy(percent)
-                : l10n.labDecoderAccuracyLoro(percent),
-            theme: theme,
-          ),
+          if (isCrossSubject) ...[
+            const SizedBox(height: 6),
+            _SummaryLine(
+              icon: Icons.info_outline_rounded,
+              text: l10n.labDecoderCrossSubject(
+                recording.subject,
+                trainingSubject,
+              ),
+              theme: theme,
+            ),
+          ] else ...[
+            const SizedBox(height: 6),
+            _SummaryLine(
+              icon: Icons.verified_outlined,
+              text: hasHeldOut
+                  ? l10n.labDecoderAccuracy(percent)
+                  : l10n.labDecoderAccuracyLoro(percent),
+              theme: theme,
+            ),
+            if (hasHeldOut) ...[
+              const SizedBox(height: 6),
+              _SummaryLine(
+                icon: Icons.repeat_rounded,
+                text: l10n.labDecoderAccuracyLoro(
+                  (training.leaveOneRunOutAccuracy * 100).round(),
+                ),
+                theme: theme,
+              ),
+            ],
+            if (interval != null) ...[
+              const SizedBox(height: 6),
+              _SummaryLine(
+                icon: Icons.straighten_rounded,
+                text: l10n.labDecoderAccuracyDetail(
+                  heldOutTrials,
+                  (interval.low * 100).round(),
+                  (interval.high * 100).round(),
+                ),
+                theme: theme,
+              ),
+            ],
+          ],
           if (hasConfusion) ...[
             const SizedBox(height: 8),
             Text(
@@ -816,38 +879,61 @@ class _ModelSummary extends StatelessWidget {
                 TableRow(
                   children: [
                     const SizedBox.shrink(),
-                    _ConfusionCell(l10n.labLeftFist, theme: theme, center: true),
-                    _ConfusionCell(l10n.labRightFist, theme: theme, center: true),
+                    _ConfusionCell(
+                      l10n.labLeftFist,
+                      theme: theme,
+                      center: true,
+                    ),
+                    _ConfusionCell(
+                      l10n.labRightFist,
+                      theme: theme,
+                      center: true,
+                    ),
                   ],
                 ),
                 TableRow(
                   children: [
                     _ConfusionCell(l10n.labLeftFist, theme: theme),
-                    _ConfusionCell('${confusion[0][0]}', theme: theme, center: true),
-                    _ConfusionCell('${confusion[0][1]}', theme: theme, center: true),
+                    _ConfusionCell(
+                      '${confusion[0][0]}',
+                      theme: theme,
+                      center: true,
+                    ),
+                    _ConfusionCell(
+                      '${confusion[0][1]}',
+                      theme: theme,
+                      center: true,
+                    ),
                   ],
                 ),
                 TableRow(
                   children: [
                     _ConfusionCell(l10n.labRightFist, theme: theme),
-                    _ConfusionCell('${confusion[1][0]}', theme: theme, center: true),
-                    _ConfusionCell('${confusion[1][1]}', theme: theme, center: true),
+                    _ConfusionCell(
+                      '${confusion[1][0]}',
+                      theme: theme,
+                      center: true,
+                    ),
+                    _ConfusionCell(
+                      '${confusion[1][1]}',
+                      theme: theme,
+                      center: true,
+                    ),
                   ],
                 ),
               ],
             ),
           ],
-          // The model's own preprocessing and limitations text: parsed
-          // for a while, never shown until now. Shown only when the
-          // model actually provides them; the static italic caveat below
-          // the card stays as the general disclaimer for all states.
+          // Model metadata is technical English in the JSON. The UI uses
+          // localized copy instead, so a Vietnamese screen never mixes in
+          // an untranslated paragraph.
           if (decoder.model.preprocessing.isNotEmpty) ...[
             const SizedBox(height: 6),
             _SummaryLine(
               icon: Icons.filter_alt_outlined,
               text:
                   '${l10n.labDecoderPreprocessingLabel}: '
-                  '${decoder.model.preprocessing}',
+                  '${l10n.labDecoderPreprocessingText}',
               theme: theme,
             ),
           ],
@@ -857,7 +943,7 @@ class _ModelSummary extends StatelessWidget {
               icon: Icons.warning_amber_rounded,
               text:
                   '${l10n.labDecoderLimitationsLabel}: '
-                  '${decoder.model.limitations}',
+                  '${l10n.labDecoderLimitationsText}',
               theme: theme,
             ),
           ],

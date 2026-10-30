@@ -4,7 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:nemro/features/live/data/attention_analyzer.dart';
+import 'package:nemro/features/live/data/camera_proxy_analyzer.dart';
 import 'package:nemro/features/live/data/camera_frame_converter.dart';
 
 enum LiveCameraFailure {

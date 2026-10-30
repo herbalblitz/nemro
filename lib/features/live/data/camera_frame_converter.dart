@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 
-import 'package:nemro/features/live/data/attention_analyzer.dart';
+import 'package:nemro/features/live/data/camera_proxy_analyzer.dart';
 
 /// Converts a camera image to a small, normalized luminance frame.
 ///

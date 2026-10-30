@@ -1,6 +1,6 @@
 # Data and model sources
 
-Nemro 0.3.0 bundles two **60-second EEG excerpts** from EEGMMIDB and a small
+Nemro 0.4.0 bundles two **60-second EEG excerpts** from EEGMMIDB and a small
 **on-device decoder** trained on the same public dataset. Live uses the camera
 only as an on-device light/contrast/motion proxy and does not add a new dataset.
 This page records the sources, licenses, evaluation rules, and attribution
@@ -43,7 +43,7 @@ requirements for the bundled data and model.
 
 ### BCI Competition IV Dataset 2a
 
-**Status:** planned for future evaluation; **not used in 0.3.0**.
+**Status:** planned for future evaluation; **not used in 0.4.0**.
 
 - **What:** four-class motor imagery EEG from nine subjects.
 - **Use in Nemro:** a possible second evaluation dataset for the Lab decoder, if
@@ -63,7 +63,8 @@ requirements for the bundled data and model.
 - **Features:** mu (8–13 Hz) and beta (13–30 Hz) Goertzel power at 0.5 Hz steps,
   log-transformed and standardized; 8 features.
 - **Training:** S001/R08 + R12, 30 trials (15 left, 15 right).
-- **Held-out evaluation:** S001/R04, 15 trials, 66.7% accuracy (chance 50%).
+- **Held-out evaluation:** S001/R04, 15 trials, 66.7% accuracy (chance 50%;
+  95% Wilson interval 41.7%–84.8%; one-sided p ≈ 0.15).
   Leave-one-run-out mean: 60.0%.
 - **Weights license:** MIT. The weights are trained from ODC-BY 1.0 data; the
   dataset attribution remains in the app and in the model card.

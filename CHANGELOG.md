@@ -2,6 +2,41 @@
 
 All notable changes to Nemro are documented here.
 
+## [0.4.0] - 2026-10-30
+
+### Added
+
+- Insights history: opt-in saved Live session summaries, weekly averages, current/longest streaks, best/worst session, per-session delete with confirmation, and CSV export through the Android share sheet.
+- Personal Live camera baseline: calibrate a usual range, show relative scores, clear the baseline from Live, and include it in **Delete all local data**.
+- Second bundled Lab replay from S002/R04, selectable next to S001/R04.
+- Cross-subject labelling in the Lab: S002 is marked as a demo and never shows S001's held-out accuracy or confusion matrix.
+- Wilson 95% interval (41.7%–84.8%) and leave-one-run-out accuracy (60.0%) in the Lab model summary; the model card also records the one-sided p-value (≈0.15).
+- Version-consistency test so `AppConstants.version` and `pubspec.yaml` cannot drift.
+- Android `dataExtractionRules` that exclude app data from device-to-device transfer as well as cloud backup.
+
+### Changed
+
+- Version bumped to 0.4.0+4.
+- User-facing "attention proxy" wording is now "camera signal proxy" / "camera proxy score" in both languages. The analyzer was renamed `CameraProxyAnalyzer`.
+- Model preprocessing and limitations text in the Lab is localized instead of showing raw English JSON.
+- README, privacy policy, architecture, data-sources, model card, and security policy now match the actual storage and export behavior.
+- CSV timestamps are exported in UTC with a `Z` suffix.
+- Streak and weekly grouping use calendar-day ordinals so DST transitions do not break a streak.
+- Settings deletion now invalidates the in-memory camera baseline and session-store providers.
+- CI pins Flutter 3.47.8 and action commits, checks formatting, runs `flutter analyze --fatal-infos`, and forbids additional media/storage permissions.
+
+### Fixed
+
+- Deleting all local data no longer leaves the old camera baseline active until the app restarts.
+- A "Baseline saved" message no longer survives into the next Live session.
+- The Lab no longer attaches S001's accuracy to S002.
+- A stale `predictedClass` getter that hardcoded class names was removed.
+
+### Security
+
+- Release manifest removes `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_MEDIA_AUDIO`, `READ_MEDIA_VISUAL_USER_SELECTED`, and `ACCESS_MEDIA_LOCATION` in addition to audio/storage permissions.
+- Android cloud backup and device-to-device transfer are both disabled.
+
 ## [0.3.0] - 2026-10-28
 
 ### Added

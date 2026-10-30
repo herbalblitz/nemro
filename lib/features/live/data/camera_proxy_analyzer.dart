@@ -16,8 +16,8 @@ class LumaFrame {
 /// One frame's heuristic proxy values.
 ///
 /// This is not a measurement of attention, fatigue, or any medical state.
-class AttentionSample {
-  const AttentionSample({
+class CameraProxySample {
+  const CameraProxySample({
     required this.score,
     required this.brightness,
     required this.motion,
@@ -54,7 +54,7 @@ class AttentionSample {
 
   int get roundedScore => score.round().clamp(0, 100).toInt();
 
-  bool get isWarmingUp => frames < AttentionAnalyzer.warmupFrames;
+  bool get isWarmingUp => frames < CameraProxyAnalyzer.warmupFrames;
 }
 
 /// A transparent, lightweight camera-frame heuristic.
@@ -66,7 +66,7 @@ class AttentionSample {
 ///
 /// It is deliberately simple and explainable. It does not detect faces, eyes,
 /// blinks, or attention, and it must never be presented as mind reading.
-class AttentionAnalyzer {
+class CameraProxyAnalyzer {
   static const int warmupFrames = 3;
   static const double _contrastTarget = 0.10;
   static const double _motionTarget = 0.12;
@@ -86,7 +86,7 @@ class AttentionAnalyzer {
     _smoothedScore = null;
   }
 
-  AttentionSample addFrame(LumaFrame frame) {
+  CameraProxySample addFrame(LumaFrame frame) {
     _frames++;
     final stats = _FrameStats.from(frame);
     final motion = _motion(frame);
@@ -109,7 +109,7 @@ class AttentionAnalyzer {
     _previousWidth = frame.width;
     _previousHeight = frame.height;
 
-    return AttentionSample(
+    return CameraProxySample(
       score: smoothed,
       brightness: stats.mean,
       motion: motion,

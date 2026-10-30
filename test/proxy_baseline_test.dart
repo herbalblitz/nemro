@@ -1,5 +1,8 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:nemro/core/preferences/preferences_providers.dart';
 import 'package:nemro/features/live/data/proxy_baseline.dart';
 
 void main() {
@@ -36,6 +39,23 @@ void main() {
     const baseline = ProxyBaseline(low: 50, high: 50);
     expect(baseline.relativeScore(30), 30);
     expect(baseline.relativeScore(90), 90);
+  });
+
+  test('invalidating after prefs.clear drops the in-memory baseline', () async {
+    SharedPreferences.setMockInitialValues({
+      'live_proxy_baseline_low': 20.0,
+      'live_proxy_baseline_high': 80.0,
+    });
+    final prefs = await SharedPreferences.getInstance();
+    final container = ProviderContainer(
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+    );
+    addTearDown(container.dispose);
+
+    expect(container.read(proxyBaselineProvider), isNotNull);
+    await prefs.clear();
+    container.invalidate(proxyBaselineProvider);
+    expect(container.read(proxyBaselineProvider), isNull);
   });
 
   test('stored values are validated', () {

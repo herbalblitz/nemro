@@ -185,7 +185,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeSubheadline.
   ///
   /// In en, this message translates to:
-  /// **'Replay real EEG, watch an on-device decoder estimate the imagined hand, and try a camera-based attention proxy.'**
+  /// **'Replay real EEG, watch an on-device decoder estimate the imagined hand, and try a camera-based light/contrast/stability proxy.'**
   String get homeSubheadline;
 
   /// No description provided for @homeLabTitle.
@@ -221,7 +221,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeLiveSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Camera attention proxy'**
+  /// **'Camera signal proxy'**
   String get homeLiveSubtitle;
 
   /// No description provided for @homeLiveAction.
@@ -410,6 +410,28 @@ abstract class AppLocalizations {
   /// **'Leave-one-run-out accuracy: {percent}% (chance 50%)'**
   String labDecoderAccuracyLoro(int percent);
 
+  /// No description provided for @labDecoderAccuracyDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'n = {trials}; 95% Wilson interval {low}%–{high}%.'**
+  String labDecoderAccuracyDetail(int trials, int low, int high);
+
+  /// No description provided for @labDecoderTrainingCrossSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Trained on {trainingSubject} runs {train}; not evaluated on {subject}.'**
+  String labDecoderTrainingCrossSubject(
+    String trainingSubject,
+    String train,
+    String subject,
+  );
+
+  /// No description provided for @labDecoderCrossSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Cross-subject demo only: there is no accuracy claim for {subject}. The held-out result applies to {trainingSubject}.'**
+  String labDecoderCrossSubject(String subject, String trainingSubject);
+
   /// No description provided for @labDecoderLoading.
   ///
   /// In en, this message translates to:
@@ -464,11 +486,23 @@ abstract class AppLocalizations {
   /// **'Preprocessing'**
   String get labDecoderPreprocessingLabel;
 
+  /// No description provided for @labDecoderPreprocessingText.
+  ///
+  /// In en, this message translates to:
+  /// **'4.1 s epochs; per-window mean removal; Hann window; Goertzel power; log10; standardized features.'**
+  String get labDecoderPreprocessingText;
+
   /// No description provided for @labDecoderLimitationsLabel.
   ///
   /// In en, this message translates to:
   /// **'Limitations'**
   String get labDecoderLimitationsLabel;
+
+  /// No description provided for @labDecoderLimitationsText.
+  ///
+  /// In en, this message translates to:
+  /// **'Single subject (S001), 30 training trials, binary imagined-fist task. Not a medical device and not mind reading.'**
+  String get labDecoderLimitationsText;
 
   /// No description provided for @labDatasetTitle.
   ///
@@ -583,6 +617,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete session'**
   String get insightsDelete;
+
+  /// No description provided for @insightsDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this session?'**
+  String get insightsDeleteConfirmTitle;
+
+  /// No description provided for @insightsDeleteConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes the session summary from this device.'**
+  String get insightsDeleteConfirmBody;
 
   /// No description provided for @insightsTrendsTitle.
   ///
@@ -809,7 +855,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsDataBody.
   ///
   /// In en, this message translates to:
-  /// **'Nemro stores settings locally. Live session summaries are saved only when you turn that on.'**
+  /// **'Nemro stores settings and an optional camera baseline locally. Live session summaries are saved only when you turn that on.'**
   String get settingsDataBody;
 
   /// No description provided for @settingsDeleteData.
@@ -821,7 +867,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsDeleteDataBody.
   ///
   /// In en, this message translates to:
-  /// **'This removes settings, language choice, and onboarding state.'**
+  /// **'This removes settings, the camera baseline, saved Live sessions, and onboarding state.'**
   String get settingsDeleteDataBody;
 
   /// No description provided for @settingsDeleteDataConfirm.
@@ -923,7 +969,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutSourceNote.
   ///
   /// In en, this message translates to:
-  /// **'The Lab bundles a 60-second EEGMMIDB excerpt (ODC-BY 1.0). Its decoder is a small logistic regression trained on S001 runs 8 and 12 and evaluated on run 4: 67% held-out accuracy, 50% chance. Research demo only.'**
+  /// **'The Lab bundles 60-second EEGMMIDB excerpts from S001 and S002 (ODC-BY 1.0). The decoder is a small logistic regression trained on S001 runs 8 and 12 and evaluated on run 4: 67% held-out accuracy, 50% chance. The S002 replay is a cross-subject demo with no accuracy claim. Research demo only.'**
   String get aboutSourceNote;
 
   /// No description provided for @aboutRepo.
@@ -959,7 +1005,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyDataBody.
   ///
   /// In en, this message translates to:
-  /// **'Language, theme, and onboarding state. Live session summaries are saved on this device only if you turn saving on in Settings, and deleting all data in Settings wipes them. The Lab decoder processes the bundled sample locally; no EEG is collected from you.'**
+  /// **'Language, theme, onboarding state, camera lens preference, and an optional camera baseline range. Live session summaries are saved on this device only if you turn saving on in Settings, and deleting all data in Settings wipes them. The Lab decoder processes the bundled sample locally; no EEG is collected from you.'**
   String get privacyDataBody;
 
   /// No description provided for @privacyDecoderTitle.
@@ -983,7 +1029,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyCameraBody.
   ///
   /// In en, this message translates to:
-  /// **'Live opens the camera only after you tap Start. Frames are downsampled and processed on-device to estimate a rough light/contrast/motion proxy. No video or images are recorded, stored, or uploaded. The camera is released when you stop or leave the app; Nemro does not request microphone or storage access.'**
+  /// **'Live opens the camera only after you tap Start. Frames are downsampled and processed on-device to estimate a rough light/contrast/motion proxy. No video or images are recorded, stored, or uploaded. An optional calibration baseline (two numbers) can be stored locally. The camera is released when you stop or leave the app; Nemro does not request microphone or storage access.'**
   String get privacyCameraBody;
 
   /// No description provided for @privacyStorageTitle.
@@ -1061,7 +1107,7 @@ abstract class AppLocalizations {
   /// No description provided for @liveStartTitle.
   ///
   /// In en, this message translates to:
-  /// **'Camera attention proxy'**
+  /// **'Camera signal proxy'**
   String get liveStartTitle;
 
   /// No description provided for @liveStartBody.
@@ -1274,6 +1320,12 @@ abstract class AppLocalizations {
   /// **'Baseline saved.'**
   String get liveBaselineSaved;
 
+  /// No description provided for @liveBaselineClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear baseline'**
+  String get liveBaselineClear;
+
   /// No description provided for @liveBaselineSaveFailed.
   ///
   /// In en, this message translates to:
@@ -1391,7 +1443,7 @@ abstract class AppLocalizations {
   /// No description provided for @liveScoreSemantics.
   ///
   /// In en, this message translates to:
-  /// **'Attention proxy score: {score} out of 100'**
+  /// **'Camera proxy score: {score} out of 100'**
   String liveScoreSemantics(int score);
 
   /// No description provided for @labDecoderConfusionTitle.

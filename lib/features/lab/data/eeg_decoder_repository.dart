@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -58,8 +59,9 @@ Map<double, EegPrediction> decodeAllEvents(
     }
     try {
       predictions[event.onset] = decoder.decode(recording, event);
-    } catch (_) {
+    } catch (error) {
       // Skip this window; the other predictions still stand.
+      debugPrint('Skipping undecodable EEG window at ${event.onset}s: $error');
     }
   }
   return predictions;

@@ -33,4 +33,16 @@ void main() {
     // Duration truncates like the m:ss display: 90.9s stays 90.
     expect(lines[2], '2026-10-27T18:05:00.000Z,87,90,42');
   });
+
+  test('offset timestamps are normalized to UTC', () {
+    final csv = sessionsToCsv([
+      LiveSessionSummary(
+        averageScore: 50,
+        duration: const Duration(minutes: 1),
+        frames: 10,
+        endedAt: DateTime.parse('2026-10-28T09:30:00+07:00'),
+      ),
+    ]);
+    expect(csv.split('\n').last, '2026-10-28T02:30:00.000Z,50,60,10');
+  });
 }
