@@ -15,17 +15,33 @@ class EegDecoderTraining {
     required this.leaveOneRunOutAccuracy,
     required this.chanceAccuracy,
     required this.heldOutConfusion,
+    this.inSampleAccuracy,
+    this.inSampleConfusion = const [],
   });
 
   final String dataset;
   final String subject;
   final List<String> trainRuns;
   final String testRun;
-  final int trainEpochs;
-  final double heldOutAccuracy;
-  final double leaveOneRunOutAccuracy;
+
+  /// Training epochs for gradient-trained models; null for models that
+  /// have no training loop (for example nearest centroid).
+  final int? trainEpochs;
+
+  /// Held-out accuracy; null when the model was never evaluated on a
+  /// run it did not train on. A null here must never be displayed as a
+  /// number — the UI falls back to leave-one-run-out or in-sample,
+  /// each with its own label.
+  final double? heldOutAccuracy;
+  final double? leaveOneRunOutAccuracy;
   final double chanceAccuracy;
   final List<List<int>> heldOutConfusion;
+
+  /// Accuracy measured on the model's own training windows. This number
+  /// flatters the model and is never comparable to held-out accuracy;
+  /// it is shown only with an in-sample label.
+  final double? inSampleAccuracy;
+  final List<List<int>> inSampleConfusion;
 
   factory EegDecoderTraining.fromJson(Map<String, dynamic> json) {
     return EegDecoderTraining(
@@ -33,19 +49,27 @@ class EegDecoderTraining {
       subject: _readString(json['subject']),
       trainRuns: _readStringList(json['train_runs']),
       testRun: _readString(json['test_run']),
-      trainEpochs: _readInt(json['train_epochs']),
-      heldOutAccuracy: _readDouble(json['held_out_accuracy']),
-      leaveOneRunOutAccuracy: _readDouble(json['leave_one_run_out_accuracy']),
+      trainEpochs: _readIntOrNull(json['train_epochs']),
+      heldOutAccuracy: _readDoubleOrNull(json['held_out_accuracy']),
+      leaveOneRunOutAccuracy: _readDoubleOrNull(
+        json['leave_one_run_out_accuracy'],
+      ),
       chanceAccuracy: _readDouble(json['chance_accuracy'], fallback: 0.5),
       heldOutConfusion: _readConfusion(json['held_out_confusion']),
+      inSampleAccuracy: _readDoubleOrNull(json['in_sample_accuracy']),
+      inSampleConfusion: _readConfusion(json['in_sample_confusion']),
     );
   }
 }
 
-/// A trained linear decoder for imagined left/right fist movements.
+/// A trained decoder for imagined left/right fist movements.
 ///
 /// The model consumes channel-major mu/beta log-power features. Class 0 is the
 /// left fist and class 1 is the right fist, matching the order in [classes].
+/// Two model types are supported: `logistic_regression` (a linear model with
+/// [weights] and [bias]) and `nearest_centroid` (one [centroids] vector per
+/// class in standardized feature space). A model carries exactly the
+/// parameters its type needs; the other set stays null.
 class EegDecoderModel {
   const EegDecoderModel({
     required this.name,
@@ -62,8 +86,9 @@ class EegDecoderModel {
     required this.featureOrder,
     required this.mean,
     required this.std,
-    required this.weights,
-    required this.bias,
+    this.weights,
+    this.bias,
+    this.centroids,
     required this.training,
     required this.preprocessing,
     required this.limitations,
@@ -83,13 +108,16 @@ class EegDecoderModel {
   final String featureOrder;
   final List<double> mean;
   final List<double> std;
-  final List<double> weights;
-  final double bias;
+  final List<double>? weights;
+  final double? bias;
+  final List<List<double>>? centroids;
   final EegDecoderTraining training;
   final String preprocessing;
   final String limitations;
 
-  int get featureCount => weights.length;
+  bool get isLogistic => type == 'logistic_regression';
+  bool get isCentroid => type == 'nearest_centroid';
+  int get featureCount => channels.length * 2;
   int get expectedFeatureCount => channels.length * 2;
 
   factory EegDecoderModel.fromJson(String source) {
@@ -125,8 +153,9 @@ class EegDecoderModel {
       featureOrder: _readString(decoded['feature_order']),
       mean: _readDoubleList(decoded['mean']),
       std: _readDoubleList(decoded['std']),
-      weights: _readDoubleList(decoded['weights']),
-      bias: _readDouble(decoded['bias']),
+      weights: _readDoubleListOrNull(decoded['weights']),
+      bias: _readDoubleOrNull(decoded['bias']),
+      centroids: _readCentroidsOrNull(decoded['centroids']),
       training: EegDecoderTraining.fromJson(training),
       preprocessing: _readString(decoded['preprocessing']),
       limitations: _readString(decoded['limitations']),
@@ -138,15 +167,40 @@ class EegDecoderModel {
     if (model.channels.isEmpty) {
       throw const FormatException('Decoder model has no channels.');
     }
-    if (model.featureCount != model.expectedFeatureCount) {
-      throw const FormatException(
-        'Decoder weights do not match the channel count.',
-      );
+    if (!model.isLogistic && !model.isCentroid) {
+      throw FormatException('Decoder model has unknown type ${model.type}.');
     }
-    if (model.mean.length != model.featureCount ||
-        model.std.length != model.featureCount) {
+    if (model.isLogistic) {
+      final weights = model.weights;
+      if (weights == null || weights.length != model.expectedFeatureCount) {
+        throw const FormatException(
+          'Logistic decoder weights do not match the channel count.',
+        );
+      }
+      if (model.bias == null) {
+        throw const FormatException('Logistic decoder is missing its bias.');
+      }
+      if (weights.any((value) => !value.isFinite)) {
+        throw const FormatException('Decoder model has non-finite values.');
+      }
+    }
+    if (model.isCentroid) {
+      final centroids = model.centroids;
+      if (centroids == null ||
+          centroids.length != 2 ||
+          centroids.any((row) => row.length != model.expectedFeatureCount)) {
+        throw const FormatException(
+          'Centroid decoder centroids do not match the channel count.',
+        );
+      }
+      if (centroids.expand((row) => row).any((value) => !value.isFinite)) {
+        throw const FormatException('Decoder model has non-finite values.');
+      }
+    }
+    if (model.mean.length != model.expectedFeatureCount ||
+        model.std.length != model.expectedFeatureCount) {
       throw const FormatException(
-        'Decoder normalization arrays do not match the weights.',
+        'Decoder normalization arrays do not match the channel count.',
       );
     }
     if (model.samplingRate <= 0 ||
@@ -157,8 +211,7 @@ class EegDecoderModel {
     if (model.std.any((value) => !value.isFinite || value <= 0)) {
       throw const FormatException('Decoder model has invalid std values.');
     }
-    if (model.mean.any((value) => !value.isFinite) ||
-        model.weights.any((value) => !value.isFinite)) {
+    if (model.mean.any((value) => !value.isFinite)) {
       throw const FormatException('Decoder model has non-finite values.');
     }
     if (model.muLow >= model.muHigh || model.betaLow >= model.betaHigh) {
@@ -228,10 +281,31 @@ class EegDecoder {
       );
     }
 
-    var logit = model.bias;
-    for (var i = 0; i < features.length; i++) {
-      final normalized = (features[i] - model.mean[i]) / model.std[i];
-      logit += model.weights[i] * normalized;
+    final standardized = [
+      for (var i = 0; i < features.length; i++)
+        (features[i] - model.mean[i]) / model.std[i],
+    ];
+    if (model.isCentroid) {
+      final centroids = model.centroids!;
+      final distances = centroids.map((centroid) {
+        var sum = 0.0;
+        for (var i = 0; i < standardized.length; i++) {
+          final diff = standardized[i] - centroid[i];
+          sum += diff * diff;
+        }
+        return math.sqrt(sum);
+      }).toList();
+      final total = distances[0] + distances[1];
+      // Closer to the right centroid means a higher right probability;
+      // equal distances (or both zero) mean a coin flip.
+      final rightProbability = total == 0 ? 0.5 : distances[0] / total;
+      return EegPrediction(rightProbability: rightProbability);
+    }
+
+    var logit = model.bias!;
+    final weights = model.weights!;
+    for (var i = 0; i < standardized.length; i++) {
+      logit += weights[i] * standardized[i];
     }
     final rightProbability = 1 / (1 + math.exp(-logit));
     return EegPrediction(rightProbability: rightProbability);
@@ -304,6 +378,24 @@ List<double> _readDoubleList(Object? value) {
   return value.map(_readDouble).toList();
 }
 
+List<double>? _readDoubleListOrNull(Object? value) {
+  if (value == null) return null;
+  return _readDoubleList(value);
+}
+
+List<List<double>>? _readCentroidsOrNull(Object? value) {
+  if (value == null) return null;
+  if (value is! List) {
+    throw const FormatException('Decoder model has invalid centroids.');
+  }
+  return value.map((row) {
+    if (row is! List) {
+      throw const FormatException('Decoder model has invalid centroids.');
+    }
+    return row.map(_readDouble).toList();
+  }).toList();
+}
+
 List<String> _readStringList(Object? value) {
   if (value is! List) return const [];
   return value.map((item) => item.toString()).toList();
@@ -336,6 +428,24 @@ double _readDouble(Object? value, {double? fallback}) {
     throw const FormatException('Decoder model has an invalid number.');
   }
   return parsed;
+}
+
+double? _readDoubleOrNull(Object? value) {
+  if (value == null) return null;
+  try {
+    return _readDouble(value);
+  } on FormatException {
+    return null;
+  }
+}
+
+int? _readIntOrNull(Object? value) {
+  if (value == null) return null;
+  try {
+    return _readInt(value);
+  } on FormatException {
+    return null;
+  }
 }
 
 int _readInt(Object? value, {int? fallback}) {
