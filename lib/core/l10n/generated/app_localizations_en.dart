@@ -1040,4 +1040,187 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get labDecoderInSampleNote =>
       'In-sample accuracy flatters the model: it was tested on the very windows it learned from, so it cannot be compared with held-out accuracy.';
+
+  @override
+  String get algorithmsTitle => 'Algorithms that build AI';
+
+  @override
+  String get algorithmsSubtitle =>
+      'Four algorithms, from 1847 to 2017, that turn data into a learning machine — plus three hands-on experiments that run real training on this device.';
+
+  @override
+  String get algorithmsHonestNote =>
+      'Everything here runs on-device with tiny toy data. These demos teach how the algorithms work; they are not powerful models and they prove nothing about the brain.';
+
+  @override
+  String get algorithmsCardsTitle => 'The algorithms';
+
+  @override
+  String get algorithmsExperimentsTitle => 'Try the algorithms';
+
+  @override
+  String get algorithmsCard1Title => '1847 — Gradient descent';
+
+  @override
+  String get algorithmsCard1Body =>
+      'To teach a model, first define how wrong it is (a loss), then walk downhill: nudge every parameter a little against the slope of the loss, and repeat. Cauchy described the idea in 1847; it still trains nearly every model today.';
+
+  @override
+  String get algorithmsCard1Limit =>
+      'It finds a downhill step, not the best answer: it can stall in a shallow valley or bounce forever if the step is too big.';
+
+  @override
+  String get algorithmsCard1Source =>
+      'Cauchy, A. (1847). Méthode générale pour la résolution des systèmes d\'équations simultanées.';
+
+  @override
+  String get algorithmsCard2Title => '1958 — The perceptron';
+
+  @override
+  String get algorithmsCard2Body =>
+      'Rosenblatt\'s perceptron is the first machine that learns from examples: it draws a line between two classes and moves the line a little every time it misclassifies a point, until the line separates them — or it proves they cannot be separated.';
+
+  @override
+  String get algorithmsCard2Limit =>
+      'A single line can only separate linearly separable classes. It cannot learn XOR, which is why networks needed hidden layers.';
+
+  @override
+  String get algorithmsCard2Source =>
+      'Rosenblatt, F. (1958). The perceptron: A probabilistic model for information storage and organization in the brain.';
+
+  @override
+  String get algorithmsCard3Title => '1986 — Backpropagation';
+
+  @override
+  String get algorithmsCard3Body =>
+      'Backpropagation answers \'who is to blame?\' for a wrong answer: it sends the error backwards through the network, layer by layer, so every weight learns how much it contributed — and gradient descent then corrects each one.';
+
+  @override
+  String get algorithmsCard3Limit =>
+      'It needs labelled examples and differentiable math; it explains how weights move, not what the network \'understands\'.';
+
+  @override
+  String get algorithmsCard3Source =>
+      'Rumelhart, D. E., Hinton, G. E., & Williams, R. J. (1986). Learning representations by back-propagating errors. Nature.';
+
+  @override
+  String get algorithmsCard4Title => '2017 — Attention and the transformer';
+
+  @override
+  String get algorithmsCard4Body =>
+      'Instead of reading words one by one, attention lets every word weigh every other word at once, so context shapes meaning. The transformer stacked attention into the architecture behind today\'s language models.';
+
+  @override
+  String get algorithmsCard4Limit =>
+      'Attention is weighted averaging, not comprehension: fluent text is not evidence of understanding, and its cost grows with sequence length.';
+
+  @override
+  String get algorithmsCard4Source =>
+      'Vaswani, A., et al. (2017). Attention is all you need. Advances in Neural Information Processing Systems.';
+
+  @override
+  String get algorithmsExperimentPerceptronTitle =>
+      'Teach a line to separate two classes';
+
+  @override
+  String get algorithmsExperimentPerceptronBody =>
+      'Tap the board to place points: red for class A, blue for class B. Then press Train and watch the line move until it separates them — or fails, if you placed them so no line can.';
+
+  @override
+  String get algorithmsExperimentPerceptronReading =>
+      'The line only moves when it makes a mistake. If your points overlap, no line can separate them: that is the perceptron\'s limit, not a bug.';
+
+  @override
+  String get algorithmsExperimentGradientTitle =>
+      'Walk downhill without falling off';
+
+  @override
+  String get algorithmsExperimentGradientBody =>
+      'Move the learning-rate slider, then press Run. A small step crawls downhill; a huge step bounces out of the valley. The algorithm is the same — only the step size changes.';
+
+  @override
+  String get algorithmsExperimentGradientReading =>
+      'Step size is the whole game: too small wastes time, too big diverges. Tuning it is most of practical training.';
+
+  @override
+  String get algorithmsExperimentOverfitTitle =>
+      'Fit the noise, miss the pattern';
+
+  @override
+  String get algorithmsExperimentOverfitBody =>
+      'Slide the degree from 1 to 9 and watch the curve. A straight line underfits; a wiggly degree-9 curve memorises every noisy point and will fail on new data.';
+
+  @override
+  String get algorithmsExperimentOverfitReading =>
+      'Training error always falls as the curve gets wigglier — that is why it cannot be trusted alone. Generalisation, not memorisation, is the goal.';
+
+  @override
+  String get algorithmsPerceptronClassA => 'Class A';
+
+  @override
+  String get algorithmsPerceptronClassB => 'Class B';
+
+  @override
+  String get algorithmsPerceptronDemo => 'Load demo points';
+
+  @override
+  String get algorithmsPerceptronTrain => 'Train';
+
+  @override
+  String get algorithmsPerceptronClear => 'Clear';
+
+  @override
+  String algorithmsPerceptronAccuracy(int percent) {
+    return 'Accuracy: $percent%';
+  }
+
+  @override
+  String algorithmsPerceptronEpochs(int epochs) {
+    return 'Line after $epochs epochs';
+  }
+
+  @override
+  String algorithmsGradientLearningRate(String value) {
+    return 'Learning rate: $value';
+  }
+
+  @override
+  String get algorithmsGradientRun => 'Run';
+
+  @override
+  String algorithmsGradientConverged(String loss) {
+    return 'Converged: final loss $loss';
+  }
+
+  @override
+  String get algorithmsGradientDiverged =>
+      'Diverged: the steps left the valley';
+
+  @override
+  String algorithmsGradientNotYet(int steps) {
+    return 'Not yet converged after $steps steps';
+  }
+
+  @override
+  String algorithmsOverfitDegree(int degree) {
+    return 'Degree: $degree';
+  }
+
+  @override
+  String algorithmsOverfitTrainError(String error) {
+    return 'Training error: $error';
+  }
+
+  @override
+  String get homeAlgorithmsTitle => 'Algorithms';
+
+  @override
+  String get homeAlgorithmsSubtitle =>
+      'The algorithms that build AI, with experiments that really train.';
+
+  @override
+  String get homeAlgorithmsAction => 'Explore';
+
+  @override
+  String get homeAlgorithmsBadge => 'New';
 }
