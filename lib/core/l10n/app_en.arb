@@ -459,5 +459,102 @@
   "labDecoderModelCentroidLine": "Nearest centroid \u00b7 mu/beta power \u00b7 {count} channels",
   "labDecoderTrainingInSample": "Trained on the replay itself ({train}); no held-out run.",
   "labDecoderAccuracyInSample": "In-sample accuracy: {percent}% (chance 50%)",
-  "labDecoderInSampleNote": "In-sample accuracy flatters the model: it was tested on the very windows it learned from, so it cannot be compared with held-out accuracy."
+  "labDecoderInSampleNote": "In-sample accuracy flatters the model: it was tested on the very windows it learned from, so it cannot be compared with held-out accuracy.",
+  "algorithmsTitle": "Algorithms that build AI",
+  "algorithmsSubtitle": "Four algorithms, from 1847 to 2017, that turn data into a learning machine \u2014 plus three hands-on experiments that run real training on this device.",
+  "algorithmsHonestNote": "Everything here runs on-device with tiny toy data. These demos teach how the algorithms work; they are not powerful models and they prove nothing about the brain.",
+  "algorithmsCardsTitle": "The algorithms",
+  "algorithmsExperimentsTitle": "Try the algorithms",
+  "algorithmsCard1Title": "1847 \u2014 Gradient descent",
+  "algorithmsCard1Body": "To teach a model, first define how wrong it is (a loss), then walk downhill: nudge every parameter a little against the slope of the loss, and repeat. Cauchy described the idea in 1847; it still trains nearly every model today.",
+  "algorithmsCard1Limit": "It finds a downhill step, not the best answer: it can stall in a shallow valley or bounce forever if the step is too big.",
+  "algorithmsCard1Source": "Cauchy, A. (1847). M\u00e9thode g\u00e9n\u00e9rale pour la r\u00e9solution des syst\u00e8mes d'\u00e9quations simultan\u00e9es.",
+  "algorithmsCard2Title": "1958 \u2014 The perceptron",
+  "algorithmsCard2Body": "Rosenblatt's perceptron is the first machine that learns from examples: it draws a line between two classes and moves the line a little every time it misclassifies a point, until the line separates them \u2014 or it proves they cannot be separated.",
+  "algorithmsCard2Limit": "A single line can only separate linearly separable classes. It cannot learn XOR, which is why networks needed hidden layers.",
+  "algorithmsCard2Source": "Rosenblatt, F. (1958). The perceptron: A probabilistic model for information storage and organization in the brain.",
+  "algorithmsCard3Title": "1986 \u2014 Backpropagation",
+  "algorithmsCard3Body": "Backpropagation answers 'who is to blame?' for a wrong answer: it sends the error backwards through the network, layer by layer, so every weight learns how much it contributed \u2014 and gradient descent then corrects each one.",
+  "algorithmsCard3Limit": "It needs labelled examples and differentiable math; it explains how weights move, not what the network 'understands'.",
+  "algorithmsCard3Source": "Rumelhart, D. E., Hinton, G. E., & Williams, R. J. (1986). Learning representations by back-propagating errors. Nature.",
+  "algorithmsCard4Title": "2017 \u2014 Attention and the transformer",
+  "algorithmsCard4Body": "Instead of reading words one by one, attention lets every word weigh every other word at once, so context shapes meaning. The transformer stacked attention into the architecture behind today's language models.",
+  "algorithmsCard4Limit": "Attention is weighted averaging, not comprehension: fluent text is not evidence of understanding, and its cost grows with sequence length.",
+  "algorithmsCard4Source": "Vaswani, A., et al. (2017). Attention is all you need. Advances in Neural Information Processing Systems.",
+  "algorithmsExperimentPerceptronTitle": "Teach a line to separate two classes",
+  "algorithmsExperimentPerceptronBody": "Tap the board to place points: red for class A, blue for class B. Then press Train and watch the line move until it separates them \u2014 or fails, if you placed them so no line can.",
+  "algorithmsExperimentPerceptronReading": "The line only moves when it makes a mistake. If your points overlap, no line can separate them: that is the perceptron's limit, not a bug.",
+  "algorithmsExperimentGradientTitle": "Walk downhill without falling off",
+  "algorithmsExperimentGradientBody": "Move the learning-rate slider, then press Run. A small step crawls downhill; a huge step bounces out of the valley. The algorithm is the same \u2014 only the step size changes.",
+  "algorithmsExperimentGradientReading": "Step size is the whole game: too small wastes time, too big diverges. Tuning it is most of practical training.",
+  "algorithmsExperimentOverfitTitle": "Fit the noise, miss the pattern",
+  "algorithmsExperimentOverfitBody": "Slide the degree from 1 to 9 and watch the curve. A straight line underfits; a wiggly degree-9 curve memorises every noisy point and will fail on new data.",
+  "algorithmsExperimentOverfitReading": "Training error always falls as the curve gets wigglier \u2014 that is why it cannot be trusted alone. Generalisation, not memorisation, is the goal.",
+  "algorithmsPerceptronClassA": "Class A",
+  "algorithmsPerceptronClassB": "Class B",
+  "algorithmsPerceptronDemo": "Load demo points",
+  "algorithmsPerceptronTrain": "Train",
+  "algorithmsPerceptronClear": "Clear",
+  "algorithmsPerceptronAccuracy": "Accuracy: {percent}%",
+  "@algorithmsPerceptronAccuracy": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "algorithmsPerceptronEpochs": "Line after {epochs} epochs",
+  "@algorithmsPerceptronEpochs": {
+    "placeholders": {
+      "epochs": {
+        "type": "int"
+      }
+    }
+  },
+  "algorithmsGradientLearningRate": "Learning rate: {value}",
+  "@algorithmsGradientLearningRate": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "algorithmsGradientRun": "Run",
+  "algorithmsGradientConverged": "Converged: final loss {loss}",
+  "@algorithmsGradientConverged": {
+    "placeholders": {
+      "loss": {
+        "type": "String"
+      }
+    }
+  },
+  "algorithmsGradientDiverged": "Diverged: the steps left the valley",
+  "algorithmsGradientNotYet": "Not yet converged after {steps} steps",
+  "@algorithmsGradientNotYet": {
+    "placeholders": {
+      "steps": {
+        "type": "int"
+      }
+    }
+  },
+  "algorithmsOverfitDegree": "Degree: {degree}",
+  "@algorithmsOverfitDegree": {
+    "placeholders": {
+      "degree": {
+        "type": "int"
+      }
+    }
+  },
+  "algorithmsOverfitTrainError": "Training error: {error}",
+  "@algorithmsOverfitTrainError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAlgorithmsTitle": "Algorithms",
+  "homeAlgorithmsSubtitle": "The algorithms that build AI, with experiments that really train.",
+  "homeAlgorithmsAction": "Explore",
+  "homeAlgorithmsBadge": "New"
 }
