@@ -260,7 +260,7 @@
   "aboutRepo": "Source on GitHub",
   "aboutLicense": "MIT License",
   "privacyTitle": "Privacy",
-  "privacyIntro": "Nemro is local-first. Version {version} has no Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.",
+  "privacyIntro": "Nemro is local-first. Version {version} has Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.",
   "@privacyIntro": {
     "placeholders": {
       "version": {
@@ -273,7 +273,7 @@
   "privacyDecoderTitle": "On-device AI",
   "privacyDecoderBody": "The Lab decoder is a small model bundled with the app. It runs locally on the EEG sample, and predictions never leave the device.",
   "privacyCameraTitle": "Camera",
-  "privacyCameraBody": "Live opens the camera only after you tap Start. Frames are downsampled and processed on-device to estimate a rough light/contrast/motion proxy. No video or images are recorded, stored, or uploaded. An optional calibration baseline (two numbers) can be stored locally. The camera is released when you stop or leave the app; Nemro does not request microphone or storage access.",
+  "privacyCameraBody": "Live opens the camera only after you tap Start. Frames are downsampled and processed on-device to estimate a rough light/contrast/motion proxy. No video or images are recorded, stored, or uploaded. An optional calibration baseline (two numbers) can be stored locally. The camera is released when you stop or leave the app.",
   "privacyStorageTitle": "Storage",
   "privacyStorageBody": "Data lives in the app's private storage. You can delete everything in Settings.",
   "privacySharingTitle": "Sharing",
