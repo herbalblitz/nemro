@@ -7,6 +7,9 @@ All notable changes to Nemro are documented here.
 ### Added
 
 - Practice: an adaptive breathing session whose pace follows the Live camera signal proxy in real time (inhale 4s, hold 1s, exhale 4–8s by score, hold 1s), with 1/3/5-minute lengths and an on-screen-only summary. The camera opens only after **Start**; frames are analyzed in memory and never recorded, stored, or uploaded, and the screen states plainly that the pace is not a measure of calm, focus, or any medical state.
+- Research: four landmark BCI findings (Berger 1929, Farwell & Donchin 1988, the open EEGMMIDB dataset, BCI illiteracy), each with its limit and source, plus two self-run 30-second camera experiments (sit still, cover the lens) whose fixed interpretations describe the signal only. Results stay on screen; nothing is saved or uploaded.
+- Lab: a second decoder for comparison — nearest centroid on the same mu/beta features, trained on the 7 windows of the S001/R04 excerpt itself. The Lab lets the user switch models; the centroid's 71.4% accuracy is labelled in-sample everywhere and never compared with the logistic model's held-out 66.7%. The two models agree on only 3 of the 7 replay windows.
+- Lab: a third bundled replay — S003/R04, another real 60-second EEGMMIDB excerpt (ODC-BY 1.0), shown as a cross-subject demo like S002.
 
 ## [0.4.0] - 2026-10-30
 
