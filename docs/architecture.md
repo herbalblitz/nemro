@@ -2,7 +2,7 @@
 
 ## Principles
 
-1. **Local-first.** No network dependency for the core experience. Release builds do not request `INTERNET`.
+1. **Local-first.** No network dependency for the core experience. Release builds request `INTERNET`, but no code currently sends data over the network.
 2. **Honest AI.** Show real data, real model outputs, and real limitations. Never present a heuristic as mind reading.
 3. **Small, replaceable modules.** The UI can grow without locking the data or model layers together.
 4. **Bilingual by default.** Every user-facing string goes through ARB localization.
@@ -104,7 +104,7 @@ This path does **not** detect faces, eyes, blinks, head pose, or attention. It u
 ## Privacy boundary
 
 - No analytics SDK, ad SDK, account system, or remote logging.
-- The release manifest requests `CAMERA` for Live, but no `INTERNET`, `RECORD_AUDIO`, storage, or media-library permission.
+- The release manifest requests `CAMERA` for Live and `INTERNET`, but no `RECORD_AUDIO`, storage, or media-library permission.
 - The camera plugin declares audio, storage, and media permissions; `tools:node="remove"` entries in the app manifest remove them from the merged release manifest.
 - Debug/profile manifests add `INTERNET` only for Flutter tooling.
 - Live camera frames stay in memory and are never recorded, persisted, or uploaded. The only persisted Live data is the opt-in summary (score, duration, frames, end time) and the optional two-number baseline.
