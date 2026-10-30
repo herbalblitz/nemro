@@ -523,7 +523,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String privacyIntro(String version) {
-    return 'Nemro is local-first. Version $version has no Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.';
+    return 'Nemro is local-first. Version $version has Internet permission. The bundled EEG sample, decoder, and Live camera proxy run entirely on-device.';
   }
 
   @override
@@ -545,7 +545,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyCameraBody =>
-      'Live opens the camera only after you tap Start. Frames are downsampled and processed on-device to estimate a rough light/contrast/motion proxy. No video or images are recorded, stored, or uploaded. An optional calibration baseline (two numbers) can be stored locally. The camera is released when you stop or leave the app; Nemro does not request microphone or storage access.';
+      'Live opens the camera only after you tap Start. Frames are downsampled and processed on-device to estimate a rough light/contrast/motion proxy. No video or images are recorded, stored, or uploaded. An optional calibration baseline (two numbers) can be stored locally. The camera is released when you stop or leave the app.';
 
   @override
   String get privacyStorageTitle => 'Storage';
