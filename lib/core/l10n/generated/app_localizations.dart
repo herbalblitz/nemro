@@ -1451,6 +1451,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Confusion matrix (rows = actual, columns = predicted)'**
   String get labDecoderConfusionTitle;
+
+  /// No description provided for @homePracticeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice'**
+  String get homePracticeTitle;
+
+  /// No description provided for @homePracticeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adaptive breathing paced by the camera signal'**
+  String get homePracticeSubtitle;
+
+  /// No description provided for @homePracticeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get homePracticeAction;
+
+  /// No description provided for @homePracticeBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get homePracticeBadge;
+
+  /// No description provided for @practiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice'**
+  String get practiceTitle;
+
+  /// No description provided for @practiceIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'A breathing session whose pace follows the camera signal. Sit in front of the camera, breathe with the circle, and let the exhale stretch when the signal is steady.'**
+  String get practiceIntro;
+
+  /// No description provided for @practiceHonestNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The pace follows a camera-signal heuristic, not a measure of calm, focus, or any medical state. Nothing is recorded or uploaded.'**
+  String get practiceHonestNote;
+
+  /// No description provided for @practiceDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Session length'**
+  String get practiceDurationLabel;
+
+  /// No description provided for @practiceMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String practiceMinutes(int minutes);
+
+  /// No description provided for @practiceStartButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start practice'**
+  String get practiceStartButton;
+
+  /// No description provided for @practiceStopButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get practiceStopButton;
+
+  /// No description provided for @practiceInhale.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe in'**
+  String get practiceInhale;
+
+  /// No description provided for @practiceHold.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold'**
+  String get practiceHold;
+
+  /// No description provided for @practiceExhale.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe out'**
+  String get practiceExhale;
+
+  /// No description provided for @practiceRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get practiceRemaining;
+
+  /// No description provided for @practiceSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice summary'**
+  String get practiceSummaryTitle;
+
+  /// No description provided for @practiceSummaryAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average proxy score'**
+  String get practiceSummaryAverage;
+
+  /// No description provided for @practiceSummaryDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get practiceSummaryDuration;
+
+  /// No description provided for @practiceSummaryCycles.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathing cycles'**
+  String get practiceSummaryCycles;
+
+  /// No description provided for @practiceStartAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice again'**
+  String get practiceStartAgain;
 }
 
 class _AppLocalizationsDelegate
