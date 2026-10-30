@@ -68,6 +68,7 @@ Live is a rough, transparent heuristic, not face or eye tracking and not a measu
 - A calibration baseline (two numbers) can be saved locally and cleared from the Live screen. It changes only how the score is presented; it is not a brain measurement.
 - Saved Live session summaries are off by default. Turn them on in Settings if you want Insights history.
 - Practice reuses the same camera pipeline: the camera opens only after you tap **Start**, frames are analyzed in memory, and the breathing pace follows the proxy score. A Practice summary is shown on screen only and is never saved or uploaded.
+- Research experiments reuse the same camera pipeline for 30-second runs; their results are shown on screen only and are never saved or uploaded.
 
 Live là một heuristic thô, minh bạch, không theo dõi khuôn mặt hay mắt và không đo chú ý hay tình trạng y tế.
 
