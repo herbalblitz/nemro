@@ -113,6 +113,117 @@ void main() {
     },
   );
 
+  test('the bundled centroid model has the expected shape', () async {
+    final source = await rootBundle.loadString(eegDecoderCentroidModelAsset);
+    final model = EegDecoderModel.fromJson(source);
+
+    expect(model.type, 'nearest_centroid');
+    expect(model.channels, ['C3', 'C4', 'CP3', 'CP4']);
+    expect(model.featureCount, 8);
+    expect(model.centroids, hasLength(2));
+    expect(model.centroids!.every((row) => row.length == 8), isTrue);
+    expect(model.weights, isNull);
+    expect(model.bias, isNull);
+    expect(model.training.subject, 'S001');
+    expect(model.training.trainRuns, ['R04 (excerpt)']);
+    expect(model.training.testRun, isEmpty);
+    expect(model.training.heldOutAccuracy, isNull);
+    expect(model.training.leaveOneRunOutAccuracy, isNull);
+    expect(model.training.inSampleAccuracy, closeTo(0.714, 0.001));
+    expect(model.training.inSampleConfusion, [
+      [2, 1],
+      [1, 3],
+    ]);
+  });
+
+  test('the decoder repository serves both models and falls back', () async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    const repository = EegDecoderRepository();
+
+    final centroid = await repository.loadModel(labDecoderCentroidId);
+    expect(centroid.model.type, 'nearest_centroid');
+    expect(centroid.model.training.inSampleAccuracy, closeTo(0.714, 0.001));
+
+    final logistic = await repository.loadModel(labDecoderLogisticId);
+    expect(logistic.model.type, 'logistic_regression');
+    expect(logistic.model.training.heldOutAccuracy, closeTo(0.667, 0.001));
+
+    final fallback = await repository.loadModel('no-such-model');
+    expect(fallback.model.type, 'logistic_regression');
+
+    final defaultModel = await repository.load();
+    expect(defaultModel.model.type, 'logistic_regression');
+  });
+
+  test('the centroid decoder picks the nearer centroid', () {
+    final model = EegDecoderModel(
+      name: 'Synthetic centroid decoder',
+      type: 'nearest_centroid',
+      classes: ['left_fist', 'right_fist'],
+      channels: ['C3', 'C4'],
+      muLow: 8,
+      muHigh: 13,
+      betaLow: 13,
+      betaHigh: 30,
+      frequencyStep: 0.5,
+      samplingRate: 160,
+      windowSeconds: 1,
+      featureOrder: 'channel-major, mu then beta',
+      mean: [0, 0, 0, 0],
+      std: [1, 1, 1, 1],
+      centroids: [
+        [0, 0, 0, 0],
+        [1, 1, 1, 1],
+      ],
+      training: const EegDecoderTraining(
+        dataset: 'Synthetic',
+        subject: 'S000',
+        trainRuns: [],
+        testRun: '',
+        trainEpochs: null,
+        heldOutAccuracy: null,
+        leaveOneRunOutAccuracy: null,
+        chanceAccuracy: 0.5,
+        heldOutConfusion: [],
+        inSampleAccuracy: 0.75,
+      ),
+      preprocessing: 'test',
+      limitations: 'test',
+    );
+    // A silent window gives log10 power of -12 on every feature, so the
+    // standardized features are all -12: distance 24 to the left centroid
+    // and 26 to the right one, giving a right probability of 24/50.
+    final recording = _recording(
+      samples: List.generate(2, (_) => List<double>.filled(160, 0)),
+    );
+    final prediction = EegDecoder(model)
+        .decode(recording, recording.events.first);
+
+    expect(prediction.rightProbability, closeTo(0.48, 0.001));
+    expect(prediction.isRight, isFalse);
+  });
+
+  test(
+    'rejects an unknown decoder type and a logistic model without weights',
+    () async {
+      final source = await rootBundle.loadString(eegDecoderModelAsset);
+
+      final typeMutated = jsonDecode(source) as Map<String, dynamic>;
+      typeMutated['type'] = 'support_vector_machine';
+      expect(
+        () => EegDecoderModel.fromJson(jsonEncode(typeMutated)),
+        throwsFormatException,
+      );
+
+      final weightsMutated = jsonDecode(source) as Map<String, dynamic>;
+      weightsMutated.remove('weights');
+      expect(
+        () => EegDecoderModel.fromJson(jsonEncode(weightsMutated)),
+        throwsFormatException,
+      );
+    },
+  );
+
   test('mu-band power separates a 10 Hz signal from a silent channel', () {
     final samples = List.generate(2, (channel) {
       if (channel == 1) return List<double>.filled(160, 0);
