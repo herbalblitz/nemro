@@ -512,7 +512,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get aboutSourceNote =>
-      'Lab đóng gói các đoạn 60 giây từ EEGMMIDB của S001 và S002 (ODC-BY 1.0). Bộ giải mã là hồi quy logistic nhỏ, huấn luyện trên run 8 và 12 của S001 và đánh giá trên run 4: độ chính xác 67%, mức ngẫu nhiên 50%. Bản phát lại S002 chỉ là demo khác chủ thể, không có tuyên bố độ chính xác. Chỉ là demo nghiên cứu.';
+      'Lab đóng gói các đoạn 60 giây từ EEGMMIDB của S001, S002 và S003 (ODC-BY 1.0). Bộ giải mã là hồi quy logistic nhỏ, huấn luyện trên run 8 và 12 của S001 và đánh giá trên run 4: độ chính xác 67%, mức ngẫu nhiên 50%. Các bản phát lại S002 và S003 chỉ là demo khác chủ thể, không có tuyên bố độ chính xác. Chỉ là demo nghiên cứu.';
 
   @override
   String get aboutRepo => 'Mã nguồn trên GitHub';
@@ -859,4 +859,187 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get practiceStartAgain => 'Tập lại';
+
+  @override
+  String get homeResearchTitle => 'Nghiên cứu';
+
+  @override
+  String get homeResearchSubtitle =>
+      'Phát hiện mốc và thí nghiệm tự chạy bằng camera';
+
+  @override
+  String get homeResearchAction => 'Mở';
+
+  @override
+  String get homeResearchBadge => 'Mới';
+
+  @override
+  String get researchTitle => 'Nghiên cứu';
+
+  @override
+  String get researchSubtitle =>
+      'Bốn phát hiện mốc, mỗi cái kèm giới hạn và nguồn — cùng hai thí nghiệm ngắn bạn tự chạy trên máy này để xem proxy camera phản ứng ra sao.';
+
+  @override
+  String get researchHonestNote =>
+      'Không có gì ở đây đo sự chú ý, bình tĩnh hay trạng thái y tế nào. Các thí nghiệm chỉ mô tả tín hiệu camera.';
+
+  @override
+  String get researchMilestonesTitle => 'Phát hiện mốc';
+
+  @override
+  String get researchExperimentsTitle => 'Thí nghiệm tự chạy';
+
+  @override
+  String get researchLimitLabel => 'Giới hạn';
+
+  @override
+  String get researchSourceLabel => 'Nguồn';
+
+  @override
+  String get researchOpenSource => 'Mở nguồn';
+
+  @override
+  String get researchStartButton => 'Bắt đầu thí nghiệm';
+
+  @override
+  String get researchStopButton => 'Dừng';
+
+  @override
+  String get researchResultTitle => 'Kết quả thí nghiệm';
+
+  @override
+  String get researchResultAverage => 'Điểm proxy trung bình';
+
+  @override
+  String get researchResultStability => 'Độ ổn định trung bình';
+
+  @override
+  String get researchResultLighting => 'Độ sáng trung bình';
+
+  @override
+  String get researchResultPresence => 'Độ hiện diện trung bình';
+
+  @override
+  String get researchResultNote =>
+      'Kết quả này chỉ mô tả tín hiệu camera trong 30 giây đó. Nó không phải bằng chứng về sự chú ý, bình tĩnh hay trạng thái tinh thần nào.';
+
+  @override
+  String get researchRunAgain => 'Chạy lại';
+
+  @override
+  String get researchBackToList => 'Về danh sách';
+
+  @override
+  String get researchMilestone1Title =>
+      '1929 — Điện não đồ đầu tiên trên người';
+
+  @override
+  String get researchMilestone1Body =>
+      'Hans Berger ở Jena (Đức) ghi được hoạt động điện của não người từ da đầu và mô tả sóng alpha (khoảng 8–13 Hz, rõ nhất khi nghỉ ngơi, nhắm mắt). Đó là khởi đầu của điện não đồ — và của mọi kỹ thuật ghi não không xâm lấn sau này.';
+
+  @override
+  String get researchMilestone1Limit =>
+      'Thiết bị thô sơ, chỉ vài đối tượng ban đầu; đây là điểm khởi đầu, chưa phải công cụ lâm sàng đã kiểm chứng.';
+
+  @override
+  String get researchMilestone1Source =>
+      'Berger, H. (1929). Über das Elektrenkephalogramm des Menschen. Archiv für Psychiatrie und Nervenkrankheiten.';
+
+  @override
+  String get researchMilestone2Title => '1988 — Đánh vần bằng sóng P300';
+
+  @override
+  String get researchMilestone2Body =>
+      'Farwell và Donchin cho thấy con người có thể chọn chữ cái trên màn hình chỉ bằng sự chú ý: não phát ra đáp ứng P300 khoảng 300 ms sau kích thích hiếm và được chú ý, và máy tính giải mã được chữ nào đã chọn. Đó là một trong những BCI không xâm lấn đầu tiên có ứng dụng thực tế — hỗ trợ giao tiếp.';
+
+  @override
+  String get researchMilestone2Limit =>
+      'Chậm (thời đó chỉ vài ký tự mỗi phút), cần hiệu chuẩn và huấn luyện theo từng người; nó giải mã lựa chọn trong các phương án hiển thị, không phải suy nghĩ tự do.';
+
+  @override
+  String get researchMilestone2Source =>
+      'Farwell, L. A., & Donchin, E. (1988). Talking off the top of your head. Electroencephalography and Clinical Neurophysiology.';
+
+  @override
+  String get researchMilestone3Title =>
+      '2004 — Bộ dữ liệu EEG tưởng tượng vận động mở';
+
+  @override
+  String get researchMilestone3Body =>
+      'Bộ dữ liệu EEG Motor Movement/Imagery trên PhysioNet ghi 109 người thực hiện và tưởng tượng cử động tay, chân (64 kênh). Nó trở thành chuẩn mở để xây dựng và so sánh bộ giải mã — Lab của Nemro phát lại ba đoạn trích từ đây (S001, S002 và S003).';
+
+  @override
+  String get researchMilestone3Limit =>
+      'Dữ liệu phòng lab, người khỏe mạnh làm theo hiệu lệnh — khác xa dùng thực tế hàng ngày; độ chính xác trên tập này không suy ra hiệu quả lâm sàng.';
+
+  @override
+  String get researchMilestone3Source =>
+      'PhysioNet EEG Motor Movement/Imagery Dataset (EEGMMIDB); Schalk et al., BCI2000 (2004).';
+
+  @override
+  String get researchMilestone4Title =>
+      '2010 — Không phải ai cũng điều khiển được BCI';
+
+  @override
+  String get researchMilestone4Body =>
+      'Nhóm Berlin BCI tổng kết: một tỉ lệ đáng kể người dùng — thường được trích khoảng 15–30% — không bao giờ đạt điều khiển BCI tưởng tượng vận động ổn định dù đã huấn luyện, hiện tượng gọi là \'BCI illiteracy\'. Hiệu quả BCI phụ thuộc vào từng người, không chỉ vào công nghệ.';
+
+  @override
+  String get researchMilestone4Limit =>
+      'Tỉ lệ thay đổi theo định nghĩa \'điều khiển được\', nhiệm vụ và thời lượng huấn luyện; không có nghĩa não của những người đó có vấn đề.';
+
+  @override
+  String get researchMilestone4Source =>
+      'Blankertz, B., et al. (2010). Neurophysiological predictor of SMR-based BCI performance. NeuroImage.';
+
+  @override
+  String get researchExperimentStillTitle => 'Ngồi yên 30 giây';
+
+  @override
+  String get researchExperimentStillBody =>
+      'Ngồi trước camera và giữ yên nhất có thể trong 30 giây. Xem thành phần ổn định và điểm số thay đổi ra sao.';
+
+  @override
+  String get researchExperimentStillReading =>
+      'Nếu bạn ngồi yên, độ ổn định thường tăng và điểm số tăng theo. Điều đó cho thấy điểm số phản ứng với chuyển động — không phải với sự tập trung, bình tĩnh hay nỗ lực.';
+
+  @override
+  String get researchExperimentCoverTitle => 'Che camera rồi mở ra';
+
+  @override
+  String get researchExperimentCoverBody =>
+      'Bắt đầu chạy, che camera bằng tay vài giây rồi mở ra. Xem thành phần hiện diện và điểm số thay đổi ra sao.';
+
+  @override
+  String get researchExperimentCoverReading =>
+      'Che ống kính làm sụp độ tương phản vùng trung tâm, nên độ hiện diện và điểm số rơi theo — không cần thay đổi trạng thái tinh thần nào. Điểm số đi theo hình ảnh nó nhận được.';
+
+  @override
+  String get labDecoderModelLabel => 'Bộ giải mã';
+
+  @override
+  String get labDecoderModelLogistic => 'Logistic';
+
+  @override
+  String get labDecoderModelCentroid => 'Centroid';
+
+  @override
+  String labDecoderModelCentroidLine(Object count) {
+    return 'Centroid gần nhất · công suất mu/beta · $count kênh';
+  }
+
+  @override
+  String labDecoderTrainingInSample(Object train) {
+    return 'Huấn luyện ngay trên đoạn phát lại ($train); không có run held-out.';
+  }
+
+  @override
+  String labDecoderAccuracyInSample(Object percent) {
+    return 'Độ chính xác nội mẫu: $percent% (ngẫu nhiên 50%)';
+  }
+
+  @override
+  String get labDecoderInSampleNote =>
+      'Độ chính xác nội mẫu tâng bốc mô hình: nó được kiểm tra trên chính các cửa sổ đã học, nên không thể so sánh với độ chính xác held-out.';
 }
