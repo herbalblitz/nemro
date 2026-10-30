@@ -39,7 +39,7 @@ Live is covered by analyzer and widget tests with a fake camera gateway. A physi
 - Dataset and ODC-BY 1.0 attribution in the Lab and About screens.
 - Privacy policy and open-source license screens inside the app.
 - Local settings stored with `shared_preferences`; no account, ads, or analytics.
-- Release manifest requests `CAMERA` for Live but has no `INTERNET`, `RECORD_AUDIO`, storage, or media-library permission. Android cloud backup and device-to-device transfer are both disabled.
+- Release manifest requests `CAMERA` for Live and `INTERNET`, but no `RECORD_AUDIO`, storage, or media-library permission. Android cloud backup and device-to-device transfer are both disabled.
 - CI that checks formatting, analyzes with `--fatal-infos`, tests, builds a release APK on GitHub Actions, and asserts the release permission set.
 
 ## What Nemro is not
@@ -154,11 +154,11 @@ lib/
 
 ## Privacy
 
-Nemro is local-first. The release build has no `INTERNET` permission, no accounts, no ads, and no tracking. Settings stay in the app's private storage. The Lab decoder is bundled and runs on-device; predictions never leave the phone.
+Nemro is local-first. The release build requests the `INTERNET` permission, but no code currently sends data over the network; no accounts, no ads, and no tracking. Settings stay in the app's private storage. The Lab decoder is bundled and runs on-device; predictions never leave the phone.
 
 Live adds only the `CAMERA` runtime permission. The camera opens only after you tap **Start**; frames are analyzed in memory and are never recorded or uploaded. The camera plugin's microphone, storage, and media-library permissions are removed from the manifest. The camera is released on **Stop** or when the app leaves the foreground. Live session summaries are off by default and saved only if you enable saving in Settings; an optional personal camera baseline stores two numbers locally. Both are included in **Delete all local data**. Android cloud backup and device-to-device transfer are disabled. See [docs/privacy.md](docs/privacy.md) for the full policy.
 
-Debug builds add the `INTERNET` permission through Flutter's debug manifest for hot reload; release builds do not.
+Debug builds add the `INTERNET` permission through Flutter's debug manifest for hot reload; release builds request it directly.
 
 ## Contributing
 
@@ -202,4 +202,4 @@ flutter build apk --release
 
 APK release hiện được ký bằng debug key cho đến khi cấu hình keystore chính thức. CI cũng tạo và tải lên `nemro-release-apk` trong tab **Actions** của GitHub. Trên Linux ARM64, công cụ NDK x86_64 có thể khiến build APK cục bộ thất bại; hãy dùng artifact CI hoặc máy x64.
 
-Dữ liệu chỉ nằm trên thiết bị; bản release không có quyền `INTERNET`, không tài khoản, không quảng cáo, không tracking. Live chỉ yêu cầu quyền runtime `CAMERA`; các quyền micro, bộ nhớ và thư viện media do plugin camera khai báo hoặc suy ra đều bị loại bỏ khỏi manifest. Camera chỉ mở sau khi nhấn **Bắt đầu**, khung hình được xử lý trong bộ nhớ và không bị ghi hay tải lên. Tóm tắt phiên Live mặc định tắt và chỉ được lưu khi bạn bật trong Cài đặt; ngưỡng camera tùy chọn chỉ lưu hai con số cục bộ. Cả hai đều bị xóa bởi **Xóa toàn bộ dữ liệu cục bộ**. Sao lưu đám mây và chuyển dữ liệu sang thiết bị khác đều bị tắt. Xem [docs/privacy.md](docs/privacy.md).
+Dữ liệu chỉ nằm trên thiết bị; bản release có quyền `INTERNET` nhưng hiện chưa có code nào gửi dữ liệu qua mạng, không tài khoản, không quảng cáo, không tracking. Live chỉ yêu cầu quyền runtime `CAMERA`; các quyền micro, bộ nhớ và thư viện media do plugin camera khai báo hoặc suy ra đều bị loại bỏ khỏi manifest. Camera chỉ mở sau khi nhấn **Bắt đầu**, khung hình được xử lý trong bộ nhớ và không bị ghi hay tải lên. Tóm tắt phiên Live mặc định tắt và chỉ được lưu khi bạn bật trong Cài đặt; ngưỡng camera tùy chọn chỉ lưu hai con số cục bộ. Cả hai đều bị xóa bởi **Xóa toàn bộ dữ liệu cục bộ**. Sao lưu đám mây và chuyển dữ liệu sang thiết bị khác đều bị tắt. Xem [docs/privacy.md](docs/privacy.md).
