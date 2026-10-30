@@ -6,7 +6,7 @@ All notable changes to Nemro are documented here.
 
 ### Added
 
-- Algorithms screen (`/algorithms`, linked from Home and Research): four landmark AI algorithms with limits and sources (gradient descent 1847, perceptron 1958, backpropagation 1986, attention/transformer 2017), plus three interactive experiments that run real training on-device — a perceptron trainer with a tappable board, a gradient-descent playground with a learning-rate slider, and an overfitting demo with a polynomial-degree slider.
+- Algorithms screen (`/algorithms`, linked from Home and Research): four landmark AI algorithms with limits and sources (gradient descent 1847, perceptron 1958, backpropagation 1986, attention/transformer 2017), plus three interactive experiments that run real training on-device — a perceptron trainer with a tappable board, a gradient-descent playground with a learning-rate slider, and an overfitting demo with a polynomial-degree slider — and three in-depth experiments: a real backpropagation network learning XOR (loss curve + decision boundary), an interactive attention-weight computation over four words, and a random-vs-zero weight-initialization comparison.
 
 ### Fixed
 
