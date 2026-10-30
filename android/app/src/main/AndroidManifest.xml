@@ -4,20 +4,8 @@
     <!-- INTERNET is requested by the release build (user decision
          2026-10-30). No code currently sends data over the network. -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Live processes frames on-device and never records audio or accesses
-         external storage. The camera plugin declares these permissions; remove
-         them from the merge. -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" tools:node="remove" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove" />
-    <!-- Android 13+ media permissions and Android 14's partial-photo access:
-         a future camera/share plugin must not reintroduce them through the
-         manifest merge. Nemro never reads the user's media library. -->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:node="remove" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" tools:node="remove" />
-    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" tools:node="remove" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" tools:node="remove" />
-    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" tools:node="remove" />
+    <!-- No permission is removed from plugin merges: the merged manifest may
+         include the camera plugin's audio, storage, and media declarations. -->
     <uses-feature
         android:name="android.hardware.camera.any"
         android:required="false"
