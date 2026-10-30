@@ -1,7 +1,7 @@
 # Model card: S001 mu/beta logistic regression
 
 - **Model version:** 1
-- **App version:** Nemro 0.4.0
+- **App version:** Nemro 0.5.0
 - **Date:** 2026-10-30
 - **Weights:** `assets/models/eeg_decoder.json`
 - **Training tool:** `tool/train_eeg_decoder.py`
@@ -21,9 +21,10 @@ on-device EEG decoding pipeline, not a brain-computer interface product.
 - Teach how band-power features, a linear classifier, and held-out evaluation
   fit together.
 
-The Lab also bundles an S002/R04 replay. It is a **cross-subject demo only**:
-the model was not trained or evaluated on S002, so the app labels that replay
-as a demo and does not show S001's accuracy or confusion matrix next to it.
+The Lab also bundles S002/R04 and S003/R04 replays. They are
+**cross-subject demos only**: the model was not trained or evaluated on
+S002 or S003, so the app labels those replays as demos and does not show
+S001's accuracy or confusion matrix next to them.
 
 **Not intended for:** diagnosis, treatment, neurofeedback, lie detection,
 surveillance, or any claim of reading thoughts or intentions. The model was not
