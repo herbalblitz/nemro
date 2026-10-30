@@ -52,6 +52,7 @@ Future<void> _pumpApp(
   Map<String, Object> values = const {'locale': 'vi'},
   EegRecording? labRecording,
   EegDecoder? labDecoder,
+  EegDecoderRepository? labDecoderRepository,
   Map<double, EegPrediction>? labPredictions,
   ValueNotifier<bool>? failLabLoad,
   LiveCameraGateway? liveCameraGateway,
@@ -83,6 +84,8 @@ Future<void> _pumpApp(
           }),
         if (labDecoder != null)
           eegDecoderProvider.overrideWith((ref) => labDecoder),
+        if (labDecoderRepository != null)
+          eegDecoderRepositoryProvider.overrideWithValue(labDecoderRepository),
         if (labPredictions != null)
           eegPredictionsProvider.overrideWith((ref) => labPredictions),
         if (liveCameraGateway != null)
@@ -206,6 +209,60 @@ EegDecoder _testDecoderNoTestRun() {
       limitations: 'Test limitations',
     ),
   );
+}
+
+/// Same as [_testDecoder] but a nearest-centroid model evaluated only on
+/// its own training windows: the summary must wear the in-sample label,
+/// never the held-out one.
+EegDecoder _testDecoderCentroid() {
+  return const EegDecoder(
+    EegDecoderModel(
+      name: 'Test centroid decoder',
+      type: 'nearest_centroid',
+      classes: ['left_fist', 'right_fist'],
+      channels: ['C3', 'Cz'],
+      muLow: 8,
+      muHigh: 13,
+      betaLow: 13,
+      betaHigh: 30,
+      frequencyStep: 0.5,
+      samplingRate: 160,
+      windowSeconds: 4.1,
+      featureOrder: 'channel-major, mu then beta',
+      mean: [0, 0, 0, 0],
+      std: [1, 1, 1, 1],
+      centroids: [
+        [0, 0, 0, 0],
+        [1, 1, 1, 1],
+      ],
+      training: EegDecoderTraining(
+        dataset: 'Test dataset',
+        subject: 'S001',
+        trainRuns: ['R04 (excerpt)'],
+        testRun: '',
+        trainEpochs: null,
+        heldOutAccuracy: null,
+        leaveOneRunOutAccuracy: null,
+        chanceAccuracy: 0.5,
+        heldOutConfusion: [],
+        inSampleAccuracy: 0.75,
+      ),
+      preprocessing: 'Test preprocessing',
+      limitations: 'Test limitations',
+    ),
+  );
+}
+
+/// Serves [_testDecoder] for the logistic id and [_testDecoderCentroid]
+/// for the centroid id, so the chip-to-provider-to-repository chain can
+/// be tested without loading real assets.
+class _FakeDecoderRepository extends EegDecoderRepository {
+  const _FakeDecoderRepository();
+
+  @override
+  Future<EegDecoder> loadModel(String id) async {
+    return id == labDecoderCentroidId ? _testDecoderCentroid() : _testDecoder();
+  }
 }
 
 class _FakeLiveCameraGateway implements LiveCameraGateway {
@@ -1443,6 +1500,51 @@ void main() {
       findsOneWidget,
     );
     expect(find.textContaining('leave-one-run-out evaluation'), findsOneWidget);
+    expect(find.textContaining('Held-out accuracy'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Lab decoder switch shows the centroid in-sample label', (
+    tester,
+  ) async {
+    // The fake repository serves a different model per id, so tapping
+    // the chip exercises the whole chain: chip, selected-decoder
+    // provider, decoder provider, repository, summary.
+    await _pumpApp(
+      tester,
+      values: {'locale': 'en', 'onboarding_complete': true},
+      labRecording: _testRecording(),
+      labDecoderRepository: const _FakeDecoderRepository(),
+      labPredictions: _testPredictions(),
+    );
+
+    final openLab = find.text('Open Lab');
+    await tester.ensureVisible(openLab);
+    await tester.tap(openLab);
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('AI decoder'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Held-out accuracy: 67%'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('Centroid'));
+    await tester.tap(find.text('Centroid'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Nearest centroid · mu/beta power · 2 channels'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('In-sample accuracy: 75%'), findsOneWidget);
+    expect(
+      find.textContaining('tested on the very windows it learned from'),
+      findsOneWidget,
+    );
     expect(find.textContaining('Held-out accuracy'), findsNothing);
     expect(tester.takeException(), isNull);
   });
