@@ -7,6 +7,8 @@ const eegSampleCsvAsset = 'assets/eeg/s001_r04_60s.csv';
 const eegSampleMetadataAsset = 'assets/eeg/s001_r04_60s.json';
 const eegSecondCsvAsset = 'assets/eeg/s002_r04_60s.csv';
 const eegSecondMetadataAsset = 'assets/eeg/s002_r04_60s.json';
+const eegThirdCsvAsset = 'assets/eeg/s003_r04_60s.csv';
+const eegThirdMetadataAsset = 'assets/eeg/s003_r04_60s.json';
 
 /// One bundled Lab recording: a CSV + JSON metadata pair from the same
 /// PhysioNet EEGMMIDB dataset, redistributed under ODC-BY 1.0.
@@ -38,6 +40,12 @@ const labRecordings = [
     label: 'S002 · R04',
     csvAsset: eegSecondCsvAsset,
     metadataAsset: eegSecondMetadataAsset,
+  ),
+  LabRecordingRef(
+    id: 's003r04',
+    label: 'S003 · R04',
+    csvAsset: eegThirdCsvAsset,
+    metadataAsset: eegThirdMetadataAsset,
   ),
 ];
 
