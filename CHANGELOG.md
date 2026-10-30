@@ -4,6 +4,14 @@ All notable changes to Nemro are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- Algorithms screen (`/algorithms`, linked from Home and Research): four landmark AI algorithms with limits and sources (gradient descent 1847, perceptron 1958, backpropagation 1986, attention/transformer 2017), plus three interactive experiments that run real training on-device — a perceptron trainer with a tappable board, a gradient-descent playground with a learning-rate slider, and an overfitting demo with a polynomial-degree slider.
+
+### Fixed
+
+- Corrected two leftover permission claims from the no-forbids change: the README and architecture doc still said the release manifest had no audio, storage, or media-library permission; they now state those plugin declarations are no longer removed.
+
 ### Changed
 
 - Release builds now request the `INTERNET` permission (user decision 2026-10-30). No code currently sends data over the network; the privacy policy, README, architecture doc, and CI permission checks were updated to match.
