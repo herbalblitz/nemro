@@ -40,7 +40,7 @@ flutter test
 - Follow `flutter_lints` and the formatting produced by `dart format`.
 - Prefer small widgets and feature-local files.
 - Use Riverpod for app state and `go_router` for navigation.
-- Keep the release manifest free of `INTERNET` and other unnecessary permissions.
+- Keep the release manifest minimal: `CAMERA` for Live and `INTERNET`, and no other unnecessary permissions.
 
 ## Pull requests
 
