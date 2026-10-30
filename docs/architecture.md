@@ -105,7 +105,7 @@ This path does **not** detect faces, eyes, blinks, head pose, or attention. It u
 
 - No analytics SDK, ad SDK, account system, or remote logging.
 - The release manifest requests `CAMERA` for Live and `INTERNET`, but no `RECORD_AUDIO`, storage, or media-library permission.
-- The camera plugin declares audio, storage, and media permissions; `tools:node="remove"` entries in the app manifest remove them from the merged release manifest.
+- The camera plugin declares audio, storage, and media permissions; nothing removes them from the merged release manifest anymore.
 - Debug/profile manifests add `INTERNET` only for Flutter tooling.
 - Live camera frames stay in memory and are never recorded, persisted, or uploaded. The only persisted Live data is the opt-in summary (score, duration, frames, end time) and the optional two-number baseline.
 - Model files and datasets are bundled or generated locally; inference does not call a server.
