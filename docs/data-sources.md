@@ -1,7 +1,7 @@
 # Data and model sources
 
-Nemro 0.4.0 bundles two **60-second EEG excerpts** from EEGMMIDB and a small
-**on-device decoder** trained on the same public dataset. Live uses the camera
+Nemro 0.5.0 bundles three **60-second EEG excerpts** from EEGMMIDB and small
+**on-device decoders** trained on the same public dataset. Live uses the camera
 only as an on-device light/contrast/motion proxy and does not add a new dataset.
 This page records the sources, licenses, evaluation rules, and attribution
 requirements for the bundled data and model.
@@ -24,6 +24,10 @@ requirements for the bundled data and model.
     predictions on S002 are out-of-sample for a different subject: they
     demonstrate the decoder running, not its 66.7% held-out accuracy, which
     applies to S001/R04 alone.
+  - The Lab also bundles a third 60-second window from **S003/R04** with the
+    same 8 channels at 160 Hz, selectable in the Lab recording selector.
+    Like S002, it is a cross-subject demo: the decoder was trained and
+    held-out evaluated on S001 only.
   - The decoder uses four channels (C3, C4, CP3, CP4). It is trained on
     **S001/R08 + R12** and evaluated on the held-out **S001/R04**, which is the
     same run used for the replay. See [model-card.md](model-card.md).
@@ -43,7 +47,7 @@ requirements for the bundled data and model.
 
 ### BCI Competition IV Dataset 2a
 
-**Status:** planned for future evaluation; **not used in 0.4.0**.
+**Status:** planned for future evaluation; **not used in 0.5.0**.
 
 - **What:** four-class motor imagery EEG from nine subjects.
 - **Use in Nemro:** a possible second evaluation dataset for the Lab decoder, if
@@ -66,6 +70,10 @@ requirements for the bundled data and model.
 - **Held-out evaluation:** S001/R04, 15 trials, 66.7% accuracy (chance 50%;
   95% Wilson interval 41.7%–84.8%; one-sided p ≈ 0.15).
   Leave-one-run-out mean: 60.0%.
+- **Second model:** a nearest-centroid classifier on the same 8 features,
+  bundled in `assets/models/eeg_decoder_centroid.json` and trained on the
+  S001/R04 excerpt itself; its 71.4% accuracy is labelled in-sample, never
+  held-out.
 - **Weights license:** MIT. The weights are trained from ODC-BY 1.0 data; the
   dataset attribution remains in the app and in the model card.
 - **Limitations:** single subject, small sample, binary imagined-fist task, no
