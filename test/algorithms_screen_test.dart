@@ -46,6 +46,18 @@ void main() {
     expect(find.text('Accuracy: 100%'), findsOneWidget);
   });
 
+  testWidgets('MLP experiment trains XOR to 100%', (tester) async {
+    await pumpAlgorithms(tester);
+
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('algorithms-train-mlp')),
+    );
+    await tester.tap(find.byKey(const ValueKey('algorithms-train-mlp')));
+    await tester.pump();
+
+    expect(find.text('Accuracy: 100%'), findsOneWidget);
+  });
+
   testWidgets('Gradient run with the default rate converges', (tester) async {
     await pumpAlgorithms(tester);
 
