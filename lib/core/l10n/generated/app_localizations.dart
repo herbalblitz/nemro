@@ -969,7 +969,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutSourceNote.
   ///
   /// In en, this message translates to:
-  /// **'The Lab bundles 60-second EEGMMIDB excerpts from S001 and S002 (ODC-BY 1.0). The decoder is a small logistic regression trained on S001 runs 8 and 12 and evaluated on run 4: 67% held-out accuracy, 50% chance. The S002 replay is a cross-subject demo with no accuracy claim. Research demo only.'**
+  /// **'The Lab bundles 60-second EEGMMIDB excerpts from S001, S002, and S003 (ODC-BY 1.0). The decoder is a small logistic regression trained on S001 runs 8 and 12 and evaluated on run 4: 67% held-out accuracy, 50% chance. The S002 and S003 replays are cross-subject demos with no accuracy claim. Research demo only.'**
   String get aboutSourceNote;
 
   /// No description provided for @aboutRepo.
@@ -1571,6 +1571,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Practice again'**
   String get practiceStartAgain;
+
+  /// No description provided for @homeResearchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Research'**
+  String get homeResearchTitle;
+
+  /// No description provided for @homeResearchSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Landmark findings and self-run camera experiments'**
+  String get homeResearchSubtitle;
+
+  /// No description provided for @homeResearchAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get homeResearchAction;
+
+  /// No description provided for @homeResearchBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get homeResearchBadge;
+
+  /// No description provided for @researchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Research'**
+  String get researchTitle;
+
+  /// No description provided for @researchSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Four landmark findings, each with its limits and sources — plus two short experiments you can run on this device to see how the camera proxy behaves.'**
+  String get researchSubtitle;
+
+  /// No description provided for @researchHonestNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here measures attention, calm, or any medical state. The experiments describe a camera signal only.'**
+  String get researchHonestNote;
+
+  /// No description provided for @researchMilestonesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Landmark findings'**
+  String get researchMilestonesTitle;
+
+  /// No description provided for @researchExperimentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-run experiments'**
+  String get researchExperimentsTitle;
+
+  /// No description provided for @researchLimitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit'**
+  String get researchLimitLabel;
+
+  /// No description provided for @researchSourceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get researchSourceLabel;
+
+  /// No description provided for @researchOpenSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Open source'**
+  String get researchOpenSource;
+
+  /// No description provided for @researchStartButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start experiment'**
+  String get researchStartButton;
+
+  /// No description provided for @researchStopButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get researchStopButton;
+
+  /// No description provided for @researchResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Experiment result'**
+  String get researchResultTitle;
+
+  /// No description provided for @researchResultAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average proxy score'**
+  String get researchResultAverage;
+
+  /// No description provided for @researchResultStability.
+  ///
+  /// In en, this message translates to:
+  /// **'Average stability'**
+  String get researchResultStability;
+
+  /// No description provided for @researchResultLighting.
+  ///
+  /// In en, this message translates to:
+  /// **'Average lighting'**
+  String get researchResultLighting;
+
+  /// No description provided for @researchResultPresence.
+  ///
+  /// In en, this message translates to:
+  /// **'Average presence'**
+  String get researchResultPresence;
+
+  /// No description provided for @researchResultNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This describes the camera signal during those 30 seconds only. It is not evidence about attention, calm, or any mental state.'**
+  String get researchResultNote;
+
+  /// No description provided for @researchRunAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Run again'**
+  String get researchRunAgain;
+
+  /// No description provided for @researchBackToList.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to list'**
+  String get researchBackToList;
+
+  /// No description provided for @researchMilestone1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'1929 — The first human EEG'**
+  String get researchMilestone1Title;
+
+  /// No description provided for @researchMilestone1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Hans Berger in Jena, Germany, recorded electrical activity from the human scalp and described the alpha rhythm (roughly 8–13 Hz, strongest at rest with eyes closed). It was the start of electroencephalography — and of every non-invasive brain recording that followed.'**
+  String get researchMilestone1Body;
+
+  /// No description provided for @researchMilestone1Limit.
+  ///
+  /// In en, this message translates to:
+  /// **'Crude early equipment and a handful of first subjects; the finding was a beginning, not a validated clinical tool.'**
+  String get researchMilestone1Limit;
+
+  /// No description provided for @researchMilestone1Source.
+  ///
+  /// In en, this message translates to:
+  /// **'Berger, H. (1929). Über das Elektrenkephalogramm des Menschen. Archiv für Psychiatrie und Nervenkrankheiten.'**
+  String get researchMilestone1Source;
+
+  /// No description provided for @researchMilestone2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'1988 — Spelling with the P300 wave'**
+  String get researchMilestone2Title;
+
+  /// No description provided for @researchMilestone2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Farwell and Donchin showed that a person can pick letters on a screen by attention alone: the brain produces a P300 response about 300 ms after a rare, attended stimulus, and a computer can decode which letter was chosen. It was one of the first non-invasive BCIs with a practical use — assisted communication.'**
+  String get researchMilestone2Body;
+
+  /// No description provided for @researchMilestone2Limit.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow (a few characters per minute at the time), needs per-person calibration and training; it decodes a choice among shown options, not free-form thought.'**
+  String get researchMilestone2Limit;
+
+  /// No description provided for @researchMilestone2Source.
+  ///
+  /// In en, this message translates to:
+  /// **'Farwell, L. A., & Donchin, E. (1988). Talking off the top of your head. Electroencephalography and Clinical Neurophysiology.'**
+  String get researchMilestone2Source;
+
+  /// No description provided for @researchMilestone3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'2004 — An open motor-imagery EEG dataset'**
+  String get researchMilestone3Title;
+
+  /// No description provided for @researchMilestone3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'The EEG Motor Movement/Imagery Dataset on PhysioNet recorded 109 people performing and imagining hand and foot movements (64 channels). It became an open standard for building and comparing decoders — Nemro\'s Lab replays three excerpts from it (S001, S002, and S003).'**
+  String get researchMilestone3Body;
+
+  /// No description provided for @researchMilestone3Limit.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab data from healthy volunteers following cues — far from everyday use; accuracy on this set says nothing about clinical effectiveness.'**
+  String get researchMilestone3Limit;
+
+  /// No description provided for @researchMilestone3Source.
+  ///
+  /// In en, this message translates to:
+  /// **'PhysioNet EEG Motor Movement/Imagery Dataset (EEGMMIDB); Schalk et al., BCI2000 (2004).'**
+  String get researchMilestone3Source;
+
+  /// No description provided for @researchMilestone4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'2010 — Not everyone can drive a BCI'**
+  String get researchMilestone4Title;
+
+  /// No description provided for @researchMilestone4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Work from the Berlin BCI group found that a substantial minority of users — often cited around 15–30% — never gain reliable control of a motor-imagery BCI despite training, a phenomenon called \'BCI illiteracy\'. BCI performance depends on the person, not just the technology.'**
+  String get researchMilestone4Body;
+
+  /// No description provided for @researchMilestone4Limit.
+  ///
+  /// In en, this message translates to:
+  /// **'The share depends on how \'control\' is defined, the task, and training length; it does not mean those people\'s brains are in any way deficient.'**
+  String get researchMilestone4Limit;
+
+  /// No description provided for @researchMilestone4Source.
+  ///
+  /// In en, this message translates to:
+  /// **'Blankertz, B., et al. (2010). Neurophysiological predictor of SMR-based BCI performance. NeuroImage.'**
+  String get researchMilestone4Source;
+
+  /// No description provided for @researchExperimentStillTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sit still for 30 seconds'**
+  String get researchExperimentStillTitle;
+
+  /// No description provided for @researchExperimentStillBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sit in front of the camera and stay as still as you can for 30 seconds. Watch what happens to the stability component and the score.'**
+  String get researchExperimentStillBody;
+
+  /// No description provided for @researchExperimentStillReading.
+  ///
+  /// In en, this message translates to:
+  /// **'If you sat still, stability usually rises and the score rises with it. That shows the score reacts to movement — not to focus, calm, or effort.'**
+  String get researchExperimentStillReading;
+
+  /// No description provided for @researchExperimentCoverTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover the lens, then uncover it'**
+  String get researchExperimentCoverTitle;
+
+  /// No description provided for @researchExperimentCoverBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Start the run, cover the camera with your hand for a few seconds, then uncover it. Watch what happens to the presence component and the score.'**
+  String get researchExperimentCoverBody;
+
+  /// No description provided for @researchExperimentCoverReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Covering the lens collapses central contrast, so presence and the score fall with it — no change in mental state needed. The score follows the image it is given.'**
+  String get researchExperimentCoverReading;
+
+  /// No description provided for @labDecoderModelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Decoder'**
+  String get labDecoderModelLabel;
+
+  /// No description provided for @labDecoderModelLogistic.
+  ///
+  /// In en, this message translates to:
+  /// **'Logistic'**
+  String get labDecoderModelLogistic;
+
+  /// No description provided for @labDecoderModelCentroid.
+  ///
+  /// In en, this message translates to:
+  /// **'Centroid'**
+  String get labDecoderModelCentroid;
+
+  /// No description provided for @labDecoderModelCentroidLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest centroid · mu/beta power · {count} channels'**
+  String labDecoderModelCentroidLine(Object count);
+
+  /// No description provided for @labDecoderTrainingInSample.
+  ///
+  /// In en, this message translates to:
+  /// **'Trained on the replay itself ({train}); no held-out run.'**
+  String labDecoderTrainingInSample(Object train);
+
+  /// No description provided for @labDecoderAccuracyInSample.
+  ///
+  /// In en, this message translates to:
+  /// **'In-sample accuracy: {percent}% (chance 50%)'**
+  String labDecoderAccuracyInSample(Object percent);
+
+  /// No description provided for @labDecoderInSampleNote.
+  ///
+  /// In en, this message translates to:
+  /// **'In-sample accuracy flatters the model: it was tested on the very windows it learned from, so it cannot be compared with held-out accuracy.'**
+  String get labDecoderInSampleNote;
 }
 
 class _AppLocalizationsDelegate
