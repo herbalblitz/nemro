@@ -11,7 +11,7 @@ Nemro là ứng dụng giáo dục ưu tiên cục bộ. Chính sách này giả
 ## Summary / Tóm tắt
 
 - No account, no ads, no analytics, no tracking.
-- The release build has no `INTERNET` permission.
+- The release build requests the `INTERNET` permission.
 - Settings and optional session history are stored on your device.
 - The Lab includes read-only EEG samples and a bundled decoder that run on-device; neither is collected from you.
 - Live opens the camera only after you tap Start. Frames are processed on-device and are not recorded, stored, or uploaded.
@@ -19,7 +19,7 @@ Nemro là ứng dụng giáo dục ưu tiên cục bộ. Chính sách này giả
 - Saved Live summaries are opt-in; you can delete one session, clear the camera baseline, or delete all local data in **Settings → Data**.
 
 - Không tài khoản, không quảng cáo, không analytics, không tracking.
-- Bản release không có quyền `INTERNET`.
+- Bản release có quyền `INTERNET`.
 - Cài đặt và lịch sử phiên tùy chọn được lưu trên thiết bị.
 - Lab có sẵn các mẫu EEG chỉ đọc và bộ giải mã đi kèm, chạy trên thiết bị; cả hai đều không được thu thập từ bạn.
 - Live chỉ mở camera sau khi bạn nhấn Bắt đầu. Khung hình được xử lý trên thiết bị, không bị ghi, lưu hay tải lên.
@@ -95,9 +95,9 @@ Live là một heuristic thô, minh bạch, không theo dõi khuôn mặt hay m�
 
 ## What is not collected / Dữ liệu không thu thập
 
-Nemro does not collect names, email addresses, contacts, location, advertising identifiers, or usage analytics. There is no account system and no third-party analytics SDK. The release build does not have the `INTERNET` permission. Debug builds add it only for Flutter hot reload.
+Nemro does not collect names, email addresses, contacts, location, advertising identifiers, or usage analytics. There is no account system and no third-party analytics SDK. The release build requests the `INTERNET` permission, but no code currently sends data over the network: nothing is uploaded, and no feature requires a connection. Debug builds add it only for Flutter hot reload.
 
-Nemro không thu thập tên, email, danh bạ, vị trí, mã nhận dạng quảng cáo hay số liệu sử dụng. Không có hệ thống tài khoản và không có SDK analytics bên thứ ba. Bản release không có quyền `INTERNET`. Bản debug chỉ thêm quyền này để Flutter hot reload.
+Nemro không thu thập tên, email, danh bạ, vị trí, mã nhận dạng quảng cáo hay số liệu sử dụng. Không có hệ thống tài khoản và không có SDK analytics bên thứ ba. Bản release có quyền `INTERNET`, nhưng hiện chưa có code nào gửi dữ liệu qua mạng: không có gì được tải lên và không tính năng nào cần kết nối. Bản debug chỉ thêm quyền này để Flutter hot reload.
 
 ## Storage and deletion / Lưu trữ và xóa dữ liệu
 
