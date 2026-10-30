@@ -9,28 +9,30 @@ import 'package:nemro/features/lab/data/eeg_repository.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('the second bundled sample has the expected shape and markers',
-      () async {
-    final csv = await rootBundle.loadString(eegSecondCsvAsset);
-    final metadata = await rootBundle.loadString(eegSecondMetadataAsset);
-    final recording = EegRecording.parse(csv: csv, metadataJson: metadata);
+  test(
+    'the second bundled sample has the expected shape and markers',
+    () async {
+      final csv = await rootBundle.loadString(eegSecondCsvAsset);
+      final metadata = await rootBundle.loadString(eegSecondMetadataAsset);
+      final recording = EegRecording.parse(csv: csv, metadataJson: metadata);
 
-    expect(recording.subject, 'S002');
-    expect(recording.run, contains('R04'));
-    expect(recording.channels, hasLength(8));
-    expect(recording.sampleCount, 9600);
-    expect(recording.duration, 60);
-    expect(recording.events, hasLength(15));
-    expect(
-      recording.events.where((event) => event.kind == EegEventKind.leftFist),
-      hasLength(3),
-    );
-    expect(
-      recording.events.where((event) => event.kind == EegEventKind.rightFist),
-      hasLength(4),
-    );
-    expect(recording.source, contains('PhysioNet'));
-  });
+      expect(recording.subject, 'S002');
+      expect(recording.run, contains('R04'));
+      expect(recording.channels, hasLength(8));
+      expect(recording.sampleCount, 9600);
+      expect(recording.duration, 60);
+      expect(recording.events, hasLength(15));
+      expect(
+        recording.events.where((event) => event.kind == EegEventKind.leftFist),
+        hasLength(3),
+      );
+      expect(
+        recording.events.where((event) => event.kind == EegEventKind.rightFist),
+        hasLength(4),
+      );
+      expect(recording.source, contains('PhysioNet'));
+    },
+  );
 
   test('the bundled decoder runs on the second recording', () async {
     final csv = await rootBundle.loadString(eegSecondCsvAsset);

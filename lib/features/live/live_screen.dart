@@ -8,7 +8,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:nemro/core/l10n/generated/app_localizations.dart';
 import 'package:nemro/core/preferences/preferences_providers.dart';
 import 'package:nemro/core/theme/app_theme.dart';
-import 'package:nemro/features/live/data/attention_analyzer.dart';
+import 'package:nemro/features/live/data/camera_proxy_analyzer.dart';
 import 'package:nemro/features/live/data/frame_throttler.dart';
 import 'package:nemro/features/live/data/live_camera_gateway.dart';
 import 'package:nemro/features/live/data/live_session_store.dart';
@@ -29,11 +29,11 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
     with WidgetsBindingObserver {
   static const int _uiFrameInterval = 2;
 
-  final AttentionAnalyzer _analyzer = AttentionAnalyzer();
+  final CameraProxyAnalyzer _analyzer = CameraProxyAnalyzer();
 
   LiveCameraSession? _session;
   StreamSubscription<LumaFrame>? _frameSubscription;
-  AttentionSample? _sample;
+  CameraProxySample? _sample;
   LiveSessionSummary? _summary;
   LiveCameraFailure? _failure;
   DateTime? _startedAt;
@@ -91,6 +91,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
       _isStarting = true;
       _failure = null;
       _summary = null;
+      _baselineOutcome = null;
       _pausedByLifecycle = false;
     });
 
@@ -103,8 +104,8 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
         _isCalibrating = false;
         try {
           await session.dispose();
-        } catch (_) {
-          // The screen is gone; there is nothing else to clean up.
+        } catch (error) {
+          debugPrint('Live session disposal failed: $error');
         }
         return;
       }
@@ -146,7 +147,8 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
         _isCalibrating = false;
         _failure = error.failure;
       });
-    } catch (_) {
+    } catch (error) {
+      debugPrint('Live camera start failed: $error');
       if (!mounted || operation != _operation) return;
       setState(() {
         _isStarting = false;
@@ -191,7 +193,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
   /// when one exists, absolute during calibration (the baseline is
   /// being measured, so relating to it would be meaningless) and when
   /// no baseline was ever captured.
-  int _displayScoreFor(AttentionSample sample) {
+  int _displayScoreFor(CameraProxySample sample) {
     if (_isCalibrating) return sample.roundedScore;
     final baseline = ref.read(proxyBaselineProvider);
     if (baseline == null) return sample.roundedScore;
@@ -208,6 +210,15 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
 
   Future<void> _cancelCalibration() async {
     await _stopSession(saveCalibration: false);
+  }
+
+  Future<void> _clearBaseline() async {
+    await ref.read(proxyBaselineProvider.notifier).clear();
+    if (mounted) {
+      setState(() {
+        _baselineOutcome = null;
+      });
+    }
   }
 
   static String _bandForScore(int score) {
@@ -253,8 +264,9 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
         try {
           await ref.read(proxyBaselineProvider.notifier).setBaseline(captured);
           _baselineOutcome = _BaselineOutcome.saved;
-        } catch (_) {
+        } catch (error) {
           // A baseline that cannot be stored must not claim success.
+          debugPrint('Baseline save failed: $error');
           _baselineOutcome = _BaselineOutcome.failed;
         }
       } else {
@@ -296,8 +308,9 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
     if (mounted && ref.read(saveLiveSummariesProvider)) {
       try {
         await ref.read(liveSessionStoreProvider).save(summary);
-      } catch (_) {
+      } catch (error) {
         // Saving history must never break ending a session.
+        debugPrint('Live summary save failed: $error');
       }
     }
 
@@ -325,12 +338,8 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
     LiveCameraSession? session,
     StreamSubscription<LumaFrame>? subscription,
   ) {
-    unawaited(
-      subscription?.cancel().then((_) {}).catchError((_) {}),
-    );
-    unawaited(
-      session?.dispose().then((_) {}).catchError((_) {}),
-    );
+    unawaited(subscription?.cancel().then((_) {}).catchError((_) {}));
+    unawaited(session?.dispose().then((_) {}).catchError((_) {}));
   }
 
   @override
@@ -399,9 +408,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
           onRetry: _startSession,
           onOpenSettings: () async {
             try {
-              await ref
-                  .read(systemSettingsOpenerProvider)
-                  .openAppSettings();
+              await ref.read(systemSettingsOpenerProvider).openAppSettings();
             } catch (_) {
               // Opening system settings must not crash the screen.
             }
@@ -448,6 +455,7 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
         const SizedBox(height: 16),
         _BaselineCard(
           onCalibrate: () => unawaited(_startCalibration()),
+          onClear: () => unawaited(_clearBaseline()),
           outcome: baselineOutcome,
         ),
         if (showPrivacyBullets) ...[
@@ -536,8 +544,8 @@ class _LiveScreenState extends ConsumerState<LiveScreen>
     final displayScore = sample == null
         ? null
         : isRelative
-            ? baseline.relativeScore(sample.score)
-            : sample.roundedScore;
+        ? baseline.relativeScore(sample.score)
+        : sample.roundedScore;
     final absoluteScore = isRelative ? sample.roundedScore : null;
     return [
       if (session != null) _PreviewCard(session: session, l10n: l10n),
@@ -785,9 +793,14 @@ class _OnDeviceChip extends StatelessWidget {
 }
 
 class _BaselineCard extends ConsumerWidget {
-  const _BaselineCard({required this.onCalibrate, required this.outcome});
+  const _BaselineCard({
+    required this.onCalibrate,
+    required this.onClear,
+    required this.outcome,
+  });
 
   final VoidCallback onCalibrate;
+  final VoidCallback onClear;
   final _BaselineOutcome? outcome;
 
   @override
@@ -867,15 +880,28 @@ class _BaselineCard extends ConsumerWidget {
               ),
             ],
             const SizedBox(height: 12),
-            OutlinedButton.icon(
-              key: const ValueKey('live-baseline-calibrate-button'),
-              onPressed: onCalibrate,
-              icon: const Icon(Icons.tune_rounded),
-              label: Text(
-                baseline == null
-                    ? l10n.liveBaselineCalibrate
-                    : l10n.liveBaselineRecalibrate,
-              ),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                OutlinedButton.icon(
+                  key: const ValueKey('live-baseline-calibrate-button'),
+                  onPressed: onCalibrate,
+                  icon: const Icon(Icons.tune_rounded),
+                  label: Text(
+                    baseline == null
+                        ? l10n.liveBaselineCalibrate
+                        : l10n.liveBaselineRecalibrate,
+                  ),
+                ),
+                if (baseline != null)
+                  TextButton.icon(
+                    key: const ValueKey('live-baseline-clear-button'),
+                    onPressed: onClear,
+                    icon: const Icon(Icons.delete_outline_rounded),
+                    label: Text(l10n.liveBaselineClear),
+                  ),
+              ],
             ),
           ],
         ),
@@ -1025,7 +1051,7 @@ class _ScoreCard extends StatelessWidget {
     required this.theme,
   });
 
-  final AttentionSample? sample;
+  final CameraProxySample? sample;
 
   /// The score announced to screen readers. It only moves when the score
   /// band changes, while the visual score updates every frame.

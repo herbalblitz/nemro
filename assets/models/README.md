@@ -8,7 +8,10 @@ subject S001 of the PhysioNet EEGMMIDB dataset.
 - **Features:** mu (8–13 Hz) and beta (13–30 Hz) Goertzel power at 0.5 Hz steps,
   log-transformed and standardized; 8 features.
 - **Training:** S001 runs R08 and R12 (30 trials, 15 left / 15 right).
-- **Held-out evaluation:** S001 run R04 (15 trials), 66.7% accuracy; chance 50%.
+- **Held-out evaluation:** S001 run R04 (15 trials), 66.7% accuracy; chance 50%;
+  95% Wilson interval 41.7%–84.8%; one-sided p ≈ 0.15.
+- **Cross-subject demo:** the S002 replay runs the same model but has no
+  accuracy claim; the model was trained and evaluated on S001 only.
 - **Inference:** pure Dart, on-device. No network or native runtime.
 - **License:** MIT for the code and weights; EEG data ODC-BY 1.0.
 

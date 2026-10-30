@@ -12,10 +12,7 @@ import 'package:nemro/features/live/data/live_session_summary.dart';
 /// and is never uploaded anywhere by this app; what the user does with
 /// the share sheet afterwards is their choice.
 class SessionExporter {
-  const SessionExporter({
-    required this.tempDirectory,
-    required this.shareFile,
-  });
+  const SessionExporter({required this.tempDirectory, required this.shareFile});
 
   /// Returns the app's temporary directory.
   final Future<Directory> Function() tempDirectory;
@@ -37,9 +34,7 @@ final sessionExporterProvider = Provider<SessionExporter>(
   (ref) => SessionExporter(
     tempDirectory: getTemporaryDirectory,
     shareFile: (path) async {
-      await SharePlus.instance.share(
-        ShareParams(files: [XFile(path)]),
-      );
+      await SharePlus.instance.share(ShareParams(files: [XFile(path)]));
     },
   ),
 );

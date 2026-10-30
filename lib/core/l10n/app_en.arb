@@ -14,13 +14,13 @@
   "onboardingConsentCheckbox": "I understand and agree",
   "onboardingContinue": "Agree and continue",
   "homeHeadline": "The AI–brain loop, in your hands.",
-  "homeSubheadline": "Replay real EEG, watch an on-device decoder estimate the imagined hand, and try a camera-based attention proxy.",
+  "homeSubheadline": "Replay real EEG, watch an on-device decoder estimate the imagined hand, and try a camera-based light/contrast/stability proxy.",
   "homeLabTitle": "Lab",
   "homeLabSubtitle": "Replay + on-device decoder",
   "homeLabAction": "Open Lab",
   "homeLabBadge": "DEMO",
   "homeLiveTitle": "Live",
-  "homeLiveSubtitle": "Camera attention proxy",
+  "homeLiveSubtitle": "Camera signal proxy",
   "homeLiveAction": "Open Live",
   "homeLiveBadge": "DEMO",
   "homeRecentTitle": "Latest session",
@@ -107,6 +107,45 @@
       }
     }
   },
+  "labDecoderAccuracyDetail": "n = {trials}; 95% Wilson interval {low}%–{high}%.",
+  "@labDecoderAccuracyDetail": {
+    "placeholders": {
+      "trials": {
+        "type": "int"
+      },
+      "low": {
+        "type": "int"
+      },
+      "high": {
+        "type": "int"
+      }
+    }
+  },
+  "labDecoderTrainingCrossSubject": "Trained on {trainingSubject} runs {train}; not evaluated on {subject}.",
+  "@labDecoderTrainingCrossSubject": {
+    "placeholders": {
+      "trainingSubject": {
+        "type": "String"
+      },
+      "train": {
+        "type": "String"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "labDecoderCrossSubject": "Cross-subject demo only: there is no accuracy claim for {subject}. The held-out result applies to {trainingSubject}.",
+  "@labDecoderCrossSubject": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      },
+      "trainingSubject": {
+        "type": "String"
+      }
+    }
+  },
   "labDecoderLoading": "Loading the on-device model…",
   "labDecoderIdle": "Rest — decoder idle.",
   "labDecoderDecoding": "Decoding this window…",
@@ -116,7 +155,9 @@
   "labDecoderMarker": "Marker",
   "labDecoderLimitations": "Single subject (S001). Demo only; not a medical device and not mind reading.",
   "labDecoderPreprocessingLabel": "Preprocessing",
+  "labDecoderPreprocessingText": "4.1 s epochs; per-window mean removal; Hann window; Goertzel power; log10; standardized features.",
   "labDecoderLimitationsLabel": "Limitations",
+  "labDecoderLimitationsText": "Single subject (S001), 30 training trials, binary imagined-fist task. Not a medical device and not mind reading.",
   "labDatasetTitle": "Dataset & license",
   "labSourceLabel": "Source",
   "labRecordingLabel": "Recording",
@@ -143,6 +184,8 @@
   "insightsStart": "Start Live",
   "insightsSavedTitle": "Saved Live sessions",
   "insightsDelete": "Delete session",
+  "insightsDeleteConfirmTitle": "Delete this session?",
+  "insightsDeleteConfirmBody": "This removes the session summary from this device.",
   "insightsTrendsTitle": "Trends",
   "insightsTrendCurrentStreak": "Current streak",
   "insightsTrendLongestStreak": "Longest streak",
@@ -194,9 +237,9 @@
   "settingsSaveLiveSummaries": "Save Live session summaries",
   "settingsSaveLiveSummariesBody": "When on, completed Live session summaries are saved on this device only. Turn off to stop saving new ones.",
   "settingsData": "Data",
-  "settingsDataBody": "Nemro stores settings locally. Live session summaries are saved only when you turn that on.",
+  "settingsDataBody": "Nemro stores settings and an optional camera baseline locally. Live session summaries are saved only when you turn that on.",
   "settingsDeleteData": "Delete all local data",
-  "settingsDeleteDataBody": "This removes settings, language choice, and onboarding state.",
+  "settingsDeleteDataBody": "This removes settings, the camera baseline, saved Live sessions, and onboarding state.",
   "settingsDeleteDataConfirm": "Delete all local data?",
   "settingsDeleteDataDone": "Local data cleared.",
   "settingsDelete": "Delete",
@@ -213,7 +256,7 @@
   "aboutSourceModel": "On-device decoder",
   "aboutSourcePlanned": "Planned",
   "aboutSourceBci": "BCI Competition IV 2a",
-  "aboutSourceNote": "The Lab bundles a 60-second EEGMMIDB excerpt (ODC-BY 1.0). Its decoder is a small logistic regression trained on S001 runs 8 and 12 and evaluated on run 4: 67% held-out accuracy, 50% chance. Research demo only.",
+  "aboutSourceNote": "The Lab bundles 60-second EEGMMIDB excerpts from S001 and S002 (ODC-BY 1.0). The decoder is a small logistic regression trained on S001 runs 8 and 12 and evaluated on run 4: 67% held-out accuracy, 50% chance. The S002 replay is a cross-subject demo with no accuracy claim. Research demo only.",
   "aboutRepo": "Source on GitHub",
   "aboutLicense": "MIT License",
   "privacyTitle": "Privacy",
@@ -226,11 +269,11 @@
     }
   },
   "privacyDataTitle": "What data is stored?",
-  "privacyDataBody": "Language, theme, and onboarding state. Live session summaries are saved on this device only if you turn saving on in Settings, and deleting all data in Settings wipes them. The Lab decoder processes the bundled sample locally; no EEG is collected from you.",
+  "privacyDataBody": "Language, theme, onboarding state, camera lens preference, and an optional camera baseline range. Live session summaries are saved on this device only if you turn saving on in Settings, and deleting all data in Settings wipes them. The Lab decoder processes the bundled sample locally; no EEG is collected from you.",
   "privacyDecoderTitle": "On-device AI",
   "privacyDecoderBody": "The Lab decoder is a small model bundled with the app. It runs locally on the EEG sample, and predictions never leave the device.",
   "privacyCameraTitle": "Camera",
-  "privacyCameraBody": "Live opens the camera only after you tap Start. Frames are downsampled and processed on-device to estimate a rough light/contrast/motion proxy. No video or images are recorded, stored, or uploaded. The camera is released when you stop or leave the app; Nemro does not request microphone or storage access.",
+  "privacyCameraBody": "Live opens the camera only after you tap Start. Frames are downsampled and processed on-device to estimate a rough light/contrast/motion proxy. No video or images are recorded, stored, or uploaded. An optional calibration baseline (two numbers) can be stored locally. The camera is released when you stop or leave the app; Nemro does not request microphone or storage access.",
   "privacyStorageTitle": "Storage",
   "privacyStorageBody": "Data lives in the app's private storage. You can delete everything in Settings.",
   "privacySharingTitle": "Sharing",
@@ -243,7 +286,7 @@
   "commonLearnMore": "Learn more",
   "commonError": "Something went wrong",
   "commonRetry": "Retry",
-  "liveStartTitle": "Camera attention proxy",
+  "liveStartTitle": "Camera signal proxy",
   "liveStartBody": "A rough, on-device proxy built from light, contrast, and motion. It is not mind reading and not a medical measurement.",
   "liveStartBullet1": "The camera starts only when you tap Start.",
   "liveStartBullet2": "Frames are processed on-device. No video is recorded or uploaded.",
@@ -303,6 +346,7 @@
   "liveBaselineStopSave": "Stop and save baseline",
   "liveBaselineCancel": "Cancel calibration",
   "liveBaselineSaved": "Baseline saved.",
+  "liveBaselineClear": "Clear baseline",
   "liveBaselineSaveFailed": "Could not save the baseline. Try again.",
   "liveBaselineTooShort": "Not enough frames to set a baseline. Stay in frame a little longer and try again.",
   "liveBaselineRelativeNote": "Relative to your usual range. Still a camera proxy, not a brain measurement.",
@@ -329,7 +373,7 @@
   "liveErrorRestricted": "Camera access is restricted on this device.",
   "liveErrorNoCamera": "No camera was found on this device.",
   "liveErrorUnavailable": "Could not start the camera. Close other camera apps and try again.",
-  "liveScoreSemantics": "Attention proxy score: {score} out of 100",
+  "liveScoreSemantics": "Camera proxy score: {score} out of 100",
   "@liveScoreSemantics": {
     "placeholders": {
       "score": {

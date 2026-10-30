@@ -55,7 +55,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeSubheadline =>
-      'Replay real EEG, watch an on-device decoder estimate the imagined hand, and try a camera-based attention proxy.';
+      'Replay real EEG, watch an on-device decoder estimate the imagined hand, and try a camera-based light/contrast/stability proxy.';
 
   @override
   String get homeLabTitle => 'Lab';
@@ -73,7 +73,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeLiveTitle => 'Live';
 
   @override
-  String get homeLiveSubtitle => 'Camera attention proxy';
+  String get homeLiveSubtitle => 'Camera signal proxy';
 
   @override
   String get homeLiveAction => 'Open Live';
@@ -186,6 +186,25 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String labDecoderAccuracyDetail(int trials, int low, int high) {
+    return 'n = $trials; 95% Wilson interval $low%–$high%.';
+  }
+
+  @override
+  String labDecoderTrainingCrossSubject(
+    String trainingSubject,
+    String train,
+    String subject,
+  ) {
+    return 'Trained on $trainingSubject runs $train; not evaluated on $subject.';
+  }
+
+  @override
+  String labDecoderCrossSubject(String subject, String trainingSubject) {
+    return 'Cross-subject demo only: there is no accuracy claim for $subject. The held-out result applies to $trainingSubject.';
+  }
+
+  @override
   String get labDecoderLoading => 'Loading the on-device model…';
 
   @override
@@ -214,7 +233,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labDecoderPreprocessingLabel => 'Preprocessing';
 
   @override
+  String get labDecoderPreprocessingText =>
+      '4.1 s epochs; per-window mean removal; Hann window; Goertzel power; log10; standardized features.';
+
+  @override
   String get labDecoderLimitationsLabel => 'Limitations';
+
+  @override
+  String get labDecoderLimitationsText =>
+      'Single subject (S001), 30 training trials, binary imagined-fist task. Not a medical device and not mind reading.';
 
   @override
   String get labDatasetTitle => 'Dataset & license';
@@ -276,6 +303,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get insightsDelete => 'Delete session';
+
+  @override
+  String get insightsDeleteConfirmTitle => 'Delete this session?';
+
+  @override
+  String get insightsDeleteConfirmBody =>
+      'This removes the session summary from this device.';
 
   @override
   String get insightsTrendsTitle => 'Trends';
@@ -415,14 +449,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsDataBody =>
-      'Nemro stores settings locally. Live session summaries are saved only when you turn that on.';
+      'Nemro stores settings and an optional camera baseline locally. Live session summaries are saved only when you turn that on.';
 
   @override
   String get settingsDeleteData => 'Delete all local data';
 
   @override
   String get settingsDeleteDataBody =>
-      'This removes settings, language choice, and onboarding state.';
+      'This removes settings, the camera baseline, saved Live sessions, and onboarding state.';
 
   @override
   String get settingsDeleteDataConfirm => 'Delete all local data?';
@@ -476,7 +510,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutSourceNote =>
-      'The Lab bundles a 60-second EEGMMIDB excerpt (ODC-BY 1.0). Its decoder is a small logistic regression trained on S001 runs 8 and 12 and evaluated on run 4: 67% held-out accuracy, 50% chance. Research demo only.';
+      'The Lab bundles 60-second EEGMMIDB excerpts from S001 and S002 (ODC-BY 1.0). The decoder is a small logistic regression trained on S001 runs 8 and 12 and evaluated on run 4: 67% held-out accuracy, 50% chance. The S002 replay is a cross-subject demo with no accuracy claim. Research demo only.';
 
   @override
   String get aboutRepo => 'Source on GitHub';
@@ -497,7 +531,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyDataBody =>
-      'Language, theme, and onboarding state. Live session summaries are saved on this device only if you turn saving on in Settings, and deleting all data in Settings wipes them. The Lab decoder processes the bundled sample locally; no EEG is collected from you.';
+      'Language, theme, onboarding state, camera lens preference, and an optional camera baseline range. Live session summaries are saved on this device only if you turn saving on in Settings, and deleting all data in Settings wipes them. The Lab decoder processes the bundled sample locally; no EEG is collected from you.';
 
   @override
   String get privacyDecoderTitle => 'On-device AI';
@@ -511,7 +545,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyCameraBody =>
-      'Live opens the camera only after you tap Start. Frames are downsampled and processed on-device to estimate a rough light/contrast/motion proxy. No video or images are recorded, stored, or uploaded. The camera is released when you stop or leave the app; Nemro does not request microphone or storage access.';
+      'Live opens the camera only after you tap Start. Frames are downsampled and processed on-device to estimate a rough light/contrast/motion proxy. No video or images are recorded, stored, or uploaded. An optional calibration baseline (two numbers) can be stored locally. The camera is released when you stop or leave the app; Nemro does not request microphone or storage access.';
 
   @override
   String get privacyStorageTitle => 'Storage';
@@ -552,7 +586,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonRetry => 'Retry';
 
   @override
-  String get liveStartTitle => 'Camera attention proxy';
+  String get liveStartTitle => 'Camera signal proxy';
 
   @override
   String get liveStartBody =>
@@ -681,6 +715,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get liveBaselineSaved => 'Baseline saved.';
 
   @override
+  String get liveBaselineClear => 'Clear baseline';
+
+  @override
   String get liveBaselineSaveFailed =>
       'Could not save the baseline. Try again.';
 
@@ -751,7 +788,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String liveScoreSemantics(int score) {
-    return 'Attention proxy score: $score out of 100';
+    return 'Camera proxy score: $score out of 100';
   }
 
   @override

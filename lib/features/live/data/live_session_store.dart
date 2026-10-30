@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,7 +36,8 @@ class LiveSessionStore {
         }
       }
       return summaries;
-    } catch (_) {
+    } catch (error) {
+      debugPrint('Could not parse saved Live sessions: $error');
       return const [];
     }
   }

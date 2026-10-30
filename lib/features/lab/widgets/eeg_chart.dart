@@ -155,10 +155,8 @@ class _EegChartPainter extends CustomPainter {
           if (value > maxValue) maxValue = value;
         }
         // 250 uV fills most of a row without clipping typical EEG.
-        final yMin =
-            baseline - (minValue / 250.0).clamp(-1.0, 1.0) * amplitude;
-        final yMax =
-            baseline - (maxValue / 250.0).clamp(-1.0, 1.0) * amplitude;
+        final yMin = baseline - (minValue / 250.0).clamp(-1.0, 1.0) * amplitude;
+        final yMax = baseline - (maxValue / 250.0).clamp(-1.0, 1.0) * amplitude;
         canvas.drawLine(Offset(x, yMin), Offset(x, yMax), paint);
       }
 

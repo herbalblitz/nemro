@@ -115,10 +115,7 @@ class ProxyBaselineController extends Notifier<ProxyBaseline?> {
 
   Future<void> setBaseline(ProxyBaseline baseline) async {
     final prefs = ref.read(sharedPreferencesProvider);
-    await prefs.setDouble(
-      AppConstants.prefLiveProxyBaselineLow,
-      baseline.low,
-    );
+    await prefs.setDouble(AppConstants.prefLiveProxyBaselineLow, baseline.low);
     await prefs.setDouble(
       AppConstants.prefLiveProxyBaselineHigh,
       baseline.high,

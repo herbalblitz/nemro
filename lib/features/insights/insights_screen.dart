@@ -33,7 +33,8 @@ class _InsightsScreenState extends ConsumerState<InsightsScreen> {
       await ref.read(sessionExporterProvider).export(summaries);
       if (!mounted) return;
       messenger.showSnackBar(SnackBar(content: Text(l10n.insightsExportDone)));
-    } catch (_) {
+    } catch (error) {
+      debugPrint('Session export failed: $error');
       if (!mounted) return;
       messenger.showSnackBar(
         SnackBar(content: Text(l10n.insightsExportFailed)),
@@ -84,47 +85,62 @@ class _InsightsScreenState extends ConsumerState<InsightsScreen> {
                   ]),
                 )
               : SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      if (index == 0) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: _TrendsCard(trends: trends, l10n: l10n),
-                        );
-                      }
-                      if (index == 1) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: Text(
-                            l10n.insightsSavedTitle,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        );
-                      }
-                      // Displayed newest first; storage is oldest first.
-                      final storedIndex = summaries.length - index + 1;
-                      final summary = summaries[storedIndex];
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    if (index == 0) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
-                        child: _SavedSessionCard(
-                          summary: summary,
-                          deleteKey: ValueKey(
-                            'insights-delete-$storedIndex',
+                        child: _TrendsCard(trends: trends, l10n: l10n),
+                      );
+                    }
+                    if (index == 1) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Text(
+                          l10n.insightsSavedTitle,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
                           ),
-                          onDelete: () async {
-                            await ref
-                                .read(liveSessionStoreProvider)
-                                .deleteAt(storedIndex);
-                            if (mounted) setState(() {});
-                          },
-                          l10n: l10n,
                         ),
                       );
-                    },
-                    childCount: summaries.length + 2,
-                  ),
+                    }
+                    // Displayed newest first; storage is oldest first.
+                    final storedIndex = summaries.length - index + 1;
+                    final summary = summaries[storedIndex];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _SavedSessionCard(
+                        summary: summary,
+                        deleteKey: ValueKey('insights-delete-$storedIndex'),
+                        onDelete: () async {
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (dialogContext) => AlertDialog(
+                              title: Text(l10n.insightsDeleteConfirmTitle),
+                              content: Text(l10n.insightsDeleteConfirmBody),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(dialogContext).pop(false),
+                                  child: Text(l10n.settingsCancel),
+                                ),
+                                FilledButton(
+                                  onPressed: () =>
+                                      Navigator.of(dialogContext).pop(true),
+                                  child: Text(l10n.settingsDelete),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirmed != true || !mounted) return;
+                          await ref
+                              .read(liveSessionStoreProvider)
+                              .deleteAt(storedIndex);
+                          if (mounted) setState(() {});
+                        },
+                        l10n: l10n,
+                      ),
+                    );
+                  }, childCount: summaries.length + 2),
                 ),
         ),
       ],
@@ -336,9 +352,7 @@ class _TrendSessionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(
-          child: Text(label, style: theme.textTheme.bodyMedium),
-        ),
+        Expanded(child: Text(label, style: theme.textTheme.bodyMedium)),
         Flexible(
           child: Text(
             '${summary.averageScore} · ${_formatDateTime(summary.endedAt)}',

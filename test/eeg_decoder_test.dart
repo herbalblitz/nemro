@@ -165,9 +165,9 @@ void main() {
       (chanceMutated['training'] as Map<String, dynamic>)['chance_accuracy'] =
           'NaN';
       expect(
-        EegDecoderModel.fromJson(
-          jsonEncode(chanceMutated),
-        ).training.chanceAccuracy,
+        EegDecoderModel.fromJson(jsonEncode(chanceMutated))
+            .training
+            .chanceAccuracy,
         0.5,
       );
     },

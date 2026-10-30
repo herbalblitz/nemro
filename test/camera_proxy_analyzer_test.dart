@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:nemro/features/live/data/attention_analyzer.dart';
+import 'package:nemro/features/live/data/camera_proxy_analyzer.dart';
 import 'package:nemro/features/live/data/camera_frame_converter.dart';
 
 LumaFrame _checkerboard({int size = 16, bool invert = false}) {
@@ -115,10 +115,10 @@ void main() {
     });
   });
 
-  group('AttentionAnalyzer', () {
+  group('CameraProxyAnalyzer', () {
     test('a blank wall stays near zero even when it is stable', () {
-      final analyzer = AttentionAnalyzer();
-      late AttentionSample sample;
+      final analyzer = CameraProxyAnalyzer();
+      late CameraProxySample sample;
       for (var i = 0; i < 5; i++) {
         sample = analyzer.addFrame(_blank(0.5));
       }
@@ -129,8 +129,8 @@ void main() {
     });
 
     test('a textured, stable frame produces a high proxy score', () {
-      final analyzer = AttentionAnalyzer();
-      late AttentionSample sample;
+      final analyzer = CameraProxyAnalyzer();
+      late CameraProxySample sample;
       for (var i = 0; i < 4; i++) {
         sample = analyzer.addFrame(_checkerboard());
       }
@@ -141,10 +141,10 @@ void main() {
     });
 
     test('motion lowers the score relative to a stable frame', () {
-      final stableAnalyzer = AttentionAnalyzer();
-      final movingAnalyzer = AttentionAnalyzer();
-      late AttentionSample stable;
-      late AttentionSample moving;
+      final stableAnalyzer = CameraProxyAnalyzer();
+      final movingAnalyzer = CameraProxyAnalyzer();
+      late CameraProxySample stable;
+      late CameraProxySample moving;
 
       for (var i = 0; i < 12; i++) {
         stable = stableAnalyzer.addFrame(_checkerboard());
@@ -157,7 +157,7 @@ void main() {
     });
 
     test('warmup covers the first three frames', () {
-      final analyzer = AttentionAnalyzer();
+      final analyzer = CameraProxyAnalyzer();
       final first = analyzer.addFrame(_checkerboard());
       final second = analyzer.addFrame(_checkerboard());
       final third = analyzer.addFrame(_checkerboard());
@@ -168,7 +168,7 @@ void main() {
     });
 
     test('reset clears the frame count and previous frame', () {
-      final analyzer = AttentionAnalyzer();
+      final analyzer = CameraProxyAnalyzer();
       analyzer.addFrame(_checkerboard());
       analyzer.addFrame(_checkerboard());
       analyzer.reset();
@@ -179,7 +179,7 @@ void main() {
     });
 
     test('scores stay inside the documented range', () {
-      final analyzer = AttentionAnalyzer();
+      final analyzer = CameraProxyAnalyzer();
       for (var i = 0; i < 20; i++) {
         final sample = analyzer.addFrame(_checkerboard(invert: i.isOdd));
         expect(sample.score, inInclusiveRange(0, 100));

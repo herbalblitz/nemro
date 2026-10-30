@@ -74,7 +74,14 @@ SessionTrends computeSessionTrends(List<LiveSessionSummary> summaries) {
 
     final ended = summary.endedAt;
     final day = DateTime(ended.year, ended.month, ended.day);
-    final weekStart = day.subtract(Duration(days: day.weekday - 1));
+    // Build the Monday from calendar fields, not by subtracting a Duration:
+    // across a DST change a "day" can be 23 or 25 hours, and Duration
+    // arithmetic can land on the wrong date.
+    final weekStart = DateTime(
+      day.year,
+      day.month,
+      day.day - (day.weekday - 1),
+    );
     final accumulator = weeklyTotals.putIfAbsent(
       weekStart,
       () => _WeekAccumulator(),
@@ -84,23 +91,29 @@ SessionTrends computeSessionTrends(List<LiveSessionSummary> summaries) {
     if (!day.isAfter(today)) days.add(day);
   }
 
-  final weeklyAverages = weeklyTotals.entries
-      .map(
-        (entry) => WeeklyAverage(
-          weekStart: entry.key,
-          averageScore: entry.value.mean,
-          sessions: entry.value.count,
-        ),
-      )
-      .toList()
-    ..sort((a, b) => b.weekStart.compareTo(a.weekStart));
+  final weeklyAverages =
+      weeklyTotals.entries
+          .map(
+            (entry) => WeeklyAverage(
+              weekStart: entry.key,
+              averageScore: entry.value.mean,
+              sessions: entry.value.count,
+            ),
+          )
+          .toList()
+        ..sort((a, b) => b.weekStart.compareTo(a.weekStart));
 
   final sortedDays = days.toList()..sort();
   var longest = 0;
   var run = 0;
   DateTime? previous;
   for (final day in sortedDays) {
-    if (previous != null && day.difference(previous).inDays == 1) {
+    // Compare UTC day ordinals so a 23-hour DST day still counts as one
+    // calendar day rather than a broken streak.
+    final isNextDay =
+        previous != null &&
+        _dayOrdinal(day).difference(_dayOrdinal(previous)).inDays == 1;
+    if (isNextDay) {
       run++;
     } else {
       run = 1;
@@ -112,10 +125,10 @@ SessionTrends computeSessionTrends(List<LiveSessionSummary> summaries) {
   var current = 0;
   var cursor = days.contains(today)
       ? today
-      : today.subtract(const Duration(days: 1));
+      : DateTime(today.year, today.month, today.day - 1);
   while (days.contains(cursor)) {
     current++;
-    cursor = cursor.subtract(const Duration(days: 1));
+    cursor = DateTime(cursor.year, cursor.month, cursor.day - 1);
   }
 
   return SessionTrends(
@@ -126,6 +139,9 @@ SessionTrends computeSessionTrends(List<LiveSessionSummary> summaries) {
     longestStreakDays: longest,
   );
 }
+
+DateTime _dayOrdinal(DateTime day) =>
+    DateTime.utc(day.year, day.month, day.day);
 
 class _WeekAccumulator {
   var _sum = 0;

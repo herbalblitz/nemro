@@ -85,7 +85,7 @@ final eegRepositoryProvider = Provider<EegRepository>(
 );
 
 final eegRecordingProvider = FutureProvider.autoDispose<EegRecording>(
-  (ref) => ref.watch(eegRepositoryProvider).loadRecording(
-    labRecordingById(ref.watch(selectedLabRecordingProvider)),
-  ),
+  (ref) => ref
+      .watch(eegRepositoryProvider)
+      .loadRecording(labRecordingById(ref.watch(selectedLabRecordingProvider))),
 );

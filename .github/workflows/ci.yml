@@ -20,12 +20,12 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
-          channel: stable
+          flutter-version: 3.47.8
           cache: true
 
       - name: Show Flutter version
@@ -36,6 +36,15 @@ jobs:
 
       - name: Generate localizations
         run: flutter gen-l10n
+
+      # Generated l10n is committed, but hand-written Dart still needs a
+      # consistent format. Skip the generated directory: it is rewritten
+      # by flutter gen-l10n, not edited by hand.
+      - name: Check Dart formatting
+        run: |
+          set -euo pipefail
+          dart format --output=none --set-exit-if-changed \
+            $(find lib test tool -name '*.dart' -not -path 'lib/core/l10n/generated/*')
 
       # Locks in the local-first promise: the release manifest must never
       # request INTERNET permission. Debug builds keep it (hot reload).
@@ -64,9 +73,15 @@ jobs:
             echo "::error::Release manifest must remove WRITE_EXTERNAL_STORAGE from the camera plugin merge."
             exit 1
           fi
+          for permission in READ_MEDIA_IMAGES READ_MEDIA_VIDEO READ_MEDIA_AUDIO READ_MEDIA_VISUAL_USER_SELECTED ACCESS_MEDIA_LOCATION; do
+            if ! grep -Eq "android.permission.$permission[^>]*tools:node=\"remove\"" "$MANIFEST"; then
+              echo "::error::Release manifest must remove $permission from any plugin merge."
+              exit 1
+            fi
+          done
 
       - name: Analyze
-        run: flutter analyze
+        run: flutter analyze --fatal-infos
 
       - name: Test
         run: flutter test
@@ -78,18 +93,18 @@ jobs:
     needs: analyze-test
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
         with:
           distribution: temurin
           java-version: "17"
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
-          channel: stable
+          flutter-version: 3.47.8
           cache: true
 
       - name: Install dependencies
@@ -158,7 +173,7 @@ jobs:
             echo "::error::Release APK is missing the CAMERA permission required by Live."
             exit 1
           fi
-          for permission in INTERNET RECORD_AUDIO READ_EXTERNAL_STORAGE WRITE_EXTERNAL_STORAGE; do
+          for permission in INTERNET RECORD_AUDIO READ_EXTERNAL_STORAGE WRITE_EXTERNAL_STORAGE READ_MEDIA_IMAGES READ_MEDIA_VIDEO READ_MEDIA_AUDIO READ_MEDIA_VISUAL_USER_SELECTED ACCESS_MEDIA_LOCATION; do
             if grep -q "android.permission.$permission" /tmp/nemro-permissions.txt; then
               echo "::error::Release APK requests forbidden permission: $permission."
               exit 1
@@ -166,7 +181,7 @@ jobs:
           done
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: nemro-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
