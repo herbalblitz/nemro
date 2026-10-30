@@ -4,6 +4,10 @@ All notable changes to Nemro are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- Release builds now request the `INTERNET` permission (user decision 2026-10-30). No code currently sends data over the network; the privacy policy, README, architecture doc, and CI permission checks were updated to match. The release manifest still refuses audio, storage, and media-library permissions.
+
 ## [0.5.0] - 2026-10-30
 
 ### Added
