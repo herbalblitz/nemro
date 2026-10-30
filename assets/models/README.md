@@ -1,4 +1,4 @@
-# Bundled decoder
+# Bundled decoders
 
 `eeg_decoder.json` is the model used by Nemro's Lab. It is a binary
 logistic-regression classifier for imagined left/right fist movement from
@@ -21,6 +21,16 @@ Do not edit the JSON by hand. Regenerate it with:
 python3 tool/train_eeg_decoder.py \
   --data-dir /path/to/S001 \
   --out assets/models/eeg_decoder.json
+```
+
+`eeg_decoder_centroid.json` is a second model for comparison: same features
+and channels, but a nearest-centroid decision rule trained on the 7 task
+windows of the S001/R04 excerpt itself. Its 71.4% accuracy is in-sample by
+construction and must never be compared with the logistic model's held-out
+number. Regenerate it with:
+
+```bash
+python3 tool/train_centroid_decoder.py
 ```
 
 The raw EDF files are not part of this repository. Full evaluation details,
