@@ -461,7 +461,7 @@
   "labDecoderAccuracyInSample": "In-sample accuracy: {percent}% (chance 50%)",
   "labDecoderInSampleNote": "In-sample accuracy flatters the model: it was tested on the very windows it learned from, so it cannot be compared with held-out accuracy.",
   "algorithmsTitle": "Algorithms that build AI",
-  "algorithmsSubtitle": "Four algorithms, from 1847 to 2017, that turn data into a learning machine \u2014 plus three hands-on experiments that run real training on this device.",
+  "algorithmsSubtitle": "Five algorithms, from 1847 to 2025, that turn data into a learning machine \u2014 plus hands-on experiments that run real training on this device.",
   "algorithmsHonestNote": "Everything here runs on-device with tiny toy data. These demos teach how the algorithms work; they are not powerful models and they prove nothing about the brain.",
   "algorithmsCardsTitle": "The algorithms",
   "algorithmsExperimentsTitle": "Try the algorithms",
@@ -481,6 +481,10 @@
   "algorithmsCard4Body": "Instead of reading words one by one, attention lets every word weigh every other word at once, so context shapes meaning. The transformer stacked attention into the architecture behind today's language models.",
   "algorithmsCard4Limit": "Attention is weighted averaging, not comprehension: fluent text is not evidence of understanding, and its cost grows with sequence length.",
   "algorithmsCard4Source": "Vaswani, A., et al. (2017). Attention is all you need. Advances in Neural Information Processing Systems.",
+  "algorithmsCard5Title": "2025 \u2014 Sequence prediction and the next token",
+  "algorithmsCard5Body": "Kronos treats a market's candles as a language: first a tokenizer turns continuous K-line numbers into discrete tokens, then a decoder-only transformer predicts the next token, again and again. The same job \u2014 predict what comes next \u2014 scales from one token of memory to attention over the whole sequence.",
+  "algorithmsCard5Limit": "A forecast is a sample from a distribution, not a fact: sampling settings change the answer, and a good backtest says nothing about tomorrow's market \u2014 or any other live stream.",
+  "algorithmsCard5Source": "Shi, Y., et al. (2025). Kronos: A Foundation Model for the Language of Financial Markets. arXiv:2508.02739.",
   "algorithmsExperimentPerceptronTitle": "Teach a line to separate two classes",
   "algorithmsExperimentPerceptronBody": "Tap the board to place points: red for class A, blue for class B. Then press Train and watch the line move until it separates them \u2014 or fails, if you placed them so no line can.",
   "algorithmsExperimentPerceptronReading": "The line only moves when it makes a mistake. If your points overlap, no line can separate them: that is the perceptron's limit, not a bug.",
@@ -577,5 +581,46 @@
   "algorithmsExperimentInitBody": "Same network, same data, two starts. Random weights break symmetry and the network learns XOR; all-zero weights keep every hidden unit identical forever, so the network stays stuck.",
   "algorithmsExperimentInitReading": "Symmetry is the enemy: if all units start equal, they receive equal updates and stay equal. Initialization is part of the algorithm, not a detail.",
   "algorithmsInitRandom": "Random start",
-  "algorithmsInitZeros": "Zero start"
+  "algorithmsInitZeros": "Zero start",
+  "algorithmsExperimentTokenizerTitle": "Turn a signal into tokens",
+  "algorithmsExperimentTokenizerBody": "A continuous signal cannot be a word \u2014 so quantize it. Move the bins slider: few bins blur the signal into coarse steps, many bins keep the detail but leave each token rare. The strip below is the signal rewritten as a token sequence, the way Kronos tokenizes market candles.",
+  "algorithmsExperimentTokenizerBins": "Bins: {bins}",
+  "@algorithmsExperimentTokenizerBins": {
+    "placeholders": {
+      "bins": {
+        "type": "int"
+      }
+    }
+  },
+  "algorithmsExperimentTokenizerReading": "Tokenization is lossy by design: every value inside a bin becomes the same token. More bins mean less loss \u2014 and fewer examples of each token for the predictor to learn from.",
+  "algorithmsExperimentNextTokenTitle": "Predict the next token",
+  "algorithmsExperimentNextTokenBody": "This predictor remembers exactly one token: it counts which token followed which in the first 72 tokens, then rolls forward 24 steps. Move temperature and top-p and predict again \u2014 same training, different samples.",
+  "algorithmsExperimentNextTokenTemperature": "Temperature: {value}",
+  "@algorithmsExperimentNextTokenTemperature": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "algorithmsExperimentNextTokenTopP": "Top-p: {value}",
+  "@algorithmsExperimentNextTokenTopP": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "algorithmsExperimentNextTokenPredict": "Predict 24 tokens",
+  "algorithmsNextTokenPredicted": "Predicted tokens",
+  "algorithmsNextTokenActual": "Actual tokens",
+  "algorithmsNextTokenAccuracy": "Next-token accuracy: {percent}%",
+  "@algorithmsNextTokenAccuracy": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "algorithmsExperimentNextTokenReading": "A Markov chain is the honest ancestor of the transformer: same job, one token of memory instead of attention over everything. Its misses are the point \u2014 a forecast is a distribution to sample from, not a sentence to trust."
 }
