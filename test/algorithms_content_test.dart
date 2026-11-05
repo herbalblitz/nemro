@@ -13,7 +13,7 @@ void main() {
     () {
       for (final l10n in [AppLocalizationsEn(), AppLocalizationsVi()]) {
         final cards = algorithmCards(l10n);
-        expect(cards, hasLength(4));
+        expect(cards, hasLength(5));
         for (final card in cards) {
           expect(card.title, isNotEmpty);
           expect(card.body, isNotEmpty);
