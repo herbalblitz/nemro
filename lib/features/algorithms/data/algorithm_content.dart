@@ -18,8 +18,10 @@ class AlgorithmCard {
   final String source;
 }
 
-/// The four algorithms shown, in chronological order: the optimizer, the
-/// first learner, the teacher, and the architecture behind modern models.
+/// The five algorithms shown, in chronological order: the optimizer, the
+/// first learner, the teacher, the architecture behind modern models,
+/// and the sequence predictor that treats a stream of numbers as a
+/// language to continue.
 List<AlgorithmCard> algorithmCards(AppLocalizations l10n) => [
   AlgorithmCard(
     title: l10n.algorithmsCard1Title,
@@ -44,5 +46,11 @@ List<AlgorithmCard> algorithmCards(AppLocalizations l10n) => [
     body: l10n.algorithmsCard4Body,
     limit: l10n.algorithmsCard4Limit,
     source: l10n.algorithmsCard4Source,
+  ),
+  AlgorithmCard(
+    title: l10n.algorithmsCard5Title,
+    body: l10n.algorithmsCard5Body,
+    limit: l10n.algorithmsCard5Limit,
+    source: l10n.algorithmsCard5Source,
   ),
 ];
