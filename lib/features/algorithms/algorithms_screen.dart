@@ -1001,9 +1001,13 @@ class _TokenizerExperimentState extends State<_TokenizerExperiment> {
             _TokenStrip(tokens: tokens, bins: _bins),
             const SizedBox(height: 8),
             Text(
-              histogram.asMap().entries.map((e) {
-                return '${e.key}: ${e.value}';
-              }).join('  ·  '),
+              histogram
+                  .asMap()
+                  .entries
+                  .map((e) {
+                    return '${e.key}: ${e.value}';
+                  })
+                  .join('  ·  '),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
                 height: 1.4,
@@ -1181,9 +1185,7 @@ class _NextTokenExperimentState extends State<_NextTokenExperiment> {
               }),
             ),
             Text(
-              l10n.algorithmsExperimentNextTokenTopP(
-                _topP.toStringAsFixed(2),
-              ),
+              l10n.algorithmsExperimentNextTokenTopP(_topP.toStringAsFixed(2)),
             ),
             Slider(
               value: _topP,
@@ -1225,9 +1227,7 @@ class _NextTokenExperimentState extends State<_NextTokenExperiment> {
               const SizedBox(height: 4),
               _TokenStrip(tokens: actual, bins: _bins),
               const SizedBox(height: 12),
-              Text(
-                l10n.algorithmsNextTokenAccuracy((accuracy * 100).round()),
-              ),
+              Text(l10n.algorithmsNextTokenAccuracy((accuracy * 100).round())),
             ],
             const SizedBox(height: 8),
             Text(
