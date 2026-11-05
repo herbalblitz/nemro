@@ -461,7 +461,7 @@
   "labDecoderAccuracyInSample": "Độ chính xác nội mẫu: {percent}% (ngẫu nhiên 50%)",
   "labDecoderInSampleNote": "Độ chính xác nội mẫu tâng bốc mô hình: nó được kiểm tra trên chính các cửa sổ đã học, nên không thể so sánh với độ chính xác held-out.",
   "algorithmsTitle": "Thuật toán tạo ra AI",
-  "algorithmsSubtitle": "Bốn thuật toán, từ 1847 đến 2017, biến dữ liệu thành cỗ máy biết học — kèm ba thí nghiệm tự tay chạy quá trình huấn luyện thật ngay trên máy này.",
+  "algorithmsSubtitle": "Năm thuật toán, từ 1847 đến 2025, biến dữ liệu thành cỗ máy biết học — kèm các thí nghiệm tự tay chạy quá trình huấn luyện thật ngay trên máy này.",
   "algorithmsHonestNote": "Mọi thứ ở đây chạy trên máy với dữ liệu đồ chơi rất nhỏ. Các demo dạy cách thuật toán hoạt động; chúng không phải mô hình mạnh và không chứng minh gì về não bộ.",
   "algorithmsCardsTitle": "Các thuật toán",
   "algorithmsExperimentsTitle": "Thử chạy thuật toán",
@@ -481,6 +481,10 @@
   "algorithmsCard4Body": "Thay vì đọc từng từ một, attention cho mỗi từ cân nhắc mọi từ khác cùng lúc, để ngữ cảnh định hình ý nghĩa. Transformer xếp chồng attention thành kiến trúc đứng sau các mô hình ngôn ngữ ngày nay.",
   "algorithmsCard4Limit": "Attention chỉ là trung bình có trọng số, không phải sự thấu hiểu: văn bản trôi chảy không phải bằng chứng của hiểu biết, và chi phí của nó tăng theo độ dài chuỗi.",
   "algorithmsCard4Source": "Vaswani, A., et al. (2017). Attention is all you need. Advances in Neural Information Processing Systems.",
+  "algorithmsCard5Title": "2025 — Dự báo chuỗi và token tiếp theo",
+  "algorithmsCard5Body": "Kronos coi nến thị trường như một ngôn ngữ: đầu tiên tokenizer biến các con số K-line liên tục thành token rời rạc, rồi transformer chỉ-giải-mã dự báo token tiếp theo, lặp đi lặp lại. Cùng một công việc — dự báo cái tiếp theo — mở rộng từ trí nhớ một token tới attention trên toàn bộ chuỗi.",
+  "algorithmsCard5Limit": "Một dự báo chỉ là một mẫu rút từ một phân phối, không phải sự thật: cài đặt sampling làm thay đổi đáp án, và một backtest tốt không nói gì về thị trường ngày mai — hay bất kỳ luồng trực tiếp nào khác.",
+  "algorithmsCard5Source": "Shi, Y., et al. (2025). Kronos: A Foundation Model for the Language of Financial Markets. arXiv:2508.02739.",
   "algorithmsExperimentPerceptronTitle": "Dạy một đường thẳng phân tách hai lớp",
   "algorithmsExperimentPerceptronBody": "Chạm vào bảng để đặt điểm: đỏ là lớp A, xanh là lớp B. Rồi nhấn Huấn luyện và xem đường thẳng dịch chuyển cho đến khi tách được chúng — hoặc thất bại, nếu bạn đặt điểm sao cho không đường thẳng nào tách nổi.",
   "algorithmsExperimentPerceptronReading": "Đường thẳng chỉ dịch chuyển khi nó mắc lỗi. Nếu điểm của bạn chồng lấn nhau, không đường thẳng nào tách được chúng: đó là giới hạn của perceptron, không phải lỗi.",
@@ -577,5 +581,46 @@
   "algorithmsExperimentInitBody": "Cùng một mạng, cùng một dữ liệu, hai điểm khởi đầu. Trọng số ngẫu nhiên phá vỡ đối xứng và mạng học được XOR; trọng số toàn 0 giữ mọi đơn vị ẩn giống hệt nhau mãi mãi, nên mạng kẹt cứng.",
   "algorithmsExperimentInitReading": "Đối xứng là kẻ thù: nếu mọi đơn vị khởi đầu bằng nhau, chúng nhận cập nhật bằng nhau và mãi bằng nhau. Khởi tạo là một phần của thuật toán, không phải chi tiết nhỏ.",
   "algorithmsInitRandom": "Khởi tạo ngẫu nhiên",
-  "algorithmsInitZeros": "Khởi tạo 0"
+  "algorithmsInitZeros": "Khởi tạo 0",
+  "algorithmsExperimentTokenizerTitle": "Biến tín hiệu thành token",
+  "algorithmsExperimentTokenizerBody": "Tín hiệu liên tục không thể là một từ — nên hãy lượng tử hóa nó. Kéo thanh bins: ít bins làm mờ tín hiệu thành các bậc thô, nhiều bins giữ chi tiết nhưng mỗi token lại hiếm. Dải bên dưới là tín hiệu được viết lại thành chuỗi token, giống cách Kronos tokenize nến thị trường.",
+  "algorithmsExperimentTokenizerBins": "Số bins: {bins}",
+  "@algorithmsExperimentTokenizerBins": {
+    "placeholders": {
+      "bins": {
+        "type": "int"
+      }
+    }
+  },
+  "algorithmsExperimentTokenizerReading": "Token hóa mất mát theo thiết kế: mọi giá trị trong cùng một bin đều thành một token. Nhiều bins nghĩa là ít mất mát hơn — nhưng cũng ít ví dụ cho mỗi token để bộ dự báo học.",
+  "algorithmsExperimentNextTokenTitle": "Dự báo token tiếp theo",
+  "algorithmsExperimentNextTokenBody": "Bộ dự báo này chỉ nhớ đúng một token: nó đếm token nào đi sau token nào trong 72 token đầu, rồi lăn tiếp 24 bước. Chỉnh temperature và top-p rồi dự báo lại — cùng dữ liệu huấn luyện, mẫu khác nhau.",
+  "algorithmsExperimentNextTokenTemperature": "Temperature: {value}",
+  "@algorithmsExperimentNextTokenTemperature": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "algorithmsExperimentNextTokenTopP": "Top-p: {value}",
+  "@algorithmsExperimentNextTokenTopP": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "algorithmsExperimentNextTokenPredict": "Dự báo 24 token",
+  "algorithmsNextTokenPredicted": "Token dự báo",
+  "algorithmsNextTokenActual": "Token thực tế",
+  "algorithmsNextTokenAccuracy": "Độ chính xác token tiếp theo: {percent}%",
+  "@algorithmsNextTokenAccuracy": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "algorithmsExperimentNextTokenReading": "Chuỗi Markov là tổ tiên trung thực của transformer: cùng công việc, trí nhớ một token thay vì attention trên mọi thứ. Những lần nó đoán sai mới là điểm mấu chốt — dự báo là một phân phối để lấy mẫu, không phải một câu để tin."
 }
