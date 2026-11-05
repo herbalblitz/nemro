@@ -1887,7 +1887,7 @@ abstract class AppLocalizations {
   /// No description provided for @algorithmsSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Four algorithms, from 1847 to 2017, that turn data into a learning machine — plus three hands-on experiments that run real training on this device.'**
+  /// **'Five algorithms, from 1847 to 2025, that turn data into a learning machine — plus hands-on experiments that run real training on this device.'**
   String get algorithmsSubtitle;
 
   /// No description provided for @algorithmsHonestNote.
@@ -2003,6 +2003,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Vaswani, A., et al. (2017). Attention is all you need. Advances in Neural Information Processing Systems.'**
   String get algorithmsCard4Source;
+
+  /// No description provided for @algorithmsCard5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'2025 — Sequence prediction and the next token'**
+  String get algorithmsCard5Title;
+
+  /// No description provided for @algorithmsCard5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Kronos treats a market\'s candles as a language: first a tokenizer turns continuous K-line numbers into discrete tokens, then a decoder-only transformer predicts the next token, again and again. The same job — predict what comes next — scales from one token of memory to attention over the whole sequence.'**
+  String get algorithmsCard5Body;
+
+  /// No description provided for @algorithmsCard5Limit.
+  ///
+  /// In en, this message translates to:
+  /// **'A forecast is a sample from a distribution, not a fact: sampling settings change the answer, and a good backtest says nothing about tomorrow\'s market — or any other live stream.'**
+  String get algorithmsCard5Limit;
+
+  /// No description provided for @algorithmsCard5Source.
+  ///
+  /// In en, this message translates to:
+  /// **'Shi, Y., et al. (2025). Kronos: A Foundation Model for the Language of Financial Markets. arXiv:2508.02739.'**
+  String get algorithmsCard5Source;
 
   /// No description provided for @algorithmsExperimentPerceptronTitle.
   ///
@@ -2249,6 +2273,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Zero start'**
   String get algorithmsInitZeros;
+
+  /// No description provided for @algorithmsExperimentTokenizerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn a signal into tokens'**
+  String get algorithmsExperimentTokenizerTitle;
+
+  /// No description provided for @algorithmsExperimentTokenizerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A continuous signal cannot be a word — so quantize it. Move the bins slider: few bins blur the signal into coarse steps, many bins keep the detail but leave each token rare. The strip below is the signal rewritten as a token sequence, the way Kronos tokenizes market candles.'**
+  String get algorithmsExperimentTokenizerBody;
+
+  /// No description provided for @algorithmsExperimentTokenizerBins.
+  ///
+  /// In en, this message translates to:
+  /// **'Bins: {bins}'**
+  String algorithmsExperimentTokenizerBins(int bins);
+
+  /// No description provided for @algorithmsExperimentTokenizerReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Tokenization is lossy by design: every value inside a bin becomes the same token. More bins mean less loss — and fewer examples of each token for the predictor to learn from.'**
+  String get algorithmsExperimentTokenizerReading;
+
+  /// No description provided for @algorithmsExperimentNextTokenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Predict the next token'**
+  String get algorithmsExperimentNextTokenTitle;
+
+  /// No description provided for @algorithmsExperimentNextTokenBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This predictor remembers exactly one token: it counts which token followed which in the first 72 tokens, then rolls forward 24 steps. Move temperature and top-p and predict again — same training, different samples.'**
+  String get algorithmsExperimentNextTokenBody;
+
+  /// No description provided for @algorithmsExperimentNextTokenTemperature.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature: {value}'**
+  String algorithmsExperimentNextTokenTemperature(String value);
+
+  /// No description provided for @algorithmsExperimentNextTokenTopP.
+  ///
+  /// In en, this message translates to:
+  /// **'Top-p: {value}'**
+  String algorithmsExperimentNextTokenTopP(String value);
+
+  /// No description provided for @algorithmsExperimentNextTokenPredict.
+  ///
+  /// In en, this message translates to:
+  /// **'Predict 24 tokens'**
+  String get algorithmsExperimentNextTokenPredict;
+
+  /// No description provided for @algorithmsNextTokenPredicted.
+  ///
+  /// In en, this message translates to:
+  /// **'Predicted tokens'**
+  String get algorithmsNextTokenPredicted;
+
+  /// No description provided for @algorithmsNextTokenActual.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual tokens'**
+  String get algorithmsNextTokenActual;
+
+  /// No description provided for @algorithmsNextTokenAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Next-token accuracy: {percent}%'**
+  String algorithmsNextTokenAccuracy(int percent);
+
+  /// No description provided for @algorithmsExperimentNextTokenReading.
+  ///
+  /// In en, this message translates to:
+  /// **'A Markov chain is the honest ancestor of the transformer: same job, one token of memory instead of attention over everything. Its misses are the point — a forecast is a distribution to sample from, not a sentence to trust.'**
+  String get algorithmsExperimentNextTokenReading;
 }
 
 class _AppLocalizationsDelegate
