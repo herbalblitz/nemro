@@ -1048,7 +1048,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get algorithmsSubtitle =>
-      'Bốn thuật toán, từ 1847 đến 2017, biến dữ liệu thành cỗ máy biết học — kèm ba thí nghiệm tự tay chạy quá trình huấn luyện thật ngay trên máy này.';
+      'Năm thuật toán, từ 1847 đến 2025, biến dữ liệu thành cỗ máy biết học — kèm các thí nghiệm tự tay chạy quá trình huấn luyện thật ngay trên máy này.';
 
   @override
   String get algorithmsHonestNote =>
@@ -1119,6 +1119,21 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get algorithmsCard4Source =>
       'Vaswani, A., et al. (2017). Attention is all you need. Advances in Neural Information Processing Systems.';
+
+  @override
+  String get algorithmsCard5Title => '2025 — Dự báo chuỗi và token tiếp theo';
+
+  @override
+  String get algorithmsCard5Body =>
+      'Kronos coi nến thị trường như một ngôn ngữ: đầu tiên tokenizer biến các con số K-line liên tục thành token rời rạc, rồi transformer chỉ-giải-mã dự báo token tiếp theo, lặp đi lặp lại. Cùng một công việc — dự báo cái tiếp theo — mở rộng từ trí nhớ một token tới attention trên toàn bộ chuỗi.';
+
+  @override
+  String get algorithmsCard5Limit =>
+      'Một dự báo chỉ là một mẫu rút từ một phân phối, không phải sự thật: cài đặt sampling làm thay đổi đáp án, và một backtest tốt không nói gì về thị trường ngày mai — hay bất kỳ luồng trực tiếp nào khác.';
+
+  @override
+  String get algorithmsCard5Source =>
+      'Shi, Y., et al. (2025). Kronos: A Foundation Model for the Language of Financial Markets. arXiv:2508.02739.';
 
   @override
   String get algorithmsExperimentPerceptronTitle =>
@@ -1277,4 +1292,55 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get algorithmsInitZeros => 'Khởi tạo 0';
+
+  @override
+  String get algorithmsExperimentTokenizerTitle => 'Biến tín hiệu thành token';
+
+  @override
+  String get algorithmsExperimentTokenizerBody =>
+      'Tín hiệu liên tục không thể là một từ — nên hãy lượng tử hóa nó. Kéo thanh bins: ít bins làm mờ tín hiệu thành các bậc thô, nhiều bins giữ chi tiết nhưng mỗi token lại hiếm. Dải bên dưới là tín hiệu được viết lại thành chuỗi token, giống cách Kronos tokenize nến thị trường.';
+
+  @override
+  String algorithmsExperimentTokenizerBins(int bins) {
+    return 'Số bins: $bins';
+  }
+
+  @override
+  String get algorithmsExperimentTokenizerReading =>
+      'Token hóa mất mát theo thiết kế: mọi giá trị trong cùng một bin đều thành một token. Nhiều bins nghĩa là ít mất mát hơn — nhưng cũng ít ví dụ cho mỗi token để bộ dự báo học.';
+
+  @override
+  String get algorithmsExperimentNextTokenTitle => 'Dự báo token tiếp theo';
+
+  @override
+  String get algorithmsExperimentNextTokenBody =>
+      'Bộ dự báo này chỉ nhớ đúng một token: nó đếm token nào đi sau token nào trong 72 token đầu, rồi lăn tiếp 24 bước. Chỉnh temperature và top-p rồi dự báo lại — cùng dữ liệu huấn luyện, mẫu khác nhau.';
+
+  @override
+  String algorithmsExperimentNextTokenTemperature(String value) {
+    return 'Temperature: $value';
+  }
+
+  @override
+  String algorithmsExperimentNextTokenTopP(String value) {
+    return 'Top-p: $value';
+  }
+
+  @override
+  String get algorithmsExperimentNextTokenPredict => 'Dự báo 24 token';
+
+  @override
+  String get algorithmsNextTokenPredicted => 'Token dự báo';
+
+  @override
+  String get algorithmsNextTokenActual => 'Token thực tế';
+
+  @override
+  String algorithmsNextTokenAccuracy(int percent) {
+    return 'Độ chính xác token tiếp theo: $percent%';
+  }
+
+  @override
+  String get algorithmsExperimentNextTokenReading =>
+      'Chuỗi Markov là tổ tiên trung thực của transformer: cùng công việc, trí nhớ một token thay vì attention trên mọi thứ. Những lần nó đoán sai mới là điểm mấu chốt — dự báo là một phân phối để lấy mẫu, không phải một câu để tin.';
 }
