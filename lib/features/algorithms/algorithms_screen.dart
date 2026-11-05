@@ -5,19 +5,23 @@ import 'package:nemro/features/algorithms/data/algorithm_content.dart';
 import 'package:nemro/features/algorithms/data/attention_demo.dart';
 import 'package:nemro/features/algorithms/data/gradient_descent.dart';
 import 'package:nemro/features/algorithms/data/mlp_trainer.dart';
+import 'package:nemro/features/algorithms/data/next_token_predictor.dart';
 import 'package:nemro/features/algorithms/data/overfit_demo.dart';
 import 'package:nemro/features/algorithms/data/perceptron_trainer.dart';
+import 'package:nemro/features/algorithms/data/signal_tokenizer.dart';
 
-/// Algorithms that build AI: four landmark algorithms, each with its
+/// Algorithms that build AI: five landmark algorithms, each with its
 /// limit and source, plus three experiments that run real training
-/// on-device with toy data, and three in-depth experiments: a real
+/// on-device with toy data, and five in-depth experiments: a real
 /// backpropagation network on XOR, an interactive attention computation,
-/// and a weight-initialization comparison.
+/// a weight-initialization comparison, a signal tokenizer, and a
+/// next-token predictor with sampling controls.
 ///
 /// Nothing here trains a powerful model and nothing here measures a
 /// mental state. The demos teach how the algorithms move: a line that
 /// learns from mistakes, a walk downhill, a curve that memorises, a
-/// hidden layer that bends a boundary, and weights that average words.
+/// hidden layer that bends a boundary, weights that average words, a
+/// signal rewritten as tokens, and a guess for what comes next.
 class AlgorithmsScreen extends StatelessWidget {
   const AlgorithmsScreen({super.key});
 
@@ -83,6 +87,10 @@ class AlgorithmsScreen extends StatelessWidget {
             const _AttentionExperiment(),
             const SizedBox(height: 10),
             const _InitExperiment(),
+            const SizedBox(height: 10),
+            const _TokenizerExperiment(),
+            const SizedBox(height: 10),
+            const _NextTokenExperiment(),
           ],
         ),
       ),
@@ -929,6 +937,301 @@ class _InitExperimentState extends State<_InitExperiment> {
             const SizedBox(height: 8),
             Text(
               l10n.algorithmsExperimentInitReading,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TokenizerExperiment extends StatefulWidget {
+  const _TokenizerExperiment();
+
+  @override
+  State<_TokenizerExperiment> createState() => _TokenizerExperimentState();
+}
+
+class _TokenizerExperimentState extends State<_TokenizerExperiment> {
+  var _bins = 8;
+  final _signal = demoSignal();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final tokens = tokenizeSignal(_signal, _bins);
+    final histogram = tokenHistogram(tokens, _bins);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.algorithmsExperimentTokenizerTitle,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.algorithmsExperimentTokenizerBody,
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.45),
+            ),
+            const SizedBox(height: 12),
+            CustomPaint(
+              size: const Size(double.infinity, 140),
+              painter: _SignalPainter(values: _signal),
+            ),
+            const SizedBox(height: 8),
+            Text(l10n.algorithmsExperimentTokenizerBins(_bins)),
+            Slider(
+              value: _bins.toDouble(),
+              min: 2,
+              max: 16,
+              divisions: 14,
+              onChanged: (value) => setState(() => _bins = value.round()),
+            ),
+            const SizedBox(height: 4),
+            _TokenStrip(tokens: tokens, bins: _bins),
+            const SizedBox(height: 8),
+            Text(
+              histogram.asMap().entries.map((e) {
+                return '${e.key}: ${e.value}';
+              }).join('  ·  '),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.algorithmsExperimentTokenizerReading,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Draws the demo signal as a line, 0 at the bottom, 1 at the top.
+class _SignalPainter extends CustomPainter {
+  const _SignalPainter({required this.values});
+
+  final List<double> values;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final border = Paint()
+      ..color = const Color(0xFF9AA0A6)
+      ..style = PaintingStyle.stroke;
+    canvas.drawRect(Offset.zero & size, border);
+    if (values.length < 2) return;
+    final line = Paint()
+      ..color = const Color(0xFF1A73E8)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+    final path = Path();
+    for (var i = 0; i < values.length; i++) {
+      final point = Offset(
+        i / (values.length - 1) * size.width,
+        size.height - values[i].clamp(0.0, 1.0) * size.height,
+      );
+      if (i == 0) {
+        path.moveTo(point.dx, point.dy);
+      } else {
+        path.lineTo(point.dx, point.dy);
+      }
+    }
+    canvas.drawPath(path, line);
+  }
+
+  @override
+  bool shouldRepaint(_SignalPainter old) => old.values != values;
+}
+
+/// A token sequence as a strip of numbered cells, coloured from blue
+/// (lowest token) to orange (highest token).
+class _TokenStrip extends StatelessWidget {
+  const _TokenStrip({required this.tokens, required this.bins});
+
+  final List<int> tokens;
+  final int bins;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 3,
+      runSpacing: 3,
+      children: [
+        for (final token in tokens)
+          Container(
+            width: 22,
+            height: 22,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Color.lerp(
+                const Color(0xFF1A73E8),
+                const Color(0xFFFFA24E),
+                bins <= 1 ? 0 : token / (bins - 1),
+              ),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              '$token',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _NextTokenExperiment extends StatefulWidget {
+  const _NextTokenExperiment();
+
+  @override
+  State<_NextTokenExperiment> createState() => _NextTokenExperimentState();
+}
+
+class _NextTokenExperimentState extends State<_NextTokenExperiment> {
+  static const _bins = 8;
+  static const _trainLength = 72;
+  static const _predictLength = 24;
+
+  var _temperature = 1.0;
+  var _topP = 0.9;
+  List<int>? _predicted;
+  List<int>? _actual;
+  double? _accuracy;
+
+  void _predict() {
+    final tokens = tokenizeSignal(demoSignal(), _bins);
+    final train = tokens.sublist(0, _trainLength);
+    final actual = tokens.sublist(_trainLength, _trainLength + _predictLength);
+    final predictor = MarkovPredictor(_bins)..train(train);
+    final predicted = predictor.rollOut(
+      train.last,
+      _predictLength,
+      temperature: _temperature,
+      topP: _topP,
+      seed: 42,
+    );
+    setState(() {
+      _predicted = predicted;
+      _actual = actual;
+      _accuracy = sequenceAccuracy(predicted, actual);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final predicted = _predicted;
+    final actual = _actual;
+    final accuracy = _accuracy;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.algorithmsExperimentNextTokenTitle,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.algorithmsExperimentNextTokenBody,
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.45),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              l10n.algorithmsExperimentNextTokenTemperature(
+                _temperature.toStringAsFixed(1),
+              ),
+            ),
+            Slider(
+              value: _temperature,
+              min: 0.2,
+              max: 2.0,
+              divisions: 18,
+              onChanged: (value) => setState(() {
+                _temperature = value;
+                _predicted = null;
+                _actual = null;
+                _accuracy = null;
+              }),
+            ),
+            Text(
+              l10n.algorithmsExperimentNextTokenTopP(
+                _topP.toStringAsFixed(2),
+              ),
+            ),
+            Slider(
+              value: _topP,
+              min: 0.5,
+              max: 1.0,
+              divisions: 10,
+              onChanged: (value) => setState(() {
+                _topP = value;
+                _predicted = null;
+                _actual = null;
+                _accuracy = null;
+              }),
+            ),
+            const SizedBox(height: 4),
+            FilledButton(
+              key: const ValueKey('algorithms-predict-next'),
+              onPressed: _predict,
+              child: Text(l10n.algorithmsExperimentNextTokenPredict),
+            ),
+            if (predicted != null && actual != null && accuracy != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                l10n.algorithmsNextTokenPredicted,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 4),
+              _TokenStrip(tokens: predicted, bins: _bins),
+              const SizedBox(height: 8),
+              Text(
+                l10n.algorithmsNextTokenActual,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 4),
+              _TokenStrip(tokens: actual, bins: _bins),
+              const SizedBox(height: 12),
+              Text(
+                l10n.algorithmsNextTokenAccuracy((accuracy * 100).round()),
+              ),
+            ],
+            const SizedBox(height: 8),
+            Text(
+              l10n.algorithmsExperimentNextTokenReading,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
                 height: 1.4,
