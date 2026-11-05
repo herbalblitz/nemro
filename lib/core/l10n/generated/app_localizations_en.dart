@@ -1046,7 +1046,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get algorithmsSubtitle =>
-      'Four algorithms, from 1847 to 2017, that turn data into a learning machine — plus three hands-on experiments that run real training on this device.';
+      'Five algorithms, from 1847 to 2025, that turn data into a learning machine — plus hands-on experiments that run real training on this device.';
 
   @override
   String get algorithmsHonestNote =>
@@ -1117,6 +1117,22 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get algorithmsCard4Source =>
       'Vaswani, A., et al. (2017). Attention is all you need. Advances in Neural Information Processing Systems.';
+
+  @override
+  String get algorithmsCard5Title =>
+      '2025 — Sequence prediction and the next token';
+
+  @override
+  String get algorithmsCard5Body =>
+      'Kronos treats a market\'s candles as a language: first a tokenizer turns continuous K-line numbers into discrete tokens, then a decoder-only transformer predicts the next token, again and again. The same job — predict what comes next — scales from one token of memory to attention over the whole sequence.';
+
+  @override
+  String get algorithmsCard5Limit =>
+      'A forecast is a sample from a distribution, not a fact: sampling settings change the answer, and a good backtest says nothing about tomorrow\'s market — or any other live stream.';
+
+  @override
+  String get algorithmsCard5Source =>
+      'Shi, Y., et al. (2025). Kronos: A Foundation Model for the Language of Financial Markets. arXiv:2508.02739.';
 
   @override
   String get algorithmsExperimentPerceptronTitle =>
@@ -1275,4 +1291,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get algorithmsInitZeros => 'Zero start';
+
+  @override
+  String get algorithmsExperimentTokenizerTitle => 'Turn a signal into tokens';
+
+  @override
+  String get algorithmsExperimentTokenizerBody =>
+      'A continuous signal cannot be a word — so quantize it. Move the bins slider: few bins blur the signal into coarse steps, many bins keep the detail but leave each token rare. The strip below is the signal rewritten as a token sequence, the way Kronos tokenizes market candles.';
+
+  @override
+  String algorithmsExperimentTokenizerBins(int bins) {
+    return 'Bins: $bins';
+  }
+
+  @override
+  String get algorithmsExperimentTokenizerReading =>
+      'Tokenization is lossy by design: every value inside a bin becomes the same token. More bins mean less loss — and fewer examples of each token for the predictor to learn from.';
+
+  @override
+  String get algorithmsExperimentNextTokenTitle => 'Predict the next token';
+
+  @override
+  String get algorithmsExperimentNextTokenBody =>
+      'This predictor remembers exactly one token: it counts which token followed which in the first 72 tokens, then rolls forward 24 steps. Move temperature and top-p and predict again — same training, different samples.';
+
+  @override
+  String algorithmsExperimentNextTokenTemperature(String value) {
+    return 'Temperature: $value';
+  }
+
+  @override
+  String algorithmsExperimentNextTokenTopP(String value) {
+    return 'Top-p: $value';
+  }
+
+  @override
+  String get algorithmsExperimentNextTokenPredict => 'Predict 24 tokens';
+
+  @override
+  String get algorithmsNextTokenPredicted => 'Predicted tokens';
+
+  @override
+  String get algorithmsNextTokenActual => 'Actual tokens';
+
+  @override
+  String algorithmsNextTokenAccuracy(int percent) {
+    return 'Next-token accuracy: $percent%';
+  }
+
+  @override
+  String get algorithmsExperimentNextTokenReading =>
+      'A Markov chain is the honest ancestor of the transformer: same job, one token of memory instead of attention over everything. Its misses are the point — a forecast is a distribution to sample from, not a sentence to trust.';
 }
