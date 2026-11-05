@@ -69,4 +69,20 @@ void main() {
 
     expect(find.textContaining('Converged:'), findsOneWidget);
   });
+
+  testWidgets('Next-token experiment predicts and scores 24 tokens', (
+    tester,
+  ) async {
+    await pumpAlgorithms(tester);
+
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('algorithms-predict-next')),
+    );
+    await tester.tap(find.byKey(const ValueKey('algorithms-predict-next')));
+    await tester.pump();
+
+    expect(find.text('Predicted tokens'), findsOneWidget);
+    expect(find.text('Actual tokens'), findsOneWidget);
+    expect(find.textContaining('Next-token accuracy:'), findsOneWidget);
+  });
 }
