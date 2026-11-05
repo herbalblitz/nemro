@@ -6,6 +6,7 @@ All notable changes to Nemro are documented here.
 
 ### Added
 
+- Algorithms: a fifth card — 2025 sequence prediction and the next token (Kronos, arXiv:2508.02739) — plus two in-depth experiments: a signal tokenizer that rewrites a fixed demo signal as a coloured token strip with a bins slider, and a next-token predictor that trains a one-token Markov model on the first 72 tokens, rolls forward 24 steps, and scores itself against the actual tokens, with temperature and top-p sampling controls.
 - Algorithms screen (`/algorithms`, linked from Home and Research): four landmark AI algorithms with limits and sources (gradient descent 1847, perceptron 1958, backpropagation 1986, attention/transformer 2017), plus three interactive experiments that run real training on-device — a perceptron trainer with a tappable board, a gradient-descent playground with a learning-rate slider, and an overfitting demo with a polynomial-degree slider — and three in-depth experiments: a real backpropagation network learning XOR (loss curve + decision boundary), an interactive attention-weight computation over four words, and a random-vs-zero weight-initialization comparison.
 
 ### Fixed
